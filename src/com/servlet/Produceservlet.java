@@ -1,7 +1,10 @@
 package com.servlet;
 import com.google.gson.JsonObject;
 import com.beans.produce;
-import com.dao.*;
+import com.dao.DBinterface.ProduceInterface;
+import com.dao.DBconnection.Dataconnect;
+import com.dao.DBservice.ProduceService;
+
 import com.servlet.tool.JsonUtil;
 
 import javax.servlet.ServletException;
@@ -16,7 +19,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @WebServlet(name = "ProduceServlet")
-public class Produceservlet {
+public class Produceservlet extends HttpServlet {
 
 
 }
