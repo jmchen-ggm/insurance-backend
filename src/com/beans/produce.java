@@ -1,9 +1,11 @@
 package com.beans;
 
 public class produce {
+
+    int id;
     private String name;
     private int rank;
-    private float money;
+    private double money;
     private int skind;
     private int snumber;
     private int sgroup;
@@ -12,10 +14,18 @@ public class produce {
     private int lpercentb;
     private int lnumber;
     private int lgroup;
-    private float score;
+    private double score;
     private String addition;
 
     public produce(){}
+
+    public int getId() {
+        return id;
+    }
+
+    public  void setId(int id) {
+        this.id = id;
+    }
 
     public String getName() {
         return name;
@@ -33,11 +43,11 @@ public class produce {
         this.rank = rank;
     }
 
-    public float getMoney() {
+    public double getMoney() {
         return money;
     }
 
-    public void setMoney(float money) {
+    public void setMoney(double money) {
         this.money = money;
     }
 
@@ -105,11 +115,11 @@ public class produce {
         this.lgroup = lgroup;
     }
 
-    public float getScore() {
+    public double getScore() {
         return score;
     }
 
-    public void setScore(float score) {
+    public void setScore(double score) {
         this.score = score;
     }
 

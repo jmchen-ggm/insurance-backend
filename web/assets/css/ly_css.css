@@ -1,0 +1,9 @@
+.ly_panel{
+
+}
+
+.ly_panel:hover{
+    -webkit-box-shadow:0 0 10px rgba(0, 204, 204, .5);
+    -moz-box-shadow:0 0 10px rgba(0, 204, 204, .5);
+    box-shadow:0 0 10px rgba(0, 204, 204, .5);
+}
