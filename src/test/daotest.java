@@ -10,7 +10,8 @@ public class daotest {
         ProduceInterface Daouser = new ProduceService();
         //List<String> x = Daouser.getWORDAccordToWORDOffset(1, 500);
         String i = "1";
-        List<produce> a = Daouser.searchProduce("人生");
+        List<produce> a = Daouser.getProduceAccordRank(0,10);
+        //List<produce> a = Daouser.searchProduce("B");
         //System.out.println(a.getName());
         int y = 0;
         for (produce u : a) {
@@ -19,5 +20,6 @@ public class daotest {
 
 
         }
+
     }
 }

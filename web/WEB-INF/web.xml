@@ -13,6 +13,5 @@
         <url-pattern>/data/information</url-pattern>
     </servlet-mapping>
 
-
 </web-app>
 

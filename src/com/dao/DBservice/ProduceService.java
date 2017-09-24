@@ -77,6 +77,7 @@ public class ProduceService implements ProduceInterface {
         try {
             Connection con=null;
             con=connect.getConnection();
+            System.out.print(con);
             String sql="select * from Produce ORDER BY rank  limit ?,?;";
             sta=con.prepareStatement(sql);
             sta.setInt(1,Start);

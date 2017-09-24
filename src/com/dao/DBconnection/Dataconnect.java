@@ -7,9 +7,9 @@ import java.sql.Statement;
 public class Dataconnect {
 
 
-    private static final String driver = "org.sqlite.JDBC";; //数据库驱动
+    private static final String driver = "org.sqlite.JDBC"; //数据库驱动
     //连接数据库的URL地址
-    private static final String myurl = "jdbc:sqlite:insuranceDB.db";
+    private static final String myurl = "jdbc:sqlite:/home/cuilijia/IdeaProjects/insuranceS/insuranceDB.db";
 
     private static Connection conn=null;
 
