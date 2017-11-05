@@ -1,0 +1,4 @@
+[INFO] 2017/11/05 15:14:00 main.go:16 Server Start
+[INFO] 2017/11/05 15:14:00 base.go:12 InitDB Start
+[INFO] 2017/11/05 15:14:00 base.go:18 open db success
+[INFO] 2017/11/05 15:14:00 base.go:25 Create Article Table Success sql = CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title Text NOT NULL, Desc Text NOT NULL, Url Text NOT NULL, ThumbUrl Text NOT NULL)
