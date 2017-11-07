@@ -21,7 +21,7 @@ func main() {
 
 	log.Info("handle /create/article/")
 	//初始Http路径监控
-	http.Handle("/static", http.FileServer(http.Dir("./files/static")))
+	http.Handle("/", http.FileServer(http.Dir("./files")))
 
 	http.HandleFunc("/create/article/", web.HandleCreateArticle)
 
