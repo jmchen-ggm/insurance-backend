@@ -1,4 +1,4 @@
-package web
+package protocol
 
 import (
 	"encoding/json"
@@ -35,6 +35,23 @@ type BBReq struct {
 }
 
 type BBCreateArticleResponse struct {
-	id       int64
-	thumbUrl string
+	Id       int64
+	ThumbUrl string
+}
+
+type BBListArticleRequest struct {
+	StartIndex int
+	PageSize   int
+}
+
+type Article struct {
+	Id       int
+	Title    string
+	Desc     string
+	Url      string
+	ThumbUrl string
+}
+
+type BBListArticleResponse struct {
+	ArticleList []Article
 }

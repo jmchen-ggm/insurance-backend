@@ -1,4 +1,4 @@
-package web
+package protocol
 
 const ResponseCodeSuccess = 0
 const ResponseCodeServerError = -1

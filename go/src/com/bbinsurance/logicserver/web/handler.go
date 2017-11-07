@@ -4,6 +4,7 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/constants"
 	"com/bbinsurance/logicserver/database"
+	"com/bbinsurance/logicserver/protocol"
 	"com/bbinsurance/time"
 	"encoding/json"
 	"fmt"
@@ -14,14 +15,14 @@ import (
 )
 
 func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
-	var bbReq BBReq
-	bbReq.Bin.FunId = FuncCreateArticle
-	bbReq.Bin.URI = UriCreateArticle
+	var bbReq protocol.BBReq
+	bbReq.Bin.FunId = protocol.FuncCreateArticle
+	bbReq.Bin.URI = protocol.UriCreateArticle
 	bbReq.Bin.SessionId = uuid.NewV4().String()
 	bbReq.Bin.Timestamp = time.GetTimestamp()
 	if request.Method != "POST" {
 		log.Error("Invalid Request Method: %s Url: %s", request.Method, request.URL)
-		HandleErrorResponse(writer, bbReq, ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http Get")
+		HandleErrorResponse(writer, bbReq, protocol.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
 		return
 	} else {
 		request.ParseMultipartForm(32 << 20)
@@ -29,7 +30,7 @@ func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
 		defer file.Close()
 		if err != nil {
 			log.Error("Invalid File %s", err)
-			HandleErrorResponse(writer, bbReq, ResponseCodeRequestInvalid, "Invalid Requst File")
+			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeRequestInvalid, "Invalid Requst File")
 			return
 		}
 		title := request.FormValue("title")
@@ -41,7 +42,7 @@ func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
 		id, err := database.InsertArticle(title, desc, url, "")
 		if err != nil {
 			log.Error("Invalid File %s", err)
-			HandleErrorResponse(writer, bbReq, ResponseCodeServerError, "Insert Article Error")
+			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Article Error")
 			return
 		}
 		thumbUrl := fmt.Sprint(id) + ".png"
@@ -50,16 +51,16 @@ func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
 		fis, err := os.OpenFile(savePath, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			log.Error("Save File Err %s", err)
-			HandleErrorResponse(writer, bbReq, ResponseCodeServerError, "Save File Error")
+			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Save File Error")
 			return
 		} else {
 			log.Info("Save File success %s", savePath)
 		}
 		defer fis.Close()
 		io.Copy(fis, file)
-		var response BBCreateArticleResponse
-		response.id = id
-		response.thumbUrl = thumbUrl
+		var response protocol.BBCreateArticleResponse
+		response.Id = id
+		response.ThumbUrl = thumbUrl
 		var responseRawMessage json.RawMessage
 		responseBytes, _ := json.Marshal(response)
 		json.Unmarshal(responseBytes, &responseRawMessage)

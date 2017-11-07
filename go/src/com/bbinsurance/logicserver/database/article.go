@@ -2,16 +2,9 @@ package database
 
 import (
 	"com/bbinsurance/log"
+	"com/bbinsurance/logicserver/protocol"
 	_ "github.com/mattn/go-sqlite3"
 )
-
-type Article struct {
-	Id       int
-	Title    string
-	Desc     string
-	Url      string
-	ThumbUrl string
-}
 
 func InsertArticle(article string, desc string, url string, thumbUrl string) (int64, error) {
 	stmt, err := GetDB().Prepare("INSERT INTO Article (Title, Desc, Url, ThumbUrl) VALUES (?, ?, ?, ?);")
@@ -46,15 +39,31 @@ func UpdateArticleThumbUrl(id int64, thumbUrl string) {
 	}
 }
 
-func GetAllArticle() []Article {
+func GetListArticle(startIndex int, length int) []protocol.Article {
+	log.Info("GetListArticle %d %d", startIndex, length)
+	rows, err := GetDB().Query("SELECT * FROM Article LIMIT ? OFFSET ?;", startIndex, length)
+	if err != nil {
+		log.Error("GetListArticle err %s", err)
+	}
+	var articleList []protocol.Article
+	for rows.Next() {
+		var article protocol.Article
+		rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Url, &article.ThumbUrl)
+		articleList = append(articleList, article)
+	}
+	rows.Close()
+	return articleList
+}
+
+func GetAllArticle() []protocol.Article {
 	log.Info("GetAllArticle")
 	rows, err := GetDB().Query("SELECT * FROM Article;")
 	if err != nil {
 		log.Error("GetAllArticle err %s", err)
 	}
-	var articleList []Article
+	var articleList []protocol.Article
 	for rows.Next() {
-		var article Article
+		var article protocol.Article
 		rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Url, &article.ThumbUrl)
 		articleList = append(articleList, article)
 	}
