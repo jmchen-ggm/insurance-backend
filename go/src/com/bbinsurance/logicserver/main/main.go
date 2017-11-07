@@ -21,6 +21,8 @@ func main() {
 
 	log.Info("handle /create/article/")
 	//初始Http路径监控
+	http.Handle("/", http.FileServer(http.Dir("./files")))
+
 	http.HandleFunc("/create/article/", web.HandleCreateArticle)
 
 	//handle请求数据接口
