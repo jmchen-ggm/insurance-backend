@@ -61,9 +61,7 @@ func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
 		var response protocol.BBCreateArticleResponse
 		response.Id = id
 		response.ThumbUrl = thumbUrl
-		var responseRawMessage json.RawMessage
 		responseBytes, _ := json.Marshal(response)
-		json.Unmarshal(responseBytes, &responseRawMessage)
-		HandleSuccessResponse(writer, bbReq, responseRawMessage)
+		HandleSuccessResponse(writer, bbReq, responseBytes)
 	}
 }

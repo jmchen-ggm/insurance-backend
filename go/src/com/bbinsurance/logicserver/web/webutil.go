@@ -26,11 +26,13 @@ func HandleRequest(request *http.Request) (protocol.BBReq, int, string) {
 	return bbReq, protocol.ResponseCodeSuccess, ""
 }
 
-func HandleSuccessResponse(writer http.ResponseWriter, request protocol.BBReq, body json.RawMessage) {
+func HandleSuccessResponse(writer http.ResponseWriter, request protocol.BBReq, body []byte) {
 	var bbResp protocol.BBResp
 	bbResp.Bin = request.Bin
 	bbResp.Header.Username = request.Header.Username
-	bbResp.Body = body
+	if body != nil {
+		json.Unmarshal(body, &bbResp.Body)
+	}
 	responseJsonStr, _ := json.Marshal(bbResp)
 	writer.Header().Set("content-type", "application/json")
 	fmt.Fprintf(writer, string(responseJsonStr))

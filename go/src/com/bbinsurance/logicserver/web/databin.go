@@ -3,7 +3,6 @@ package web
 import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
-	"encoding/json"
 	"net/http"
 )
 
@@ -14,11 +13,10 @@ func HandleDataBin(writer http.ResponseWriter, request *http.Request) {
 	} else {
 		if bbReq.Bin.FunId == protocol.FuncListArticle {
 			log.Info("HandleDataBin ListArticle")
-			responseRawMessage := GetListArticle(bbReq)
-			HandleSuccessResponse(writer, bbReq, responseRawMessage)
+			responseBytes := GetListArticle(bbReq)
+			HandleSuccessResponse(writer, bbReq, responseBytes)
 		} else {
-			var responseRawMessage json.RawMessage
-			HandleSuccessResponse(writer, bbReq, responseRawMessage)
+			HandleSuccessResponse(writer, bbReq, nil)
 		}
 	}
 }
