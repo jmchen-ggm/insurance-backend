@@ -40,7 +40,7 @@ func UpdateArticleThumbUrl(id int64, thumbUrl string) {
 }
 
 func GetListArticle(startIndex int, length int) []protocol.Article {
-	rows, err := GetDB().Query("SELECT * FROM Article LIMIT " + string(length) + " OFFSET " + string(startIndex))
+	rows, err := GetDB().Query("SELECT * FROM Article LIMIT " + string(length) + " OFFSETS " + string(startIndex))
 	if err != nil {
 		log.Error("GetListArticle err %s", err)
 	}
