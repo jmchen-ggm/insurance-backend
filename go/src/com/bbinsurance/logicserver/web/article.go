@@ -11,7 +11,7 @@ func GetListArticle(bbReq protocol.BBReq) []byte {
 	var listArticleRequest protocol.BBListArticleRequest
 	json.Unmarshal(bbReq.Body, &listArticleRequest)
 	articleList := database.GetListArticle(listArticleRequest.StartIndex, listArticleRequest.PageSize)
-	log.Info("req %d %d %d", listArticleRequest.StartIndex, listArticleRequest.PageSize, len(articleList)
+	log.Info("req %d %d %d", listArticleRequest.StartIndex, listArticleRequest.PageSize, len(articleList))
 	var response protocol.BBListArticleResponse
 	response.ArticleList = articleList
 	responseBytes, _ := json.Marshal(response)
