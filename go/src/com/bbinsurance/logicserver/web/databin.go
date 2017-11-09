@@ -7,6 +7,7 @@ import (
 )
 
 func HandleDataBin(writer http.ResponseWriter, request *http.Request) {
+	log.Info("New Request: %s %s", request.URL, request.Method)
 	bbReq, code, msg := HandleRequest(request)
 	if code != protocol.ResponseCodeSuccess {
 		HandleErrorResponse(writer, bbReq, code, msg)
