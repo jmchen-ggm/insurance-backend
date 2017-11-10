@@ -56,24 +56,24 @@ func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Article Error")
 			return
 		}
-		thumbUrl := fmt.Sprint(id) + ".png"
+		thumbUrl := fmt.Sprintf("img/articles/%d.png", id)
 		database.UpdateArticleThumbUrl(id, thumbUrl)
-		savePath := constants.STATIC_FOLDER + "/img/articles/" + thumbUrl
+		savePath := constants.STATIC_FOLDER + "/" + thumbUrl
 		fis, err := os.OpenFile(savePath, os.O_WRONLY|os.O_CREATE, 0666)
+		defer fis.Close()
 		if err != nil {
 			log.Error("Save File Err %s", err)
+			database.DeleteArticleById(id)
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Save File Error")
-			return
 		} else {
 			log.Info("Save File success %s", savePath)
+			io.Copy(fis, file)
+			var response protocol.BBCreateArticleResponse
+			response.Id = id
+			response.ThumbUrl = thumbUrl
+			responseBytes, _ := json.Marshal(response)
+			HandleSuccessResponse(writer, bbReq, responseBytes)
 		}
-		defer fis.Close()
-		io.Copy(fis, file)
-		var response protocol.BBCreateArticleResponse
-		response.Id = id
-		response.ThumbUrl = thumbUrl
-		responseBytes, _ := json.Marshal(response)
-		HandleSuccessResponse(writer, bbReq, responseBytes)
 	}
 }
 

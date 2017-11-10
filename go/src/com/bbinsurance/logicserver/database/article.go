@@ -7,57 +7,81 @@ import (
 	"fmt"
 )
 
+const ArticleTableName = "Article"
+
 func InsertArticle(title string, desc string, url string, thumbUrl string) (int64, error) {
-	stmt, err := GetDB().Prepare("INSERT INTO Article (Title, Desc, Url, ThumbUrl) VALUES (?, ?, ?, ?);")
+	sql := fmt.Sprintf("INSERT INTO %s (Title, Desc, Url, ThumbUrl) VALUES (?, ?, ?, ?);", ArticleTableName)
+	stmt, err := GetDB().Prepare(sql)
+	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
 		return -1, err
+	} else {
+		result, err := stmt.Exec(title, desc, url, thumbUrl)
+		if err != nil {
+			log.Error("Prepare Exec Error %s", err)
+			return -1, err
+		} else {
+			id, err := result.LastInsertId()
+			return id, err
+		}
 	}
-
-	result, err := stmt.Exec(title, desc, url, thumbUrl)
-	if err != nil {
-		log.Error("Prepare Exec Error %s", err)
-		return -1, err
-	}
-	id, err := result.LastInsertId()
-	return id, err
 }
 
 func UpdateArticleThumbUrl(id int64, thumbUrl string) {
 	log.Info("UpdateArticleThumbUrl: id=%d thumbUrl=%s", id, thumbUrl)
-	stmt, err := GetDB().Prepare("UPDATE Article SET thumbUrl=? WHERE id=?;")
+	sql := fmt.Sprintf("UPDATE %s SET thumbUrl=? WHERE id= ?;", ArticleTableName)
+	stmt, err := GetDB().Prepare(sql)
+	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
-		return
-	}
-
-	_, err = stmt.Exec(thumbUrl, id)
-	if err != nil {
-		log.Error("Prepare Exec Error %s", err)
-		return
 	} else {
-		log.Info("UpdateArticleThumbUrl Success")
+		_, err = stmt.Exec(thumbUrl, id)
+		if err != nil {
+			log.Error("Prepare Exec Error %s", err)
+		} else {
+			log.Info("UpdateArticleThumbUrl Success")
+		}
 	}
 }
 
 func GetListArticle(startIndex int, length int) []protocol.Article {
 	var sql string
 	if (length == -1) {
-		sql = fmt.Sprintf("SELECT * FROM Article")
+		sql = fmt.Sprintf("SELECT * FROM %s", ArticleTableName)
 	} else {
-		sql = fmt.Sprintf("SELECT * FROM Article LIMIT %d OFFSET %d", length, startIndex)
+		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", ArticleTableName, length, startIndex)
 	}
 	log.Info("GetListArticle sql=%s", sql)
 	rows, err := GetDB().Query(sql)
+	defer rows.Close()
+	var articleList []protocol.Article
 	if err != nil {
 		log.Error("GetListArticle err %s", err)
+	} else {
+		for rows.Next() {
+			var article protocol.Article
+			rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Url, &article.ThumbUrl)
+			articleList = append(articleList, article)
+		}
+		log.Info("GetListArticle %d ", len(articleList))
 	}
-	var articleList []protocol.Article
-	for rows.Next() {
-		var article protocol.Article
-		rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Url, &article.ThumbUrl)
-		articleList = append(articleList, article)
-	}
-	rows.Close()
 	return articleList
+}
+
+func DeleteArticleById(id int64) {
+	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", ArticleTableName)
+	stmt, err := GetDB().Prepare(sql)
+	defer stmt.Close()
+	if err != nil {
+		log.Error("Prepare SQL Error %s", err)
+	} else {
+		_, err = stmt.Exec(id)
+		if err != nil {
+			log.Error("Prepare Exec Error %s", err)
+			return
+		} else {
+			log.Info("RemoveArticleById %d Success", id)
+		}
+	}
 }

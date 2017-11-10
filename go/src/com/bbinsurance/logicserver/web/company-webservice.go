@@ -48,7 +48,7 @@ func HandleCreateCompany(writer http.ResponseWriter, request *http.Request) {
 		name := request.FormValue("name")
 		desc := request.FormValue("desc")
 
-		log.Info("CreateCompany: name=%s desc=%s file=%s", nam, desc, fileHandler.Header)
+		log.Info("CreateCompany: name=%s desc=%s file=%s", name, desc, fileHandler.Header)
 
 		id, err := database.InsertCompany(name, desc, "")
 		if err != nil {
@@ -56,23 +56,23 @@ func HandleCreateCompany(writer http.ResponseWriter, request *http.Request) {
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Company Error")
 			return
 		}
-		thumbUrl := fmt.Sprint(id) + ".png"
+		thumbUrl := fmt.Sprintf("img/companys/%d.png", id)
 		database.UpdateCompanyThumbUrl(id, thumbUrl)
-		savePath := constants.STATIC_FOLDER + "/img/companys/" + thumbUrl
+		savePath := constants.STATIC_FOLDER + "/" + thumbUrl
 		fis, err := os.OpenFile(savePath, os.O_WRONLY|os.O_CREATE, 0666)
+		defer fis.Close()
 		if err != nil {
 			log.Error("Save File Err %s", err)
+			database.DeleteCompanyById(id)
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Save File Error")
-			return
 		} else {
 			log.Info("Save File success %s", savePath)
+			io.Copy(fis, file)
+			var response protocol.BBCreateCompanyResponse
+			response.Id = id
+			response.ThumbUrl = thumbUrl
+			responseBytes, _ := json.Marshal(response)
+			HandleSuccessResponse(writer, bbReq, responseBytes)
 		}
-		defer fis.Close()
-		io.Copy(fis, file)
-		var response protocol.BBCreateCompanyResponse
-		response.Id = id
-		response.ThumbUrl = thumbUrl
-		responseBytes, _ := json.Marshal(response)
-		HandleSuccessResponse(writer, bbReq, responseBytes)
 	}
 }
