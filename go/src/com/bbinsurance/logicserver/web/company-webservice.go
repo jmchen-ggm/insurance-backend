@@ -14,10 +14,22 @@ import (
 	"os"
 )
 
-func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
+
+func GetListCompany(bbReq protocol.BBReq) []byte {
+	var listCompanyRequest protocol.BBListCompanyRequest
+	json.Unmarshal(bbReq.Body, &listCompanyRequest)
+	companyList := database.GetListCompany(listCompanyRequest.StartIndex, listCompanyRequest.PageSize)
+	log.Info("req %d %d %d", listCompanyRequest.StartIndex, listCompanyRequest.PageSize, len(companyList))
+	var response protocol.BBListCompanyResponse
+	response.CompanyList = companyList
+	responseBytes, _ := json.Marshal(response)
+	return responseBytes
+}
+
+func HandleCreateCompany(writer http.ResponseWriter, request *http.Request) {
 	var bbReq protocol.BBReq
-	bbReq.Bin.FunId = protocol.FuncCreateArticle
-	bbReq.Bin.URI = protocol.UriCreateArticle
+	bbReq.Bin.FunId = protocol.FuncCreateCompany
+	bbReq.Bin.URI = protocol.UriCreateData
 	bbReq.Bin.SessionId = uuid.NewV4().String()
 	bbReq.Bin.Timestamp = time.GetTimestamp()
 	if request.Method != "POST" {
@@ -33,21 +45,20 @@ func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeRequestInvalid, "Invalid Requst File")
 			return
 		}
-		title := request.FormValue("title")
+		name := request.FormValue("name")
 		desc := request.FormValue("desc")
-		url := request.FormValue("url")
 
-		log.Info("CreateArticle: title=%s desc=%s url=%s file=%s", title, desc, url, fileHandler.Header)
+		log.Info("CreateCompany: name=%s desc=%s file=%s", name, desc, fileHandler.Header)
 
-		id, err := database.InsertArticle(title, desc, url, "")
+		id, err := database.InsertCompany(name, desc, "")
 		if err != nil {
 			log.Error("Invalid File %s", err)
-			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Article Error")
+			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Company Error")
 			return
 		}
 		thumbUrl := fmt.Sprint(id) + ".png"
-		database.UpdateArticleThumbUrl(id, thumbUrl)
-		savePath := constants.STATIC_FOLDER + "/img/articles/" + thumbUrl
+		database.UpdateCompanyThumbUrl(id, thumbUrl)
+		savePath := constants.STATIC_FOLDER + "/img/companys/" + thumbUrl
 		fis, err := os.OpenFile(savePath, os.O_WRONLY|os.O_CREATE, 0666)
 		if err != nil {
 			log.Error("Save File Err %s", err)
@@ -58,7 +69,7 @@ func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
 		}
 		defer fis.Close()
 		io.Copy(fis, file)
-		var response protocol.BBCreateArticleResponse
+		var response protocol.BBCreateCompanyResponse
 		response.Id = id
 		response.ThumbUrl = thumbUrl
 		responseBytes, _ := json.Marshal(response)

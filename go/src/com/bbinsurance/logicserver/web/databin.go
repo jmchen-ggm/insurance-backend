@@ -16,8 +16,14 @@ func HandleDataBin(writer http.ResponseWriter, request *http.Request) {
 			log.Info("HandleDataBin ListArticle")
 			responseBytes := GetListArticle(bbReq)
 			HandleSuccessResponse(writer, bbReq, responseBytes)
+		} else if bbReq.Bin.FunId == protocol.FuncListCompany {
+			log.Info("HandleDataBin ListCompany")
+			responseBytes := GetListCompany(bbReq)
+			HandleSuccessResponse(writer, bbReq, responseBytes)
 		} else {
-			HandleSuccessResponse(writer, bbReq, nil)
+			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeInvalidFunId, "Invalid FunId")
 		}
 	}
 }
+
+

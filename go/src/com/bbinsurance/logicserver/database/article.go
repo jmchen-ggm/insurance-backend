@@ -7,14 +7,14 @@ import (
 	"fmt"
 )
 
-func InsertArticle(article string, desc string, url string, thumbUrl string) (int64, error) {
+func InsertArticle(title string, desc string, url string, thumbUrl string) (int64, error) {
 	stmt, err := GetDB().Prepare("INSERT INTO Article (Title, Desc, Url, ThumbUrl) VALUES (?, ?, ?, ?);")
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
 		return -1, err
 	}
 
-	result, err := stmt.Exec(article, desc, url, thumbUrl)
+	result, err := stmt.Exec(title, desc, url, thumbUrl)
 	if err != nil {
 		log.Error("Prepare Exec Error %s", err)
 		return -1, err

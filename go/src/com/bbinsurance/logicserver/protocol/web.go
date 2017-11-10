@@ -55,3 +55,33 @@ type Article struct {
 type BBListArticleResponse struct {
 	ArticleList []Article
 }
+
+type Company struct {
+	Id       int
+	Name    string
+	Desc     string
+	ThumbUrl string
+}
+
+type BBListCompanyRequest struct {
+	StartIndex int
+	PageSize   int
+}
+
+type BBListCompanyResponse struct {
+	CompanyList []Company
+}
+
+type BBCreateCompanyResponse struct {
+	Id       int64
+	ThumbUrl string
+}
+
+type Insurance struct {
+	Id       int
+	NameZHCN    string
+	NameEN     string
+	Desc     string
+	CompanyId int
+	ThumbUrl string
+}

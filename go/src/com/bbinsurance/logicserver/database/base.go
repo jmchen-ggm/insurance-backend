@@ -17,12 +17,26 @@ func InitDB() {
 	} else {
 		log.Info("open db success")
 	}
-	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title Text NOT NULL, Desc Text NOT NULL, Url Text NOT NULL, ThumbUrl Text NOT NULL)"
+	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Desc TEXT NOT NULL, Url TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
 	_, err = db.Exec(createArticleSql, nil)
 	if err != nil {
 		log.Error("Create Article Error: sql = %s, err = %s", createArticleSql, err)
 	} else {
 		log.Info("Create Article Table Success sql = %s", createArticleSql)
+	}
+	var createCompanySql = "CREATE TABLE IF NOT EXISTS Company(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
+	_, err = db.Exec(createCompanySql, nil)
+	if err != nil {
+		log.Error("Create Company Error: sql = %s, err = %s", createCompanySql, err)
+	} else {
+		log.Info("Create Company Table Success sql = %s", createCompanySql)
+	}
+	var createInsuranceSql = "CREATE TABLE IF NOT EXISTS Insurance(Id INTEGER PRIMARY KEY AUTOINCREMENT, NameZHCN TEXT Not NULL, NameEN TEXT NOT NULL, Desc TEXT NOT NULL, Type INTEGER, CompanyId INTEGER, ThumbUrl TEXT NOT NULL);"
+	_, err = db.Exec(createInsuranceSql, nil)
+	if err != nil {
+		log.Error("Create Insurance Error: sql = %s, err = %s", createInsuranceSql, err)
+	} else {
+		log.Info("Create Insurance Table Success sql = %s", createInsuranceSql)
 	}
 }
 
