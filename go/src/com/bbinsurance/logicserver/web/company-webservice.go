@@ -48,7 +48,7 @@ func HandleCreateCompany(writer http.ResponseWriter, request *http.Request) {
 		name := request.FormValue("name")
 		desc := request.FormValue("desc")
 
-		log.Info("CreateCompany: name=%s desc=%s file=%s", name, desc, fileHandler.Header)
+		log.Info("CreateCompany: name=%s desc=%s file=%s", nam, desc, fileHandler.Header)
 
 		id, err := database.InsertCompany(name, desc, "")
 		if err != nil {
