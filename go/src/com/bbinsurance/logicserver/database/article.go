@@ -4,6 +4,7 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
 	_ "github.com/mattn/go-sqlite3"
+	"fmt"
 )
 
 func InsertArticle(article string, desc string, url string, thumbUrl string) (int64, error) {
@@ -40,25 +41,16 @@ func UpdateArticleThumbUrl(id int64, thumbUrl string) {
 }
 
 func GetListArticle(startIndex int, length int) []protocol.Article {
-	rows, err := GetDB().Query("SELECT * FROM Article LIMIT " + string(length) + " OFFSETS " + string(startIndex))
+	var sql string
+	if (length == -1) {
+		sql = fmt.Sprintf("SELECT * FROM Article")
+	} else {
+		sql = fmt.Sprintf("SELECT * FROM Article LIMIT %d OFFSET %d", length, startIndex)
+	}
+	log.Info("GetListArticle sql=%s", sql)
+	rows, err := GetDB().Query(sql)
 	if err != nil {
 		log.Error("GetListArticle err %s", err)
-	}
-	var articleList []protocol.Article
-	for rows.Next() {
-		var article protocol.Article
-		rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Url, &article.ThumbUrl)
-		articleList = append(articleList, article)
-	}
-	rows.Close()
-	return articleList
-}
-
-func GetAllArticle() []protocol.Article {
-	log.Info("GetAllArticle")
-	rows, err := GetDB().Query("SELECT * FROM Article;")
-	if err != nil {
-		log.Error("GetAllArticle err %s", err)
 	}
 	var articleList []protocol.Article
 	for rows.Next() {
