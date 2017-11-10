@@ -20,7 +20,7 @@ func main() {
 	database.InitDB()
 
 	//初始Http路径监控
-	http.Handle("/", http.FileServer(http.Dir("./files")))
+	http.Handle("/", http.FileServer(http.Dir(constants.STATIC_FOLDER)))
 
 	http.HandleFunc("/create/article", web.HandleCreateArticle)
 	http.HandleFunc("/create/company", web.HandleCreateCompany)
