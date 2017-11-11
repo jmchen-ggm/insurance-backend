@@ -6,12 +6,12 @@ import (
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
 	"com/bbinsurance/time"
+	"com/bbinsurance/util"
 	"encoding/json"
 	"fmt"
 	"github.com/satori/go.uuid"
 	"io"
 	"net/http"
-	"os"
 	"strconv"
 )
 
@@ -62,7 +62,7 @@ func HandleCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		thumbUrl := fmt.Sprintf("img/insurances/%d.png", id)
 		database.UpdateInsuranceThumbUrl(id, thumbUrl)
 		savePath := constants.STATIC_FOLDER + "/" + thumbUrl
-		fis, err := os.OpenFile(savePath, os.O_WRONLY|os.O_CREATE, 0666)
+		fis, err := util.FileCreate(savePath)
 		defer fis.Close()
 		if err != nil {
 			log.Error("Save File Err %s", err)
