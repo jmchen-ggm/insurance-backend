@@ -45,11 +45,13 @@ type BBListArticleRequest struct {
 }
 
 type Article struct {
-	Id       int
-	Title    string
-	Desc     string
-	Url      string
-	ThumbUrl string
+	Id        int
+	Title     string
+	Desc      string
+	Date      string
+	Timestamp int64
+	Url       string
+	ThumbUrl  string
 }
 
 type BBListArticleResponse struct {
@@ -58,7 +60,7 @@ type BBListArticleResponse struct {
 
 type Company struct {
 	Id       int
-	Name    string
+	Name     string
 	Desc     string
 	ThumbUrl string
 }
@@ -78,10 +80,25 @@ type BBCreateCompanyResponse struct {
 }
 
 type Insurance struct {
-	Id       int
-	NameZHCN    string
-	NameEN     string
-	Desc     string
+	Id        int
+	NameZHCN  string
+	NameEN    string
+	Desc      string
 	CompanyId int
+	Timestamp int64
+	ThumbUrl  string
+}
+
+type BBListInsuranceRequest struct {
+	StartIndex int
+	PageSize   int
+}
+
+type BBListInsuranceResponse struct {
+	InsuranceList []Insurance
+}
+
+type BBCreateInsuranceResponse struct {
+	Id       int64
 	ThumbUrl string
 }

@@ -24,6 +24,7 @@ func main() {
 
 	http.HandleFunc("/create/article", web.HandleCreateArticle)
 	http.HandleFunc("/create/company", web.HandleCreateCompany)
+	http.HandleFunc("/create/insurance", web.HandleCreateInsurance)
 
 	//handle请求数据接口
 	http.HandleFunc("/data-bin", web.HandleDataBin)

@@ -3,8 +3,8 @@ package database
 import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
-	_ "github.com/mattn/go-sqlite3"
 	"fmt"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const CompanyTableName = "Company"
@@ -47,7 +47,7 @@ func UpdateCompanyThumbUrl(id int64, thumbUrl string) {
 
 func GetListCompany(startIndex int, length int) []protocol.Company {
 	var sql string
-	if (length == -1) {
+	if length == -1 {
 		sql = fmt.Sprintf("SELECT * FROM %s", CompanyTableName)
 	} else {
 		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", CompanyTableName, length, startIndex)

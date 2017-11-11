@@ -3,21 +3,23 @@ package database
 import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
-	_ "github.com/mattn/go-sqlite3"
+	"com/bbinsurance/time"
 	"fmt"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 const ArticleTableName = "Article"
 
-func InsertArticle(title string, desc string, url string, thumbUrl string) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Title, Desc, Url, ThumbUrl) VALUES (?, ?, ?, ?);", ArticleTableName)
+func InsertArticle(title string, desc string, date string, url string, thumbUrl string) (int64, error) {
+	sql := fmt.Sprintf("INSERT INTO %s (Title, Desc, Date, Timestamp, Url, ThumbUrl) VALUES (?, ?, ?, ?, ?);", ArticleTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
 		return -1, err
 	} else {
-		result, err := stmt.Exec(title, desc, url, thumbUrl)
+		timestamp := time.GetTimestamp()
+		result, err := stmt.Exec(title, desc, date, timestamp, url, thumbUrl)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			return -1, err
@@ -47,7 +49,7 @@ func UpdateArticleThumbUrl(id int64, thumbUrl string) {
 
 func GetListArticle(startIndex int, length int) []protocol.Article {
 	var sql string
-	if (length == -1) {
+	if length == -1 {
 		sql = fmt.Sprintf("SELECT * FROM %s", ArticleTableName)
 	} else {
 		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", ArticleTableName, length, startIndex)
@@ -61,7 +63,7 @@ func GetListArticle(startIndex int, length int) []protocol.Article {
 	} else {
 		for rows.Next() {
 			var article protocol.Article
-			rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Url, &article.ThumbUrl)
+			rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Date, &article.Timestamp, &article.Url, &article.ThumbUrl)
 			articleList = append(articleList, article)
 		}
 		log.Info("GetListArticle %d ", len(articleList))

@@ -12,22 +12,23 @@ import (
 	"io"
 	"net/http"
 	"os"
+	"strconv"
 )
 
-func GetListArticle(bbReq protocol.BBReq) []byte {
-	var listArticleRequest protocol.BBListArticleRequest
-	json.Unmarshal(bbReq.Body, &listArticleRequest)
-	articleList := database.GetListArticle(listArticleRequest.StartIndex, listArticleRequest.PageSize)
-	log.Info("req %d %d %d", listArticleRequest.StartIndex, listArticleRequest.PageSize, len(articleList))
-	var response protocol.BBListArticleResponse
-	response.ArticleList = articleList
+func GetListInsurance(bbReq protocol.BBReq) []byte {
+	var listInsuranceRequest protocol.BBListInsuranceRequest
+	json.Unmarshal(bbReq.Body, &listInsuranceRequest)
+	insuranceList := database.GetListInsurance(listInsuranceRequest.StartIndex, listInsuranceRequest.PageSize)
+	log.Info("req %d %d %d", listInsuranceRequest.StartIndex, listInsuranceRequest.PageSize, len(insuranceList))
+	var response protocol.BBListInsuranceResponse
+	response.InsuranceList = insuranceList
 	responseBytes, _ := json.Marshal(response)
 	return responseBytes
 }
 
-func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
+func HandleCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 	var bbReq protocol.BBReq
-	bbReq.Bin.FunId = protocol.FuncCreateArticle
+	bbReq.Bin.FunId = protocol.FuncCreateInsurance
 	bbReq.Bin.URI = protocol.UriCreateData
 	bbReq.Bin.SessionId = uuid.NewV4().String()
 	bbReq.Bin.Timestamp = time.GetTimestamp()
@@ -44,32 +45,33 @@ func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeRequestInvalid, "Invalid Requst File")
 			return
 		}
-		title := request.FormValue("title")
+		nameZHCN := request.FormValue("nameZHCN")
+		nameEN := request.FormValue("nameEN")
 		desc := request.FormValue("desc")
-		date := request.FormValue("date")
-		url := request.FormValue("url")
+		companyIdStr := request.FormValue("companyId")
+		companyId, _ := strconv.Atoi(companyIdStr)
 
-		log.Info("CreateArticle: title=%s desc=%s date=%s url=%s file=%s", title, desc, date, url, fileHandler.Header)
+		log.Info("CreateInsurance: nameZHCN=%s nameEN=%s desc=%s companyId=%d file=%s", nameZHCN, nameEN, desc, companyId, fileHandler.Header)
 
-		id, err := database.InsertArticle(title, desc, date, url, "")
+		id, err := database.InsertInsurance(nameZHCN, nameEN, desc, companyId, "")
 		if err != nil {
 			log.Error("Invalid File %s", err)
-			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Article Error")
+			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Insurance Error")
 			return
 		}
-		thumbUrl := fmt.Sprintf("img/articles/%d.png", id)
-		database.UpdateArticleThumbUrl(id, thumbUrl)
+		thumbUrl := fmt.Sprintf("img/insurances/%d.png", id)
+		database.UpdateInsuranceThumbUrl(id, thumbUrl)
 		savePath := constants.STATIC_FOLDER + "/" + thumbUrl
 		fis, err := os.OpenFile(savePath, os.O_WRONLY|os.O_CREATE, 0666)
 		defer fis.Close()
 		if err != nil {
 			log.Error("Save File Err %s", err)
-			database.DeleteArticleById(id)
+			database.DeleteInsuranceById(id)
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Save File Error")
 		} else {
 			log.Info("Save File success %s", savePath)
 			io.Copy(fis, file)
-			var response protocol.BBCreateArticleResponse
+			var response protocol.BBCreateInsuranceResponse
 			response.Id = id
 			response.ThumbUrl = thumbUrl
 			responseBytes, _ := json.Marshal(response)

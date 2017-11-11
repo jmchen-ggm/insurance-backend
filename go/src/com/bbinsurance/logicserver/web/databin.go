@@ -20,10 +20,12 @@ func HandleDataBin(writer http.ResponseWriter, request *http.Request) {
 			log.Info("HandleDataBin ListCompany")
 			responseBytes := GetListCompany(bbReq)
 			HandleSuccessResponse(writer, bbReq, responseBytes)
+		} else if bbReq.Bin.FunId == protocol.FuncListInsurance {
+			log.Info("HandleDataBin ListInsurance")
+			responseBytes := GetListInsurance(bbReq)
+			HandleSuccessResponse(writer, bbReq, responseBytes)
 		} else {
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeInvalidFunId, "Invalid FunId")
 		}
 	}
 }
-
-
