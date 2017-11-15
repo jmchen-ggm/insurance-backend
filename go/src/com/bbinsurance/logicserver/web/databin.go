@@ -25,7 +25,7 @@ func HandleDataBin(writer http.ResponseWriter, request *http.Request) {
 	if code != protocol.ResponseCodeSuccess {
 		HandleErrorResponse(writer, bbReq, code, msg)
 	} else {
-		method, ok := HandlerObjMap[bReq.Bin.FunId]
+		method, ok := HandlerObjMap[bbReq.Bin.FunId]
 		if ok {
 			log.Info("HandleDataBin %d", bReq.Bin.FunId)
 			responseBytes := method(bbReq)
