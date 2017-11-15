@@ -80,7 +80,7 @@ func SelectCompanyByName(Name string) protocol.Company {
 		log.Error("GetCompany err %s", err)
 	} else {
 		for rows.Next() {
-			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
+			  rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
 		}
 		log.Info("GetCompany %s ", company.Name)
 	}
