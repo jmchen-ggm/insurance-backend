@@ -53,7 +53,7 @@ func HandleCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 
 		log.Info("CreateInsurance: nameZHCN=%s nameEN=%s desc=%s companyId=%d file=%s", nameZHCN, nameEN, desc, companyId, fileHandler.Header)
 
-		id, err := database.InsertInsurance(nameZHCN, nameEN, desc, companyId, "")
+		id, err := database.InsertInsurance(nameZHCN, nameEN, desc, 0,companyId, "")
 		if err != nil {
 			log.Error("Invalid File %s", err)
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Insurance Error")

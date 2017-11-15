@@ -86,9 +86,15 @@ type Insurance struct {
 	NameZHCN  string
 	NameEN    string
 	Desc      string
-	CompanyId int
+	Company   string
 	Timestamp int64
 	ThumbUrl  string
+	Type      string
+}
+
+type Type struct {
+	Id   int64
+	Name string
 }
 
 type BBListInsuranceRequest struct {

@@ -69,8 +69,26 @@ func GetListCompany(startIndex int, length int) []protocol.Company {
 	return companyList
 }
 
+func SelectCompanyByName(Name string) protocol.Company {
+	var sql string
+	var company protocol.Company
+	sql = fmt.Sprintf("SELECT * FROM %s where Name=?limit 1",CompanyTableName)
+	log.Info("Get Company By Name sql=%s", sql)
+	rows, err := GetDB().Query(sql,Name)
+	defer rows.Close()
+	if err != nil {
+		log.Error("GetCompany err %s", err)
+	} else {
+		for rows.Next() {
+			  rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
+		}
+		log.Info("GetCompany %s ", company.Name)
+	}
+	return company
+}
+
 func DeleteCompanyById(id int64) {
-	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", CompanyTableName)
+	sql := fmt.Sprintf("DELETE FROM %s WHERE Id=?", CompanyTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
