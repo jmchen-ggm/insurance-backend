@@ -38,6 +38,21 @@ func InitDB() {
 	} else {
 		log.Info("Create Insurance Table Success sql = %s", createInsuranceSql)
 	}
+	var createCommentSql = "CREATE TABLE IF NOT EXISTS Comment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, Content TEXT NOT NULL, Score INTEGER, TimeStamp INTEGER, ViewCount INTEGER, Flags INTEGER);"
+	_, err = db.Exec(createCommentSql, nil)
+	if err != nil {
+		log.Error("Create Comment Error: sql = %s, err = %s", createCommentSql, err)
+	} else {
+		log.Info("Create Comment Table Success sql = %s", createCommentSql)
+	}
+
+	var createSubCommentSql = "CREATE TABLE IF NOT EXISTS SubComment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, ReplyUin INTEGER, CommentId INTEGER, Content TEXT NOT NULL, TimeStamp INTEGER);"
+	_, err = db.Exec(createSubCommentSql, nil)
+	if err != nil {
+		log.Error("Create SubComment Error: sql = %s, err = %s", createSubCommentSql, err)
+	} else {
+		log.Info("Create SubComment Table Success sql = %s", createSubCommentSql)
+	}
 }
 
 func GetDB() *sql.DB {

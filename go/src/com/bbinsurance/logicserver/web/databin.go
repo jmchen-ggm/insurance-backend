@@ -24,6 +24,18 @@ func HandleDataBin(writer http.ResponseWriter, request *http.Request) {
 			log.Info("HandleDataBin ListInsurance")
 			responseBytes := GetListInsurance(bbReq)
 			HandleSuccessResponse(writer, bbReq, responseBytes)
+		} else if bbReq.Bin.FunId == protocol.FuncListComment {
+			log.Info("HandleDataBin ListComment")
+			responseBytes := GetListComment(bbReq)
+			HandleSuccessResponse(writer, bbReq, responseBytes)
+		} else if bbReq.Bin.FunId == protocol.FuncCreateComment {
+			log.Info("HandleDataBin CreateComment")
+			responseBytes := FuncCreateComment(bbReq)
+			HandleSuccessResponse(writer, bbReq, responseBytes)
+		} else if bbReq.Bin.FunId == protocol.FuncCreateComment {
+			log.Info("HandleDataBin ViewComment")
+			responseBytes := FuncViewComment(bbReq)
+			HandleSuccessResponse(writer, bbReq, responseBytes)
 		} else {
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeInvalidFunId, "Invalid FunId")
 		}

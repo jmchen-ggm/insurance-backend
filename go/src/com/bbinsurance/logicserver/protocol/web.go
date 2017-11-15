@@ -12,11 +12,13 @@ type BBBin struct {
 }
 
 type BBReqHeader struct {
+	Uin      int64
 	Username string
 	Token    string
 }
 
 type BBRespHeader struct {
+	Uin          int64
 	Username     string
 	ResponseCode int
 	ErrMsg       string
@@ -101,4 +103,36 @@ type BBListInsuranceResponse struct {
 type BBCreateInsuranceResponse struct {
 	Id       int64
 	ThumbUrl string
+}
+
+type Comment struct {
+	LocalId   int64
+	ServId    int64
+	Uin       int64
+	Content   string
+	Score     int
+	Timestamp int64
+	ViewCount int
+	Flags     int64
+}
+
+type BBCreateCommentRequest struct {
+	Comment Comment
+}
+
+type BBCreateCommentResponse struct {
+	ServId int64
+}
+
+type BBListCommentRequest struct {
+	StartIndex int
+	PageSize   int
+}
+
+type BBListCommentResponse struct {
+	CommentList []Comment
+}
+
+type BBViewCommentRequest struct {
+	ServId int64
 }
