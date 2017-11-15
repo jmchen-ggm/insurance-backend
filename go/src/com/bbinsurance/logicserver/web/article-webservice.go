@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-func GetListArticle(bbReq protocol.BBReq) []byte {
+func FunGetListArticle(bbReq protocol.BBReq) []byte {
 	var listArticleRequest protocol.BBListArticleRequest
 	json.Unmarshal(bbReq.Body, &listArticleRequest)
 	articleList := database.GetListArticle(listArticleRequest.StartIndex, listArticleRequest.PageSize)
@@ -25,7 +25,7 @@ func GetListArticle(bbReq protocol.BBReq) []byte {
 	return responseBytes
 }
 
-func HandleCreateArticle(writer http.ResponseWriter, request *http.Request) {
+func FunCreateArticle(writer http.ResponseWriter, request *http.Request) {
 	var bbReq protocol.BBReq
 	bbReq.Bin.FunId = protocol.FuncCreateArticle
 	bbReq.Bin.URI = protocol.UriCreateData

@@ -15,7 +15,7 @@ import (
 	"strconv"
 )
 
-func GetListInsurance(bbReq protocol.BBReq) []byte {
+func FunGetListInsurance(bbReq protocol.BBReq) []byte {
 	var listInsuranceRequest protocol.BBListInsuranceRequest
 	json.Unmarshal(bbReq.Body, &listInsuranceRequest)
 	insuranceList := database.GetListInsurance(listInsuranceRequest.StartIndex, listInsuranceRequest.PageSize)
@@ -26,7 +26,7 @@ func GetListInsurance(bbReq protocol.BBReq) []byte {
 	return responseBytes
 }
 
-func HandleCreateInsurance(writer http.ResponseWriter, request *http.Request) {
+func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 	var bbReq protocol.BBReq
 	bbReq.Bin.FunId = protocol.FuncCreateInsurance
 	bbReq.Bin.URI = protocol.UriCreateData
@@ -53,7 +53,7 @@ func HandleCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 
 		log.Info("CreateInsurance: nameZHCN=%s nameEN=%s desc=%s companyId=%d file=%s", nameZHCN, nameEN, desc, companyId, fileHandler.Header)
 
-		id, err := database.InsertInsurance(nameZHCN, nameEN, desc, 0,companyId, "")
+		id, err := database.InsertInsurance(nameZHCN, nameEN, desc, 0, companyId, "")
 		if err != nil {
 			log.Error("Invalid File %s", err)
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Insurance Error")

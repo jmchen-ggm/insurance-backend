@@ -8,26 +8,26 @@ import (
 
 type HandleMethod func(protocol.BBReq) []byte
 
-var HandlerObjMap map[int]HandleMethod
+var dandlerObjMap map[int]HandleMethod
 
-func InitDataBin() {
-	HandlerObjMap[protocol.FuncListArticle] = GetListArticle
-	HandlerObjMap[protocol.FuncListCompany] = GetListCompany
-	HandlerObjMap[protocol.FuncListInsurance] = GetListInsurance
-	HandlerObjMap[protocol.FuncListComment] = GetListComment
-	HandlerObjMap[protocol.FuncCreateComment] = FuncCreateComment
-	HandlerObjMap[protocol.FuncViewComment] = FuncViewComment
+func FunInitDataBin() {
+	dandlerObjMap[protocol.FuncListArticle] = FunGetListArticle
+	dandlerObjMap[protocol.FuncListCompany] = FunGetListCompany
+	dandlerObjMap[protocol.FuncListInsurance] = FunGetListInsurance
+	dandlerObjMap[protocol.FuncListComment] = FunGetListComment
+	dandlerObjMap[protocol.FuncCreateComment] = FunCreateComment
+	dandlerObjMap[protocol.FuncViewComment] = FunViewComment
 }
 
-func HandleDataBin(writer http.ResponseWriter, request *http.Request) {
+func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
 	log.Info("New Request: %s %s", request.URL, request.Method)
 	bbReq, code, msg := HandleRequest(request)
 	if code != protocol.ResponseCodeSuccess {
 		HandleErrorResponse(writer, bbReq, code, msg)
 	} else {
-		method, ok := HandlerObjMap[bbReq.Bin.FunId]
+		method, ok := dandlerObjMap[bbReq.Bin.FunId]
 		if ok {
-			log.Info("HandleDataBin %d", bReq.Bin.FunId)
+			log.Info("HandleDataBin %d", bbReq.Bin.FunId)
 			responseBytes := method(bbReq)
 			HandleSuccessResponse(writer, bbReq, responseBytes)
 		} else {

@@ -22,12 +22,13 @@ func main() {
 	//初始Http路径监控
 	http.Handle("/", http.FileServer(http.Dir(constants.STATIC_FOLDER)))
 
-	http.HandleFunc("/create/article", web.HandleCreateArticle)
-	http.HandleFunc("/create/company", web.HandleCreateCompany)
-	http.HandleFunc("/create/insurance", web.HandleCreateInsurance)
+	http.HandleFunc("/create/article", web.FunCreateArticle)
+	http.HandleFunc("/create/company", web.FunCreateCompany)
+	http.HandleFunc("/create/insurance", web.FunCreateInsurance)
 
 	//handle请求数据接口
-	http.HandleFunc("/data-bin", web.HandleDataBin)
+	web.FunInitDataBin()
+	http.HandleFunc("/data-bin", web.FunHandleDataBin)
 
 	log.Info("listen %s port", constants.PORT)
 	http.ListenAndServe(":"+constants.PORT, nil)

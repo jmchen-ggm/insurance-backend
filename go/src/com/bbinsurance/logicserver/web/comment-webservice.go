@@ -7,7 +7,7 @@ import (
 	"encoding/json"
 )
 
-func GetListComment(bbReq protocol.BBReq) []byte {
+func FunGetListComment(bbReq protocol.BBReq) []byte {
 	var listCommentRequest protocol.BBListCommentRequest
 	json.Unmarshal(bbReq.Body, &listCommentRequest)
 	commentList := database.GetListComment(listCommentRequest.StartIndex, listCommentRequest.PageSize)
@@ -18,7 +18,7 @@ func GetListComment(bbReq protocol.BBReq) []byte {
 	return responseBytes
 }
 
-func FuncCreateComment(bbReq protocol.BBReq) []byte {
+func FunCreateComment(bbReq protocol.BBReq) []byte {
 	var createCommentRequest protocol.BBCreateCommentRequest
 	json.Unmarshal(bbReq.Body, &createCommentRequest)
 	id, err := database.InsertComment(createCommentRequest.Comment.Uin, createCommentRequest.Comment.Content,
@@ -33,7 +33,7 @@ func FuncCreateComment(bbReq protocol.BBReq) []byte {
 	return responseBytes
 }
 
-func FuncViewComment(bbReq protocol.BBReq) []byte {
+func FunViewComment(bbReq protocol.BBReq) []byte {
 	var viewCommentRequest protocol.BBViewCommentRequest
 	json.Unmarshal(bbReq.Body, &viewCommentRequest)
 	database.UpdateCommentViewCount(viewCommentRequest.ServId)

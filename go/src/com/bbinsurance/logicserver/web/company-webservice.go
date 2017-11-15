@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-func GetListCompany(bbReq protocol.BBReq) []byte {
+func FunGetListCompany(bbReq protocol.BBReq) []byte {
 	var listCompanyRequest protocol.BBListCompanyRequest
 	json.Unmarshal(bbReq.Body, &listCompanyRequest)
 	companyList := database.GetListCompany(listCompanyRequest.StartIndex, listCompanyRequest.PageSize)
@@ -25,7 +25,7 @@ func GetListCompany(bbReq protocol.BBReq) []byte {
 	return responseBytes
 }
 
-func HandleCreateCompany(writer http.ResponseWriter, request *http.Request) {
+func FunCreateCompany(writer http.ResponseWriter, request *http.Request) {
 	var bbReq protocol.BBReq
 	bbReq.Bin.FunId = protocol.FuncCreateCompany
 	bbReq.Bin.URI = protocol.UriCreateData
