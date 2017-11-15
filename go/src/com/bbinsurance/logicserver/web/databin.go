@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-type HandleMethod func(protocol.BBReq) []byte
+type HandleMethod func(protocol.BBReq) ([]byte, int, string)
 
 var dandlerObjMap map[int]HandleMethod
 
@@ -28,8 +28,12 @@ func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
 		method, ok := dandlerObjMap[bbReq.Bin.FunId]
 		if ok {
 			log.Info("HandleDataBin %d", bbReq.Bin.FunId)
-			responseBytes := method(bbReq)
-			HandleSuccessResponse(writer, bbReq, responseBytes)
+			responseBytes, code, errMsg := method(bbReq)
+			if code == protocol.ResponseCodeSuccess {
+				HandleSuccessResponse(writer, bbReq, responseBytes)
+			} else {
+				HandleErrorResponse(writer, bbReq, code, errMsg)
+			}
 		} else {
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeInvalidFunId, "Invalid FunId")
 		}

@@ -14,7 +14,7 @@ import (
 	"net/http"
 )
 
-func FunGetListArticle(bbReq protocol.BBReq) []byte {
+func FunGetListArticle(bbReq protocol.BBReq) ([]byte, int, string) {
 	var listArticleRequest protocol.BBListArticleRequest
 	json.Unmarshal(bbReq.Body, &listArticleRequest)
 	articleList := database.GetListArticle(listArticleRequest.StartIndex, listArticleRequest.PageSize)
@@ -22,7 +22,7 @@ func FunGetListArticle(bbReq protocol.BBReq) []byte {
 	var response protocol.BBListArticleResponse
 	response.ArticleList = articleList
 	responseBytes, _ := json.Marshal(response)
-	return responseBytes
+	return responseBytes, protocol.ResponseCodeSuccess, ""
 }
 
 func FunCreateArticle(writer http.ResponseWriter, request *http.Request) {

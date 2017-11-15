@@ -15,7 +15,7 @@ import (
 	"strconv"
 )
 
-func FunGetListInsurance(bbReq protocol.BBReq) []byte {
+func FunGetListInsurance(bbReq protocol.BBReq) ([]byte, int, string) {
 	var listInsuranceRequest protocol.BBListInsuranceRequest
 	json.Unmarshal(bbReq.Body, &listInsuranceRequest)
 	insuranceList := database.GetListInsurance(listInsuranceRequest.StartIndex, listInsuranceRequest.PageSize)
@@ -23,7 +23,7 @@ func FunGetListInsurance(bbReq protocol.BBReq) []byte {
 	var response protocol.BBListInsuranceResponse
 	response.InsuranceList = insuranceList
 	responseBytes, _ := json.Marshal(response)
-	return responseBytes
+	return responseBytes, protocol.ResponseCodeSuccess, ""
 }
 
 func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
