@@ -60,7 +60,7 @@ func SelectInsuranceTypeByName(Name string) protocol.Type {
 	rows, err := GetDB().Query(sql,Name)
 	defer rows.Close()
 	if err != nil {
-		log.Error("GetCompany err %s", err)
+		  log.Error("GetCompany err %s", err)
 	} else {
 		for rows.Next() {
 			err = rows.Scan(&Type.Id, &Type.Name)
