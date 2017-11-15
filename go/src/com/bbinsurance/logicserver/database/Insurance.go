@@ -51,9 +51,15 @@ func UpdateInsuranceThumbUrl(id int64, thumbUrl string) {
 func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	var sql string
 	if length == -1 {
-		sql = fmt.Sprintf("SELECT * FROM %s", InsuranceTableName)
+		sql = fmt.Sprintf(
+			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id ",
+			InsuranceTableName,InsuranceTableName,InsuranceTableName,InsuranceTableName,InsuranceTypeTableName,CompanyTableName,InsuranceTableName,InsuranceTableName,
+			InsuranceTableName,CompanyTableName,InsuranceTypeTableName,InsuranceTableName,CompanyTableName,InsuranceTableName,InsuranceTypeTableName, length, startIndex)
 	} else {
-		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", InsuranceTableName, length, startIndex)
+		sql = fmt.Sprintf(
+			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id LIMIT %d OFFSET %d",
+			InsuranceTableName,InsuranceTableName,InsuranceTableName,InsuranceTableName,InsuranceTypeTableName,CompanyTableName,InsuranceTableName,InsuranceTableName,
+			InsuranceTableName,CompanyTableName,InsuranceTypeTableName,InsuranceTableName,CompanyTableName,InsuranceTableName,InsuranceTypeTableName, length, startIndex)
 	}
 	log.Info("GetListInsurance sql=%s", sql)
 	rows, err := GetDB().Query(sql)
