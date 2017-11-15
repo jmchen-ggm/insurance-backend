@@ -67,8 +67,8 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type,&insurance.Timestamp, &insurance.CompanyId, &insurance.ThumbUrl)
 			id, err := strconv.Atoi(insurance.Type)
 			if(err!=nil){
-			    fmt.Println(err)}
-			Type:=GetListInsuranceType(id,1)
+			      fmt.Println(err)}
+			Type:=GetListInsuranceType(id-1,1)
 			insurance.Type=Type[0].Name
 			insuranceList = append(insuranceList, insurance)
 		}
