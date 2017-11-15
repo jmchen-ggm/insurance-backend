@@ -6,35 +6,29 @@ import (
 	"net/http"
 )
 
+type HandleMethod func(protocol.BBReq) []byte
+
+var HandlerObjMap map[int]HandleMethod
+
+func InitDataBin() {
+	HandlerObjMap[protocol.FuncListArticle] = GetListArticle
+	HandlerObjMap[protocol.FuncListCompany] = GetListCompany
+	HandlerObjMap[protocol.FuncListInsurance] = GetListInsurance
+	HandlerObjMap[protocol.FuncListComment] = GetListComment
+	HandlerObjMap[protocol.FuncCreateComment] = FuncCreateComment
+	HandlerObjMap[protocol.FuncViewComment] = FuncViewComment
+}
+
 func HandleDataBin(writer http.ResponseWriter, request *http.Request) {
 	log.Info("New Request: %s %s", request.URL, request.Method)
 	bbReq, code, msg := HandleRequest(request)
 	if code != protocol.ResponseCodeSuccess {
 		HandleErrorResponse(writer, bbReq, code, msg)
 	} else {
-		if bbReq.Bin.FunId == protocol.FuncListArticle {
-			log.Info("HandleDataBin ListArticle")
-			responseBytes := GetListArticle(bbReq)
-			HandleSuccessResponse(writer, bbReq, responseBytes)
-		} else if bbReq.Bin.FunId == protocol.FuncListCompany {
-			log.Info("HandleDataBin ListCompany")
-			responseBytes := GetListCompany(bbReq)
-			HandleSuccessResponse(writer, bbReq, responseBytes)
-		} else if bbReq.Bin.FunId == protocol.FuncListInsurance {
-			log.Info("HandleDataBin ListInsurance")
-			responseBytes := GetListInsurance(bbReq)
-			HandleSuccessResponse(writer, bbReq, responseBytes)
-		} else if bbReq.Bin.FunId == protocol.FuncListComment {
-			log.Info("HandleDataBin ListComment")
-			responseBytes := GetListComment(bbReq)
-			HandleSuccessResponse(writer, bbReq, responseBytes)
-		} else if bbReq.Bin.FunId == protocol.FuncCreateComment {
-			log.Info("HandleDataBin CreateComment")
-			responseBytes := FuncCreateComment(bbReq)
-			HandleSuccessResponse(writer, bbReq, responseBytes)
-		} else if bbReq.Bin.FunId == protocol.FuncCreateComment {
-			log.Info("HandleDataBin ViewComment")
-			responseBytes := FuncViewComment(bbReq)
+		method, ok := HandlerObjMap[bReq.Bin.FunId]
+		if ok {
+			log.Info("HandleDataBin %d", bReq.Bin.FunId)
+			responseBytes := method(bbReq)
 			HandleSuccessResponse(writer, bbReq, responseBytes)
 		} else {
 			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeInvalidFunId, "Invalid FunId")
