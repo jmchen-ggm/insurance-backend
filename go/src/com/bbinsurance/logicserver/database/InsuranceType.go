@@ -35,12 +35,12 @@ func GetListInsuranceType(startIndex int, length int) []protocol.Type {
 	} else {
 		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", InsuranceTypeTableName, length, startIndex)
 	}
-	log.Info("GetListCompany sql=%s", sql)
+	log.Info("GetListInsuranceType sql=%s", sql)
 	rows, err := GetDB().Query(sql)
 	defer rows.Close()
 	var typeList []protocol.Type
 	if err != nil {
-		log.Error("GetListCompany err %s", err)
+		log.Error("GetListInsuranceType err %s", err)
 	} else {
 		for rows.Next() {
 			var Type protocol.Type
@@ -56,16 +56,16 @@ func SelectInsuranceTypeByName(Name string) protocol.Type {
 	var sql string
 	var Type protocol.Type
 	sql = fmt.Sprintf("SELECT * FROM %s where Name=? limit 1",InsuranceTypeTableName)
-	log.Info("Get Company By Name sql=%s", sql)
+	log.Info("Get InsuranceType By Name sql=%s", sql)
 	rows, err := GetDB().Query(sql,Name)
 	defer rows.Close()
 	if err != nil {
-		  log.Error("GetCompany err %s", err)
+		  log.Error("GetInsuranceType err %s", err)
 	} else {
 		for rows.Next() {
 			err = rows.Scan(&Type.Id, &Type.Name)
 			if err != nil {
-				log.Error("GetCompany err %s", err)
+				log.Error("GetInsuranceType err %s", err)
 			}
 		}
 	}
@@ -84,7 +84,7 @@ func DeleteInsuranceTypeById(id int64) {
 			log.Error("Prepare Exec Error %s", err)
 			return
 		} else {
-			log.Info("RemoveCompanyById %d Success", id)
+			log.Info("RemoveInsuranceTypeById %d Success", id)
 		}
 	}
 }
