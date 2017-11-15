@@ -31,5 +31,4 @@ func main() {
 
 	log.Info("listen %s port", constants.PORT)
 	http.ListenAndServe(":"+constants.PORT, nil)
-	//test
 }

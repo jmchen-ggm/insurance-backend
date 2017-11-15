@@ -6,12 +6,13 @@ import (
 	"com/bbinsurance/time"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
+	"strconv"
 )
 
 const InsuranceTableName = "Insurance"
 
-func InsertInsurance(nameZHCN string, nameEN string, desc string, companyId int, thumbUrl string) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (NameZHCN, NameEN, Desc, Timestamp, CompanyId, ThumbUrl) VALUES (?, ?, ?, ?, ?, ?);", InsuranceTableName)
+func InsertInsurance(nameZHCN string, nameEN string, desc string,InsuranceTypeId int64, companyId int, thumbUrl string) (int64, error) {
+	sql := fmt.Sprintf("INSERT INTO %s (NameZHCN, NameEN, Desc, Type, Timestamp, CompanyId, ThumbUrl) VALUES (?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -19,7 +20,7 @@ func InsertInsurance(nameZHCN string, nameEN string, desc string, companyId int,
 		return -1, err
 	} else {
 		timestamp := time.GetTimestamp()
-		result, err := stmt.Exec(nameZHCN, nameEN, desc, timestamp, companyId, thumbUrl)
+		result, err := stmt.Exec(nameZHCN, nameEN, desc, InsuranceTypeId, timestamp, companyId, thumbUrl)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			return -1, err
@@ -63,13 +64,20 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	} else {
 		for rows.Next() {
 			var insurance protocol.Insurance
-			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Timestamp, &insurance.CompanyId, &insurance.ThumbUrl)
+			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type,&insurance.Timestamp, &insurance.CompanyId, &insurance.ThumbUrl)
+			id, err := strconv.Atoi(insurance.Type)
+			if(err!=nil){
+			    fmt.Println(err)}
+			Type:=GetListInsuranceType(id,1)
+			insurance.Type=Type[0].Name
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetListInsurance %d ", len(insuranceList))
 	}
 	return insuranceList
 }
+
+
 
 func DeleteInsuranceById(id int64) {
 	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", InsuranceTableName)

@@ -87,6 +87,12 @@ type Insurance struct {
 	CompanyId int
 	Timestamp int64
 	ThumbUrl  string
+	Type      string
+}
+
+type Type struct {
+	Id        int64
+	Name      string
 }
 
 type BBListInsuranceRequest struct {
