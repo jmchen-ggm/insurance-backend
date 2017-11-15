@@ -108,3 +108,4 @@ type BBCreateInsuranceResponse struct {
 	Id       int64
 	ThumbUrl string
 }
+
