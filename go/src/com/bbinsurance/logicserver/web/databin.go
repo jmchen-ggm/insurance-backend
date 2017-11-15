@@ -11,6 +11,7 @@ type HandleMethod func(protocol.BBReq) ([]byte, int, string)
 var dandlerObjMap map[int]HandleMethod
 
 func FunInitDataBin() {
+	dandlerObjMap = make(map[int]HandleMethod)
 	dandlerObjMap[protocol.FuncListArticle] = FunGetListArticle
 	dandlerObjMap[protocol.FuncListCompany] = FunGetListCompany
 	dandlerObjMap[protocol.FuncListInsurance] = FunGetListInsurance
