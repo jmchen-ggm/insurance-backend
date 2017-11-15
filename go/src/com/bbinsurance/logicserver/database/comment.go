@@ -11,7 +11,7 @@ import (
 const CommentTableName = "Comment"
 
 func InsertComment(uin int64, context string, score int) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Uin, Context, Score, Timestamp, ViewCount, Flags) VALUES (?, ?, ?, ?, ?, ?);", CommentTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, Score, Timestamp, ViewCount, Flags) VALUES (?, ?, ?, ?, ?, ?);", CommentTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
