@@ -64,7 +64,10 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	} else {
 		for rows.Next() {
 			var insurance protocol.Insurance
-			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type,&insurance.Timestamp, &insurance.CompanyId, &insurance.ThumbUrl)
+			var CompanyID int
+			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type, &CompanyID, &insurance.Timestamp,  &insurance.ThumbUrl)
+			company:=GetListCompany(CompanyID-1,1)
+			insurance.Company=company[0].Name
 			id, err := strconv.Atoi(insurance.Type)
 			if(err!=nil){
 			      fmt.Println(err)}
