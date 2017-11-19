@@ -29,7 +29,7 @@ func FunCreateComment(bbReq protocol.BBReq) ([]byte, int, string) {
 		return nil, protocol.ResponseCodeServerError, "Create Comment Error"
 	} else {
 		var response protocol.BBCreateCommentResponse
-		response.ServId = id
+		response.ServerId = id
 		responseBytes, _ := json.Marshal(response)
 		return responseBytes, protocol.ResponseCodeSuccess, ""
 	}
@@ -38,7 +38,7 @@ func FunCreateComment(bbReq protocol.BBReq) ([]byte, int, string) {
 func FunViewComment(bbReq protocol.BBReq) ([]byte, int, string) {
 	var viewCommentRequest protocol.BBViewCommentRequest
 	json.Unmarshal(bbReq.Body, &viewCommentRequest)
-	database.UpdateCommentViewCount(viewCommentRequest.ServId)
-	log.Info("FuncCreateComment: %d", viewCommentRequest.ServId)
+	database.UpdateCommentViewCount(viewCommentRequest.ServerId)
+	log.Info("FuncCreateComment: %d", viewCommentRequest.ServerId)
 	return nil, protocol.ResponseCodeSuccess, ""
 }

@@ -113,7 +113,7 @@ type BBCreateInsuranceResponse struct {
 
 type Comment struct {
 	LocalId   int64
-	ServId    int64
+	ServerId  int64
 	Uin       int64
 	Content   string
 	Score     int
@@ -127,7 +127,7 @@ type BBCreateCommentRequest struct {
 }
 
 type BBCreateCommentResponse struct {
-	ServId int64
+	ServerId int64
 }
 
 type BBListCommentRequest struct {
@@ -140,5 +140,5 @@ type BBListCommentResponse struct {
 }
 
 type BBViewCommentRequest struct {
-	ServId int64
+	ServerId int64
 }
