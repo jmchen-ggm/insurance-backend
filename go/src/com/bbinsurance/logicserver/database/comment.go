@@ -19,7 +19,7 @@ func InsertComment(uin int64, context string, score int) (int64, error) {
 		return -1, err
 	} else {
 		timestamp := time.GetTimestamp()
-		result, err := stmt.Exec(uin, context, score, timestamp, 0, 0)
+		result, err := stmt.Exec(uin, context, score, timestamp, 0, protocol.CREATED)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			return -1, err
