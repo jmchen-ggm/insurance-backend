@@ -47,6 +47,7 @@ func InitDB() {
 	}
 
 	var createCommentTimestampIndex = "CREATE INDEX IF NOT EXISTS Comment_Timestamp ON Comment(TimeStamp)"
+	db.Exec(createCommentTimestampIndex, nil)
 
 	var createSubCommentSql = "CREATE TABLE IF NOT EXISTS SubComment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, ReplyUin INTEGER, CommentId INTEGER, Content TEXT NOT NULL, TimeStamp INTEGER);"
 	_, err = db.Exec(createSubCommentSql, nil)
