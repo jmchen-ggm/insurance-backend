@@ -46,6 +46,8 @@ func InitDB() {
 		log.Info("Create Comment Table Success sql = %s", createCommentSql)
 	}
 
+	var createCommentTimestampIndex = "CREATE INDEX IF NOT EXISTS Comment_Timestamp ON Comment(TimeStamp)"
+
 	var createSubCommentSql = "CREATE TABLE IF NOT EXISTS SubComment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, ReplyUin INTEGER, CommentId INTEGER, Content TEXT NOT NULL, TimeStamp INTEGER);"
 	_, err = db.Exec(createSubCommentSql, nil)
 	if err != nil {

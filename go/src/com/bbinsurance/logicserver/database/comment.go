@@ -50,9 +50,9 @@ func UpdateCommentViewCount(id int64) {
 func GetListComment(startIndex int, length int) []protocol.Comment {
 	var sql string
 	if length == -1 {
-		sql = fmt.Sprintf("SELECT * FROM %s", CommentTableName)
+		sql = fmt.Sprintf("SELECT * FROM %s ORDER BY TimeStamp DESC;", CommentTableName)
 	} else {
-		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", CommentTableName, length, startIndex)
+		sql = fmt.Sprintf("SELECT * FROM %s ORDER BY TimeStamp DESC LIMIT %d OFFSET %d;", CommentTableName, length, startIndex)
 	}
 	log.Info("GetListComment sql=%s", sql)
 	rows, err := GetDB().Query(sql)
