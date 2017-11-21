@@ -112,14 +112,16 @@ type BBCreateInsuranceResponse struct {
 }
 
 type Comment struct {
-	LocalId   int64
-	ServerId  int64
-	Uin       int64
-	Content   string
-	Score     int
-	Timestamp int64
-	ViewCount int
-	Flags     int64
+	ServerId   int64
+	Uin        int64
+	Content    string
+	TotalScore int
+	Score1     int
+	Score2     int
+	Score3     int
+	Timestamp  int64
+	ViewCount  int
+	Flags      int64
 }
 
 type BBCreateCommentRequest struct {

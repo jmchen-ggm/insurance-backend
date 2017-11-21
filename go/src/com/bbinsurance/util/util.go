@@ -1,6 +1,7 @@
 package util
 
 import (
+	"encoding/json"
 	"reflect"
 	"unsafe"
 )
@@ -20,4 +21,9 @@ func StringToBytes(s string) (b []byte) {
 	pbytes.Len = pstring.Len
 	pbytes.Cap = pstring.Len
 	return
+}
+
+func objToString(v interface{}) string {
+	var bytes = json.Marshal(v)
+	return BytesToString(bytes)
 }

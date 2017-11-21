@@ -4,14 +4,16 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
 	"com/bbinsurance/time"
+	"com/bbinsurance/util"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 const CommentTableName = "Comment"
 
-func InsertComment(uin int64, context string, score int) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, Score, Timestamp, ViewCount, Flags) VALUES (?, ?, ?, ?, ?, ?);", CommentTableName)
+func InsertComment(comment Comment) (int64, error) {
+	log.Info("InsertComment %s", util.objToString(comment))
+	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, TotalScore, Score1, Score2, Score3, Timestamp, ViewCount, Flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", CommentTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -19,7 +21,7 @@ func InsertComment(uin int64, context string, score int) (int64, error) {
 		return -1, err
 	} else {
 		timestamp := time.GetTimestamp()
-		result, err := stmt.Exec(uin, context, score, timestamp, 0, protocol.CREATED)
+		result, err := stmt.Exec(comment.Uin, comment.Content, comment.TotalScore, comment.Score1, comment.Score2, comment.Score3, timestamp, 0, protocol.CREATED)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			return -1, err
@@ -63,7 +65,7 @@ func GetListComment(startIndex int, length int) []protocol.Comment {
 	} else {
 		for rows.Next() {
 			var comment protocol.Comment
-			rows.Scan(&comment.ServerId, &comment.Uin, &comment.Content, &comment.Score, &comment.Timestamp, &comment.ViewCount, &comment.Flags)
+			rows.Scan(&comment.ServerId, &comment.Uin, &comment.Content, &comment.TotalScore, &comment.Score1, &comment.Score2, &comment.Score3, &comment.Timestamp, &comment.ViewCount, &comment.Flags)
 			commentList = append(commentList, comment)
 		}
 		log.Info("GetListComment %d ", len(commentList))
