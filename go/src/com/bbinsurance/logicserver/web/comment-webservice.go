@@ -21,8 +21,7 @@ func FunGetListComment(bbReq protocol.BBReq) ([]byte, int, string) {
 func FunCreateComment(bbReq protocol.BBReq) ([]byte, int, string) {
 	var createCommentRequest protocol.BBCreateCommentRequest
 	json.Unmarshal(bbReq.Body, &createCommentRequest)
-	id, err := database.InsertComment(createCommentRequest.Comment.Uin, createCommentRequest.Comment.Content,
-		createCommentRequest.Comment.Score)
+	id, err := database.InsertComment(createCommentRequest.Comment)
 	log.Info("FuncCreateComment: %d", id)
 	if err != nil {
 		log.Error("FuncCreateComment %s", err)
