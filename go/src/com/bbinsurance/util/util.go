@@ -24,6 +24,6 @@ func StringToBytes(s string) (b []byte) {
 }
 
 func objToString(v interface{}) string {
-	var bytes = json.Marshal(v)
+	var bytes, _ = json.Marshal(v)
 	return BytesToString(bytes)
 }
