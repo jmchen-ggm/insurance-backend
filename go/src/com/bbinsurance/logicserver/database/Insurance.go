@@ -11,7 +11,7 @@ import (
 
 const InsuranceTableName = "Insurance"
 
-func InsertInsurance(nameZHCN string, nameEN string, desc string,InsuranceTypeId int64, companyId int, thumbUrl string) (int64, error) {
+func InsertInsurance(nameZHCN string, nameEN string, desc string, InsuranceTypeId int64, companyId int, thumbUrl string) (int64, error) {
 	sql := fmt.Sprintf("INSERT INTO %s (NameZHCN, NameEN, Desc, Type, Timestamp, CompanyId, ThumbUrl) VALUES (?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
@@ -19,7 +19,7 @@ func InsertInsurance(nameZHCN string, nameEN string, desc string,InsuranceTypeId
 		log.Error("Prepare SQL Error %s", err)
 		return -1, err
 	} else {
-		timestamp := time.GetTimestamp()
+		timestamp := time.GetTimestampInMilli()
 		result, err := stmt.Exec(nameZHCN, nameEN, desc, InsuranceTypeId, timestamp, companyId, thumbUrl)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
@@ -53,13 +53,13 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	if length == -1 {
 		sql = fmt.Sprintf(
 			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id ",
-			InsuranceTableName,InsuranceTableName,InsuranceTableName,InsuranceTableName,InsuranceTypeTableName,CompanyTableName,InsuranceTableName,InsuranceTableName,
-			InsuranceTableName,CompanyTableName,InsuranceTypeTableName,InsuranceTableName,CompanyTableName,InsuranceTableName,InsuranceTypeTableName, length, startIndex)
+			InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTypeTableName, CompanyTableName, InsuranceTableName, InsuranceTableName,
+			InsuranceTableName, CompanyTableName, InsuranceTypeTableName, InsuranceTableName, CompanyTableName, InsuranceTableName, InsuranceTypeTableName, length, startIndex)
 	} else {
 		sql = fmt.Sprintf(
 			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id LIMIT %d OFFSET %d",
-			InsuranceTableName,InsuranceTableName,InsuranceTableName,InsuranceTableName,InsuranceTypeTableName,CompanyTableName,InsuranceTableName,InsuranceTableName,
-			InsuranceTableName,CompanyTableName,InsuranceTypeTableName,InsuranceTableName,CompanyTableName,InsuranceTableName,InsuranceTypeTableName, length, startIndex)
+			InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTypeTableName, CompanyTableName, InsuranceTableName, InsuranceTableName,
+			InsuranceTableName, CompanyTableName, InsuranceTypeTableName, InsuranceTableName, CompanyTableName, InsuranceTableName, InsuranceTypeTableName, length, startIndex)
 	}
 	log.Info("GetListInsurance sql=%s", sql)
 	rows, err := GetDB().Query(sql)
@@ -71,22 +71,21 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 		for rows.Next() {
 			var insurance protocol.Insurance
 			var CompanyID int
-			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type, &CompanyID, &insurance.Timestamp,  &insurance.ThumbUrl)
-			company:=GetListCompany(CompanyID-1,1)
-			insurance.Company=company[0].Name
+			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type, &CompanyID, &insurance.Timestamp, &insurance.ThumbUrl)
+			company := GetListCompany(CompanyID-1, 1)
+			insurance.Company = company[0].Name
 			id, err := strconv.Atoi(insurance.Type)
-			if(err!=nil){
-			      fmt.Println(err)}
-			Type:=GetListInsuranceType(id-1,1)
-			insurance.Type=Type[0].Name
+			if err != nil {
+				fmt.Println(err)
+			}
+			Type := GetListInsuranceType(id-1, 1)
+			insurance.Type = Type[0].Name
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetListInsurance %d ", len(insuranceList))
 	}
 	return insuranceList
 }
-
-
 
 func DeleteInsuranceById(id int64) {
 	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", InsuranceTableName)

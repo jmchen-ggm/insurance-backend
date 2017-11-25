@@ -18,7 +18,7 @@ func InsertArticle(title string, desc string, date string, url string, thumbUrl 
 		log.Error("Prepare SQL Error %s", err)
 		return -1, err
 	} else {
-		timestamp := time.GetTimestamp()
+		timestamp := time.GetTimestampInMilli()
 		result, err := stmt.Exec(title, desc, date, timestamp, url, thumbUrl)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
