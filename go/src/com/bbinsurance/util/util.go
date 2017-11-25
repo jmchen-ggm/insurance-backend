@@ -23,7 +23,7 @@ func StringToBytes(s string) (b []byte) {
 	return
 }
 
-func objToString(v interface{}) string {
+func ObjToString(v interface{}) string {
 	var bytes, _ = json.Marshal(v)
 	return BytesToString(bytes)
 }
