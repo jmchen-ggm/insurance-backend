@@ -1,6 +1,8 @@
 package util
 
 import (
+	"crypto/md5"
+	"encoding/hex"
 	"encoding/json"
 	"reflect"
 	"unsafe"
@@ -26,4 +28,11 @@ func StringToBytes(s string) (b []byte) {
 func ObjToString(v interface{}) string {
 	var bytes, _ = json.Marshal(v)
 	return BytesToString(bytes)
+}
+
+func MD5(s string) string {
+	h := md5.New()
+	h.Write(StringToBytes(s))
+	cipherStr := h.Sum(nil)
+	return hex.EncodeToString(cipherStr)
 }

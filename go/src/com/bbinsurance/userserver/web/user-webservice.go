@@ -19,7 +19,7 @@ func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
 	bbReq.Bin.FunId = webcommon.FuncRegisterUser
 	bbReq.Bin.URI = webcommon.UriCreateData
 	bbReq.Bin.SessionId = uuid.NewV4().String()
-	bbReq.Bin.Timestamp = time.GetTimestamp()
+	bbReq.Bin.Timestamp = time.GetTimestampInMilli()
 	if request.Method != "POST" {
 		log.Error("Invalid Request Method: %s Url: %s", request.Method, request.URL)
 		webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
@@ -43,7 +43,10 @@ func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
 		user.Username = username
 		user.Nickname = request.FormValue("nickname")
 		user.PhoneNumber = request.FormValue("phoneNumber")
-		user.ThumbUrl = fmt.Sprintf("img/users/%s.png", username)
+		password := request.FormValue("password")
+		usernameMD5 := util.MD5(user.Username)
+		passwordMD5 := util.MD5(password)
+		user.ThumbUrl = fmt.Sprintf("img/users/%s.png", usernameMD5)
 		log.Info("CreateUser: %s file: %s", util.ObjToString(user), fileHandler.Header)
 		savePath := constants.STATIC_FOLDER + "/" + user.ThumbUrl
 		fis, err := util.FileCreate(savePath)
@@ -53,7 +56,13 @@ func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Save File Error")
 		} else {
 			io.Copy(fis, file)
-			database.InsertUser(user)
+			id, _ := database.InsertUser(user)
+			var passwordObj protocol.Password
+			passwordObj.UserId = id
+			passwordObj.PasswordMd5 = passwordMD5
+			passwordObj.LastLoginToken = ""
+			passwordObj.Timestamp = time.GetTimestampInMilli()
+			database.InsertPassword(passwordObj)
 			webcommon.HandleSuccessResponse(writer, bbReq, nil)
 		}
 	}

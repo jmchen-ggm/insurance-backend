@@ -25,7 +25,7 @@ func InitDB() {
 		log.Info("Create User Table Success sql = %s", createUserSql)
 	}
 
-	var createPasswordSql = "CREATE TABLE IF NOT EXISTS Password(UserId INTEGER PRIMARY KEY AUTOINCREMENT, PasswordMd5 TEXT NOT NULL, LastLoginToken TEXT NOT NULL, Timestamp INTEGER);"
+	var createPasswordSql = "CREATE TABLE IF NOT EXISTS Password(UserId INTEGER PRIMARY KEY, PasswordMd5 TEXT NOT NULL, LastLoginToken TEXT NOT NULL, Timestamp INTEGER);"
 	_, err = db.Exec(createPasswordSql, nil)
 	if err != nil {
 		log.Error("Create Password Error: sql = %s, err = %s", createPasswordSql, err)
