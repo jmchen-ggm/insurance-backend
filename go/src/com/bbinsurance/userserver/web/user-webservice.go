@@ -36,9 +36,9 @@ func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
 		}
 		username := request.FormValue("username")
 		user, err := database.GetUserByUsername(username)
-		if err != nil {
-			log.Error("Invalid User duplicated username %s %s", username, err)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Duplicated username")
+		if err == nil {
+			log.Error("Invalid User duplicated username %s", username)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Duplicated username: "+username)
 			return
 		}
 		user.Username = username
