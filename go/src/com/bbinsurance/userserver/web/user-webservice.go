@@ -5,6 +5,7 @@ import (
 	"com/bbinsurance/time"
 	"com/bbinsurance/userserver/constants"
 	"com/bbinsurance/userserver/database"
+	"com/bbinsurance/userserver/protocol"
 	"com/bbinsurance/util"
 	"com/bbinsurance/webcommon"
 	"fmt"
