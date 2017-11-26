@@ -51,7 +51,7 @@ func GetUser(id int64) (protocol.User, error) {
 }
 
 func GetUserByUsername(username string) (protocol.User, error) {
-	sql := fmt.Sprintf("DELETE FROM %s WHERE Username=?", UserTableName)
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE Username=?", UserTableName)
 	rows, err := GetDB().Query(sql, username)
 	defer rows.Close()
 	var user protocol.User
