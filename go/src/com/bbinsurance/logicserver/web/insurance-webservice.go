@@ -7,6 +7,7 @@ import (
 	"com/bbinsurance/logicserver/protocol"
 	"com/bbinsurance/time"
 	"com/bbinsurance/util"
+	"com/bbinsurance/webcommon"
 	"encoding/json"
 	"fmt"
 	"github.com/satori/go.uuid"
@@ -15,7 +16,7 @@ import (
 	"strconv"
 )
 
-func FunGetListInsurance(bbReq protocol.BBReq) ([]byte, int, string) {
+func FunGetListInsurance(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var listInsuranceRequest protocol.BBListInsuranceRequest
 	json.Unmarshal(bbReq.Body, &listInsuranceRequest)
 	insuranceList := database.GetListInsurance(listInsuranceRequest.StartIndex, listInsuranceRequest.PageSize)
@@ -23,18 +24,18 @@ func FunGetListInsurance(bbReq protocol.BBReq) ([]byte, int, string) {
 	var response protocol.BBListInsuranceResponse
 	response.InsuranceList = insuranceList
 	responseBytes, _ := json.Marshal(response)
-	return responseBytes, protocol.ResponseCodeSuccess, ""
+	return responseBytes, webcommon.ResponseCodeSuccess, ""
 }
 
 func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
-	var bbReq protocol.BBReq
-	bbReq.Bin.FunId = protocol.FuncCreateInsurance
-	bbReq.Bin.URI = protocol.UriCreateData
+	var bbReq webcommon.BBReq
+	bbReq.Bin.FunId = webcommon.FuncCreateInsurance
+	bbReq.Bin.URI = webcommon.UriCreateData
 	bbReq.Bin.SessionId = uuid.NewV4().String()
 	bbReq.Bin.Timestamp = time.GetTimestamp()
 	if request.Method != "POST" {
 		log.Error("Invalid Request Method: %s Url: %s", request.Method, request.URL)
-		HandleErrorResponse(writer, bbReq, protocol.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
+		HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
 		return
 	} else {
 		request.ParseMultipartForm(32 << 20)
@@ -42,7 +43,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		defer file.Close()
 		if err != nil {
 			log.Error("Invalid File %s", err)
-			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeRequestInvalid, "Invalid Requst File")
+			HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst File")
 			return
 		}
 		nameZHCN := request.FormValue("nameZHCN")
@@ -56,7 +57,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		id, err := database.InsertInsurance(nameZHCN, nameEN, desc, 0, companyId, "")
 		if err != nil {
 			log.Error("Invalid File %s", err)
-			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Insert Insurance Error")
+			HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Insert Insurance Error")
 			return
 		}
 		thumbUrl := fmt.Sprintf("img/insurances/%d.png", id)
@@ -67,7 +68,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			log.Error("Save File Err %s", err)
 			database.DeleteInsuranceById(id)
-			HandleErrorResponse(writer, bbReq, protocol.ResponseCodeServerError, "Save File Error")
+			HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Save File Error")
 		} else {
 			log.Info("Save File success %s", savePath)
 			io.Copy(fis, file)

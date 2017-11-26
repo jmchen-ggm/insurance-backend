@@ -11,7 +11,7 @@ import (
 func main() {
 	// 初始化Logger
 	log.InitLogging("bb-insurance.log")
-	log.Info("Server Start")
+	log.Info("Logic Server Start")
 
 	// 初始化变量
 	constants.InitConstants()

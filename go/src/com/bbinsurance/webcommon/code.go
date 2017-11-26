@@ -1,4 +1,4 @@
-package protocol
+package webcommon
 
 const ResponseCodeSuccess = 0
 const ResponseCodeServerError = -1
@@ -13,9 +13,14 @@ const FuncListComment = 4
 const FuncCreateComment = 5
 const FuncViewComment = 6
 
+const FuncRegisterUser = 101
+const FuncLogin = 102
+const FuncGetUser = 103
+
 const FuncCreateArticle = 10001
 const FuncCreateCompany = 10002
 const FuncCreateInsurance = 10003
 
-const UriArticleList = "data-bin"
+const UriData = "data-bin"
 const UriCreateData = "create-bin"
+const UriUser = "user-bin"

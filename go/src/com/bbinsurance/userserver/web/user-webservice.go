@@ -1,0 +1,60 @@
+package web
+
+import (
+	"com/bbinsurance/log"
+	"com/bbinsurance/time"
+	"com/bbinsurance/userserver/constants"
+	"com/bbinsurance/userserver/database"
+	"com/bbinsurance/util"
+	"com/bbinsurance/webcommon"
+	"fmt"
+	"github.com/satori/go.uuid"
+	"io"
+	"net/http"
+)
+
+func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
+
+	var bbReq webcommon.BBReq
+	bbReq.Bin.FunId = webcommon.FuncRegisterUser
+	bbReq.Bin.URI = webcommon.UriCreateData
+	bbReq.Bin.SessionId = uuid.NewV4().String()
+	bbReq.Bin.Timestamp = time.GetTimestamp()
+	if request.Method != "POST" {
+		log.Error("Invalid Request Method: %s Url: %s", request.Method, request.URL)
+		webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
+		return
+	} else {
+		request.ParseMultipartForm(32 << 20)
+		file, fileHandler, err := request.FormFile("uploadfile")
+		defer file.Close()
+		if err != nil {
+			log.Error("Invalid File %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst File")
+			return
+		}
+		username := request.FormValue("username")
+		user, _ := database.GetUserByUsername(username)
+		if user.Id >= 0 {
+			log.Error("Invalid User duplicated username %s", username)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Duplicated username")
+			return
+		}
+		user.Username = username
+		user.Nickname = request.FormValue("nickname")
+		user.PhoneNumber = request.FormValue("phoneNumber")
+		user.ThumbUrl = fmt.Sprintf("img/users/%s.png", username)
+		log.Info("CreateUser: %s file: %s", util.ObjToString(user), fileHandler.Header)
+		savePath := constants.STATIC_FOLDER + "/" + user.ThumbUrl
+		fis, err := util.FileCreate(savePath)
+		defer fis.Close()
+		if err != nil {
+			log.Error("Save File Err %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Save File Error")
+		} else {
+			io.Copy(fis, file)
+			database.InsertUser(user)
+			webcommon.HandleSuccessResponse(writer, bbReq, nil)
+		}
+	}
+}
