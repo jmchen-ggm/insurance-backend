@@ -63,6 +63,7 @@ func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
 			passwordObj.PasswordMD5 = passwordMD5
 			passwordObj.LastLoginToken = ""
 			passwordObj.Timestamp = time.GetTimestampInMilli()
+			log.Info("Create Password: %s", util.ObjToString(passwordObj))
 			database.InsertPassword(passwordObj)
 			webcommon.HandleSuccessResponse(writer, bbReq, nil)
 		}
