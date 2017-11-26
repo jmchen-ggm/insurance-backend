@@ -7,8 +7,10 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
+const PasswordTableName = "Password"
+
 func InsertPassword(password protocol.Password) error {
-	sql := fmt.Sprintf("INSERT INTO %s (UserId, PasswordMd5, LastLoginToken, Timestamp) VALUES (?, ?, ?, ?, ?);", UserTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (UserId, PasswordMd5, LastLoginToken, Timestamp) VALUES (?, ?, ?, ?, ?);", PasswordTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
