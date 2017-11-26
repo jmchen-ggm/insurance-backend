@@ -11,7 +11,7 @@ type User struct {
 
 type Password struct {
 	UserId         int64
-	PasswordMd5    string
+	PasswordMD5    string
 	LastLoginToken string
 	Timestamp      int64
 }

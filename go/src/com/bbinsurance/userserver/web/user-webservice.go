@@ -59,7 +59,7 @@ func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
 			id, _ := database.InsertUser(user)
 			var passwordObj protocol.Password
 			passwordObj.UserId = id
-			passwordObj.PasswordMd5 = passwordMD5
+			passwordObj.PasswordMD5 = passwordMD5
 			passwordObj.LastLoginToken = ""
 			passwordObj.Timestamp = time.GetTimestampInMilli()
 			database.InsertPassword(passwordObj)
