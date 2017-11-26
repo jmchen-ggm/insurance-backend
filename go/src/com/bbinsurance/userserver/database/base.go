@@ -25,6 +25,9 @@ func InitDB() {
 		log.Info("Create User Table Success sql = %s", createUserSql)
 	}
 
+	var createUsernameIndexSql = "CREATE INDEX IF NOT EXISTS User_Username On User(Username)"
+	db.Exec(createUsernameIndexSql, nil)
+
 	var createPasswordSql = "CREATE TABLE IF NOT EXISTS Password(UserId INTEGER PRIMARY KEY, PasswordMd5 TEXT NOT NULL, LastLoginToken TEXT NOT NULL, Timestamp INTEGER);"
 	_, err = db.Exec(createPasswordSql, nil)
 	if err != nil {
