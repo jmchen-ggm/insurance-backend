@@ -31,9 +31,28 @@ func InsertUser(user protocol.User) (int64, error) {
 	}
 }
 
+func GetAllUserList() ([]protocol.User, error) {
+	sql := fmt.Sprintf("SELECT * FROM %s", UserTableName)
+	rows, err := GetDB().Query(sql)
+	defer rows.Close()
+	var userList []protocol.User
+	if err != nil {
+		log.Error("GetAllUserList err %s", err)
+		return nil, err
+	} else {
+		for rows.Next() {
+			var user protocol.User
+			rows.Scan(&user.Id, &user.Username, &user.Nickname, &user.PhoneNumber, &user.Timestamp, &user.ThumbUrl)
+			userList = append(userList, user)
+		}
+		log.Info("GetAllUserList %d ", len(userList))
+		return userList, err
+	}
+}
+
 func GetUser(id int64) (protocol.User, error) {
 	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", UserTableName)
-	rows, err := GetDB().Query(sql)
+	rows, err := GetDB().Query(sql, id)
 	defer rows.Close()
 	var user protocol.User
 	user.Id = -1

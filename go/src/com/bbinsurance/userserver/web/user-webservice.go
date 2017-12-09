@@ -8,14 +8,78 @@ import (
 	"com/bbinsurance/userserver/protocol"
 	"com/bbinsurance/util"
 	"com/bbinsurance/webcommon"
+	"encoding/json"
 	"fmt"
 	"github.com/satori/go.uuid"
 	"io"
 	"net/http"
 )
 
-func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
+func FunLogin(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var bbLoginRequest protocol.BBLoginRequest
+	json.Unmarshal(bbReq.Body, &bbLoginRequest)
+	user, err := database.GetUserByUsername(bbLoginRequest.Username)
+	if err != nil {
+		return nil, webcommon.ResponseCodeRequestInvalid, "Invalid Username: " + bbLoginRequest.Username
+	} else {
+		password, err := database.GetPasswordByUserId(user.Id)
+		if err != nil {
+			return nil, webcommon.ResponseCodeRequestInvalid, "Invalid Username: " + bbLoginRequest.Username
+		} else {
+			if password.PasswordMD5 == bbLoginRequest.PasswordMD5 {
+				password.LastLoginToken = uuid.NewV4().String()
+				password.Timestamp = time.GetTimestampInMilli()
+				err := database.UpdateToken(password)
+				if err != nil {
+					return nil, webcommon.ResponseCodeRequestInvalid, "Invalid Password"
+				} else {
+					var bbLogicResponse protocol.BBLoginResponse
+					bbLogicResponse.UserInfo = user
+					bbLogicResponse.Token = password.LastLoginToken
+					responseBytes, _ := json.Marshal(bbLogicResponse)
+					return responseBytes, webcommon.ResponseCodeSuccess, ""
+				}
+			} else {
+				return nil, webcommon.ResponseCodeRequestInvalid, "Invalid Password"
+			}
+		}
+	}
+}
 
+func FunGetUser(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var bbGetUserRequest protocol.BBGetUserRequest
+	json.Unmarshal(bbReq.Body, &bbGetUserRequest)
+	user, err := database.GetUser(bbGetUserRequest.UserId)
+	if err != nil {
+		return nil, webcommon.ResponseCodeServerError, "Server Error"
+	} else {
+		var bbGetUserResponse protocol.BBGetUserResponse
+		bbGetUserResponse.User = user
+		responseBytes, _ := json.Marshal(bbGetUserResponse)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	}
+}
+
+func FunBatchGetUser(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var bbLoginRequest protocol.BBLoginRequest
+	json.Unmarshal(bbReq.Body, &bbLoginRequest)
+	return nil, 0, ""
+}
+
+func FunGetAllUser(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var batchGetUserResponse protocol.BBBatchGetUserResponse
+	userList, err := database.GetAllUserList()
+	if err != nil {
+		return nil, webcommon.ResponseCodeServerError, "Server Error"
+	} else {
+		batchGetUserResponse.UserList = userList
+		responseBytes, _ := json.Marshal(batchGetUserResponse)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	}
+
+}
+
+func FunCreateUser(writer http.ResponseWriter, request *http.Request) {
 	var bbReq webcommon.BBReq
 	bbReq.Bin.FunId = webcommon.FuncRegisterUser
 	bbReq.Bin.URI = webcommon.UriCreateData

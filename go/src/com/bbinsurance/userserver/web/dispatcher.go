@@ -8,10 +8,14 @@ import (
 
 type HandleMethod func(webcommon.BBReq) ([]byte, int, string)
 
-var dandlerObjMap map[int]HandleMethod
+var handlerObjMap map[int]HandleMethod
 
 func FunInitDataBin() {
-	dandlerObjMap = make(map[int]HandleMethod)
+	handlerObjMap = make(map[int]HandleMethod)
+	handlerObjMap[webcommon.FuncLogin] = FunLogin
+	handlerObjMap[webcommon.FuncGetUser] = FunGetUser
+	handlerObjMap[webcommon.FuncBatchGetUser] = FunBatchGetUser
+	handlerObjMap[webcommon.FuncGetAllUser] = FunGetAllUser
 }
 
 func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
@@ -20,7 +24,7 @@ func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
 	if code != webcommon.ResponseCodeSuccess {
 		webcommon.HandleErrorResponse(writer, bbReq, code, msg)
 	} else {
-		method, ok := dandlerObjMap[bbReq.Bin.FunId]
+		method, ok := handlerObjMap[bbReq.Bin.FunId]
 		if ok {
 			log.Info("HandleDataBin %d", bbReq.Bin.FunId)
 			responseBytes, code, errMsg := method(bbReq)
