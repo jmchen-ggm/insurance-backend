@@ -25,7 +25,7 @@ func InsertPassword(password protocol.Password) error {
 
 func GetPasswordByUserId(userId int64) (protocol.Password, error) {
 	sql := fmt.Sprintf("SELECT * FROM %s WHERE UserId=?", PasswordTableName)
-	rows, err := GetDB().Query(sql)
+	rows, err := GetDB().Query(sql, userId)
 	defer rows.Close()
 	var password protocol.Password
 	if err != nil {
