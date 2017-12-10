@@ -42,7 +42,7 @@ func GetPasswordByUserId(userId int64) (protocol.Password, error) {
 }
 
 func UpdateToken(password protocol.Password) error {
-	sql := fmt.Sprintf("UPDATE %s SET LastLogicToken=?, Timestamp=? WHERE UserId=?", PasswordTableName)
+	sql := fmt.Sprintf("UPDATE %s SET LastLoginToken=?, Timestamp=? WHERE UserId=?", PasswordTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
