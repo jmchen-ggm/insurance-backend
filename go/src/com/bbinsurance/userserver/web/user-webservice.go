@@ -19,7 +19,7 @@ func FunLogin(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var bbLoginRequest protocol.BBLoginRequest
 	json.Unmarshal(bbReq.Body, &bbLoginRequest)
 	user, err := database.GetUserByUsername(bbLoginRequest.Username)
-	log.Info("FunLogin: %s userId:%s", bbReq.Body, user.Id)
+	log.Info("FunLogin: %s userId: %d", bbReq.Body, user.Id)
 	if err != nil {
 		return nil, webcommon.ResponseCodeRequestInvalid, "Invalid Username: " + bbLoginRequest.Username
 	} else {

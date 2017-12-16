@@ -32,7 +32,9 @@ func HandleSuccessResponse(writer http.ResponseWriter, request BBReq, body []byt
 	if body != nil {
 		json.Unmarshal(body, &bbResp.Body)
 	}
-	responseJsonStr, _ := json.Marshal(bbResp)
+	responseJsonBytes, _ := json.Marshal(bbResp)
+	responseJsonStr := string(responseJsonBytes)
+	log.Info("HandleSuccessResponse responseJsonStr: %s", responseJsonStr)
 	writer.Header().Set("content-type", "application/json")
 	fmt.Fprintf(writer, string(responseJsonStr))
 }
@@ -45,6 +47,7 @@ func HandleErrorResponse(writer http.ResponseWriter, request BBReq, errorCode in
 	bbResp.Header.ErrMsg = errMsg
 	bbResp.Body = *new(json.RawMessage)
 	responseJsonStr, _ := json.Marshal(bbResp)
+	og.Info("HandleErrorResponse code: %d errMsg: %s", errorCode, errMsg)
 	writer.Header().Set("content-type", "application/json")
 	fmt.Fprintf(writer, string(responseJsonStr))
 }
