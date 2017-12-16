@@ -38,6 +38,7 @@ type BBLoginRequest struct {
 }
 
 type BBLoginResponse struct {
-	UserInfo User
-	Token    string
+	UserInfo  User
+	Token     string
+	Timestamp int64
 }

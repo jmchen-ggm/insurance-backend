@@ -37,6 +37,7 @@ func FunLogin(bbReq webcommon.BBReq) ([]byte, int, string) {
 					var bbLogicResponse protocol.BBLoginResponse
 					bbLogicResponse.UserInfo = user
 					bbLogicResponse.Token = password.LastLoginToken
+					bbLogicResponse.Timestamp = password.Timestamp
 					responseBytes, _ := json.Marshal(bbLogicResponse)
 					return responseBytes, webcommon.ResponseCodeSuccess, ""
 				}
