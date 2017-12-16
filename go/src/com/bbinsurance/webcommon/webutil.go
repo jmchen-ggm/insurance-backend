@@ -23,6 +23,7 @@ func HandleRequest(request *http.Request) (BBReq, int, string) {
 			return bbReq, ResponseCodeRequestInvalid, "Decode Request Json Err"
 		}
 	}
+	log.Info("HandleRequest %s", bbReq.Body)
 	return bbReq, ResponseCodeSuccess, ""
 }
 
