@@ -22,7 +22,7 @@ func FunInitDataBin() {
 
 func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
 	log.Info("New Request: %s %s", request.URL, request.Method)
-	bbReq, code, msg := HandleRequest(request)
+	bbReq, code, msg := webcommon.HandleRequest(request)
 	if code != webcommon.ResponseCodeSuccess {
 		HandleErrorResponse(writer, bbReq, code, msg)
 	} else {
@@ -31,12 +31,12 @@ func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
 			log.Info("HandleDataBin %d", bbReq.Bin.FunId)
 			responseBytes, code, errMsg := method(bbReq)
 			if code == webcommon.ResponseCodeSuccess {
-				HandleSuccessResponse(writer, bbReq, responseBytes)
+				webcommon.HandleSuccessResponse(writer, bbReq, responseBytes)
 			} else {
-				HandleErrorResponse(writer, bbReq, code, errMsg)
+				webcommon.HandleErrorResponse(writer, bbReq, code, errMsg)
 			}
 		} else {
-			HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeInvalidFunId, "Invalid FunId")
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeInvalidFunId, "Invalid FunId")
 		}
 	}
 }
