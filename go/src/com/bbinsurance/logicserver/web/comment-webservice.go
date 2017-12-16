@@ -4,6 +4,7 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
+	"com/bbinsurance/time"
 	"com/bbinsurance/webcommon"
 	"encoding/json"
 )
@@ -22,6 +23,10 @@ func FunGetListComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 func FunCreateComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var createCommentRequest protocol.BBCreateCommentRequest
 	json.Unmarshal(bbReq.Body, &createCommentRequest)
+	createCommentRequest.Comment.Timestamp = time.GetTimestampInMilli()
+	createCommentRequest.Comment.ViewCount = 0
+	createCommentRequest.Comment.Flags = protocol.CREATED
+	log.Info("Create Comment %s", time.GetCurrentTimeFormat(time.DATE_TIME_FMT))
 	id, err := database.InsertComment(createCommentRequest.Comment)
 	log.Info("FuncCreateComment: %d", id)
 	if err != nil {

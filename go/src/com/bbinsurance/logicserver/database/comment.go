@@ -3,7 +3,6 @@ package database
 import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
-	"com/bbinsurance/time"
 	"com/bbinsurance/util"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
@@ -20,8 +19,7 @@ func InsertComment(comment protocol.Comment) (int64, error) {
 		log.Error("Prepare SQL Error %s", err)
 		return -1, err
 	} else {
-		timestamp := time.GetTimestampInMilli()
-		result, err := stmt.Exec(comment.Uin, comment.Content, comment.TotalScore, comment.Score1, comment.Score2, comment.Score3, timestamp, 0, protocol.CREATED)
+		result, err := stmt.Exec(comment.Uin, comment.Content, comment.TotalScore, comment.Score1, comment.Score2, comment.Score3, comment.Timestamp, comment.ViewCount, comment.Flags)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			return -1, err
