@@ -24,7 +24,7 @@ func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
 	log.Info("New Request: %s %s", request.URL, request.Method)
 	bbReq, code, msg := webcommon.HandleRequest(request)
 	if code != webcommon.ResponseCodeSuccess {
-		HandleErrorResponse(writer, bbReq, code, msg)
+		webcommon.HandleErrorResponse(writer, bbReq, code, msg)
 	} else {
 		method, ok := handlerObjMap[bbReq.Bin.FunId]
 		if ok {

@@ -35,7 +35,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 	bbReq.Bin.Timestamp = time.GetTimestamp()
 	if request.Method != "POST" {
 		log.Error("Invalid Request Method: %s Url: %s", request.Method, request.URL)
-		HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
+		webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
 		return
 	} else {
 		request.ParseMultipartForm(32 << 20)
@@ -43,7 +43,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		defer file.Close()
 		if err != nil {
 			log.Error("Invalid File %s", err)
-			HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst File")
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst File")
 			return
 		}
 		nameZHCN := request.FormValue("nameZHCN")
@@ -57,7 +57,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		id, err := database.InsertInsurance(nameZHCN, nameEN, desc, 0, companyId, "")
 		if err != nil {
 			log.Error("Invalid File %s", err)
-			HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Insert Insurance Error")
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Insert Insurance Error")
 			return
 		}
 		thumbUrl := fmt.Sprintf("img/insurances/%d.png", id)
@@ -68,7 +68,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			log.Error("Save File Err %s", err)
 			database.DeleteInsuranceById(id)
-			HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Save File Error")
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Save File Error")
 		} else {
 			log.Info("Save File success %s", savePath)
 			io.Copy(fis, file)
@@ -76,7 +76,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 			response.Id = id
 			response.ThumbUrl = thumbUrl
 			responseBytes, _ := json.Marshal(response)
-			HandleSuccessResponse(writer, bbReq, responseBytes)
+			webcommon.HandleSuccessResponse(writer, bbReq, responseBytes)
 		}
 	}
 }
