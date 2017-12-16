@@ -1,6 +1,7 @@
 package webcommon
 
 import (
+	"com/bbinsurance/log"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -47,7 +48,7 @@ func HandleErrorResponse(writer http.ResponseWriter, request BBReq, errorCode in
 	bbResp.Header.ErrMsg = errMsg
 	bbResp.Body = *new(json.RawMessage)
 	responseJsonStr, _ := json.Marshal(bbResp)
-	og.Info("HandleErrorResponse code: %d errMsg: %s", errorCode, errMsg)
+	log.Info("HandleErrorResponse code: %d errMsg: %s", errorCode, errMsg)
 	writer.Header().Set("content-type", "application/json")
 	fmt.Fprintf(writer, string(responseJsonStr))
 }
