@@ -93,7 +93,7 @@ type BBCreateCommentRequest struct {
 }
 
 type BBCreateCommentResponse struct {
-	ServerId int64
+	Comment Comment
 }
 
 type BBListCommentRequest struct {

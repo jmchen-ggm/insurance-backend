@@ -34,7 +34,7 @@ func FunCreateComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 		return nil, webcommon.ResponseCodeServerError, "Create Comment Error"
 	} else {
 		var response protocol.BBCreateCommentResponse
-		response.ServerId = id
+		response.Comment = createCommentRequest.Comment
 		responseBytes, _ := json.Marshal(response)
 		return responseBytes, webcommon.ResponseCodeSuccess, ""
 	}
