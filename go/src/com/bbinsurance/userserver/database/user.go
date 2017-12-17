@@ -51,7 +51,7 @@ func GetAllUserList() ([]protocol.User, error) {
 }
 
 func GetUser(id int64) (protocol.User, error) {
-	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", UserTableName)
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE id=?", UserTableName)
 	rows, err := GetDB().Query(sql, id)
 	defer rows.Close()
 	var user protocol.User
