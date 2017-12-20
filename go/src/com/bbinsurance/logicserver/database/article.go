@@ -11,7 +11,7 @@ import (
 const ArticleTableName = "Article"
 
 func InsertArticle(title string, desc string, date string, url string, thumbUrl string) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Title, Desc, Date, Timestamp, Url, ThumbUrl) VALUES (?, ?, ?, ?, ?);", ArticleTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Title, Desc, Date, Timestamp, Url, ThumbUrl) VALUES (?, ?, ?, ?, ?, ?);", ArticleTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
