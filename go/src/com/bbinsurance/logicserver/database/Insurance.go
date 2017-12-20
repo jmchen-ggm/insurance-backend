@@ -50,10 +50,10 @@ func UpdateInsuranceThumbUrl(id int64, thumbUrl string) {
 func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	var sql string
 	if length == -1 {
-		sql = fmt.Sprintf(
-			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id ",
+		sql = fmt.Sprintf
+			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id",
 			InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTypeTableName, CompanyTableName, InsuranceTableName, InsuranceTableName,
-			InsuranceTableName, CompanyTableName, InsuranceTypeTableName, InsuranceTableName, CompanyTableName, InsuranceTableName, InsuranceTypeTableName, length, startIndex)
+			InsuranceTableName, CompanyTableName, InsuranceTypeTableName, InsuranceTableName, CompanyTableName, InsuranceTableName, InsuranceTypeTableName)
 	} else {
 		sql = fmt.Sprintf(
 			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id LIMIT %d OFFSET %d",
