@@ -50,10 +50,10 @@ type Insurance struct {
 	NameZHCN  string
 	NameEN    string
 	Desc      string
+	Type      string
 	Company   string
 	Timestamp int64
 	ThumbUrl  string
-	Type      string
 }
 
 type Type struct {

@@ -6,7 +6,6 @@ import (
 	"com/bbinsurance/time"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
-	"strconv"
 )
 
 const InsuranceTableName = "Insurance"
@@ -70,16 +69,7 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	} else {
 		for rows.Next() {
 			var insurance protocol.Insurance
-			var CompanyID int
-			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type, &CompanyID, &insurance.Timestamp, &insurance.ThumbUrl)
-			company := GetListCompany(CompanyID-1, 1)
-			insurance.Company = company[0].Name
-			id, err := strconv.Atoi(insurance.Type)
-			if err != nil {
-				fmt.Println(err)
-			}
-			Type := GetListInsuranceType(id-1, 1)
-			insurance.Type = Type[0].Name
+			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type, &insurance.Company, &insurance.Timestamp, &insurance.ThumbUrl)
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetListInsurance %d ", len(insuranceList))

@@ -38,6 +38,13 @@ func InitDB() {
 	} else {
 		log.Info("Create Insurance Table Success sql = %s", createInsuranceSql)
 	}
+	var createInsuranceTypeSql = "CREATE TABLE IF NOT EXISTS InsuranceType(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL);"
+	_, err = db.Exec(createInsuranceTypeSql, nil)
+	if err != nil {
+		log.Error("Create InsuranceType Error: sql = %s, err = %s", createInsuranceTypeSql, err)
+	} else {
+		log.Info("Create InsuranceType Table Success sql = %s", createInsuranceTypeSql)
+	}
 	var createCommentSql = "CREATE TABLE IF NOT EXISTS Comment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, Content TEXT NOT NULL, TotalScore INTEGER, Score1 INTEGER, Score2 INTEGER, Score3 INTEGER, TimeStamp INTEGER, ViewCount INTEGER, Flags INTEGER);"
 	_, err = db.Exec(createCommentSql, nil)
 	if err != nil {
