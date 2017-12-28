@@ -36,3 +36,7 @@ func MD5(s string) string {
 	cipherStr := h.Sum(nil)
 	return hex.EncodeToString(cipherStr)
 }
+
+func IsEmpty(value string) bool {
+	return value == ""
+}

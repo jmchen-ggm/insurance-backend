@@ -2,9 +2,23 @@ package database
 
 import (
 	"com/bbinsurance/log"
+	"com/bbinsurance/util"
 	"database/sql"
+	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+const ArticleTableVersionKey = "ArticleTableVersionKey"
+const CompanyTableVersionKey = "ComponyTableVersionKey"
+const InsuranceTableVersionKey = "InsuranceTableVersionKey"
+const InsuranceTypeTableVersionKey = "InsuranceTypeTableVersionKey"
+const CommentTableVersionKey = "CommentTableVersionKey"
+
+const CurrentArticleTableVersion = "0"
+const CurrentCompanyTableVersion = "0"
+const CurrentInsuranceTableVersion = "0"
+const CurrentInsuranceTypeTableVersion = "0"
+const CurrentCommentTableVersion = "0"
 
 var db *sql.DB
 
@@ -17,6 +31,21 @@ func InitDB() {
 	} else {
 		log.Info("open db success")
 	}
+
+	var createConfigSql = "CREATE TABLE IF NOT EXISTS Config(Key TEXT PRIMARY KEY, Value Text NOT NULL)"
+	_, err = db.Exec(createConfigSql, nil)
+	if err != nil {
+		log.Error("Create Config Error: sql = %s, err = %s", createConfigSql, err)
+	} else {
+		log.Info("Create Config Table Success sql = %s", createConfigSql)
+	}
+
+	CheckTable(ArticleTableName, ArticleTableVersionKey, CurrentArticleTableVersion)
+	CheckTable(CompanyTableName, CompanyTableVersionKey, CurrentCompanyTableVersion)
+	CheckTable(InsuranceTableName, InsuranceTableVersionKey, CurrentInsuranceTableVersion)
+	CheckTable(InsuranceTypeTableName, InsuranceTypeTableVersionKey, CurrentInsuranceTypeTableVersion)
+	CheckTable(CommentTableName, CommentTableVersionKey, CurrentCommentTableVersion)
+
 	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Desc TEXT NOT NULL, Date TEXT NOT NULL, TimeStamp INTEGER, Url TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
 	_, err = db.Exec(createArticleSql, nil)
 	if err != nil {
@@ -24,6 +53,7 @@ func InitDB() {
 	} else {
 		log.Info("Create Article Table Success sql = %s", createArticleSql)
 	}
+
 	var createCompanySql = "CREATE TABLE IF NOT EXISTS Company(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
 	_, err = db.Exec(createCompanySql, nil)
 	if err != nil {
@@ -31,7 +61,7 @@ func InitDB() {
 	} else {
 		log.Info("Create Company Table Success sql = %s", createCompanySql)
 	}
-	var createInsuranceSql = "CREATE TABLE IF NOT EXISTS Insurance(Id INTEGER PRIMARY KEY AUTOINCREMENT, NameZHCN TEXT Not NULL, NameEN TEXT NOT NULL, Desc TEXT NOT NULL, Type INTEGER, CompanyId INTEGER, Timestamp INTEGER, ThumbUrl TEXT NOT NULL);"
+	var createInsuranceSql = "CREATE TABLE IF NOT EXISTS Insurance(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc TEXT NOT NULL, InsuranceTypeId INTEGER, CompanyId INTEGER, Timestamp INTEGER, ThumbUrl TEXT NOT NULL, DetailData TEXT NOT NULL);"
 	_, err = db.Exec(createInsuranceSql, nil)
 	if err != nil {
 		log.Error("Create Insurance Error: sql = %s, err = %s", createInsuranceSql, err)
@@ -67,4 +97,29 @@ func InitDB() {
 
 func GetDB() *sql.DB {
 	return db
+}
+
+func DropTable(tableName string) {
+	sql := fmt.Sprintf("DROP TABLE %s;", tableName)
+	db.Exec(sql, nil)
+	log.Info("DropTable %s", sql)
+}
+
+func GetTableVersion(key string) string {
+	version, err := GetConfig(key)
+	if err != nil {
+		version = "0"
+	}
+	if util.IsEmpty(version) {
+		version = "0"
+	}
+	return version
+}
+
+func CheckTable(tableName string, key string, currentVersion string) {
+	verison := GetTableVersion(key)
+	if verison != currentVersion {
+		DropTable(tableName)
+	}
+	SetConfig(key, currentVersion)
 }
