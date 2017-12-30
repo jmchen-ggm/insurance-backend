@@ -57,11 +57,6 @@ type Insurance struct {
 	DetailData        string
 }
 
-type Type struct {
-	Id   int64
-	Name string
-}
-
 type BBListInsuranceRequest struct {
 	StartIndex int
 	PageSize   int
@@ -122,6 +117,11 @@ type BBCreateInsuranceTypeResponse struct {
 	InsuranceType InsuranceType
 }
 
-type BBListInsuranceTypeReponse struct {
+type BBListInsuranceTypeRequest struct {
+	StartIndex int
+	PageSize   int
+}
+
+type BBListInsuranceTypeResponse struct {
 	InsuranceTypeList []InsuranceType
 }

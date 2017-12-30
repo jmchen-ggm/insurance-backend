@@ -45,7 +45,7 @@ func GetInsuranceTypeNameById(id int64) string {
 	}
 }
 
-func GetListInsuranceType(startIndex int, length int) []protocol.Type {
+func GetListInsuranceType(startIndex int, length int) []protocol.InsuranceType {
 	var sql string
 	if length == -1 {
 		sql = fmt.Sprintf("SELECT * FROM %s", InsuranceTypeTableName)
@@ -55,38 +55,18 @@ func GetListInsuranceType(startIndex int, length int) []protocol.Type {
 	log.Info("GetListInsuranceType sql=%s", sql)
 	rows, err := GetDB().Query(sql)
 	defer rows.Close()
-	var typeList []protocol.Type
+	var insuranceTypeList []protocol.InsuranceType
 	if err != nil {
 		log.Error("GetListInsuranceType err %s", err)
 	} else {
 		for rows.Next() {
-			var Type protocol.Type
-			rows.Scan(&Type.Id, &Type.Name)
-			typeList = append(typeList, Type)
+			var insuranceType protocol.InsuranceType
+			rows.Scan(&insuranceType.Id, &insuranceType.Name, &insuranceType.Desc, &insuranceType.ThumbUrl)
+			insuranceTypeList = append(insuranceTypeList, insuranceType)
 		}
-		log.Info("GetListType %d ", len(typeList))
+		log.Info("GetListInsuranceType %d ", len(insuranceTypeList))
 	}
-	return typeList
-}
-
-func SelectInsuranceTypeByName(Name string) protocol.Type {
-	var sql string
-	var Type protocol.Type
-	sql = fmt.Sprintf("SELECT * FROM %s where Name=? limit 1", InsuranceTypeTableName)
-	log.Info("Get InsuranceType By Name sql=%s", sql)
-	rows, err := GetDB().Query(sql, Name)
-	defer rows.Close()
-	if err != nil {
-		log.Error("GetInsuranceType err %s", err)
-	} else {
-		for rows.Next() {
-			err = rows.Scan(&Type.Id, &Type.Name)
-			if err != nil {
-				log.Error("GetInsuranceType err %s", err)
-			}
-		}
-	}
-	return Type
+	return insuranceTypeList
 }
 
 func DeleteInsuranceTypeById(id int64) {

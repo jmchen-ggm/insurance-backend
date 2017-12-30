@@ -12,6 +12,7 @@ const FuncListInsurance = 3
 const FuncListComment = 4
 const FuncCreateComment = 5
 const FuncViewComment = 6
+const FuncListInsuranceType = 7
 
 const FuncRegisterUser = 101
 const FuncLogin = 102
