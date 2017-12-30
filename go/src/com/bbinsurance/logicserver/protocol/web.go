@@ -103,7 +103,19 @@ type BBListCommentResponse struct {
 }
 
 type BBViewCommentRequest struct {
-	ServerId int64
+	Id int64
+}
+
+type BBViewCommentResponse struct {
+	Comment Comment
+}
+
+type BBUpCommentRequest struct {
+	Id int64
+}
+
+type BBUpCommentResponse struct {
+	Comment Comment
 }
 
 type InsuranceType struct {

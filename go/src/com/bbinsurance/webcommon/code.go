@@ -13,13 +13,14 @@ const FuncListComment = 4
 const FuncCreateComment = 5
 const FuncViewComment = 6
 const FuncListInsuranceType = 7
+const FuncGetHomeData = 8
+const FuncUpComment = 9
 
 const FuncRegisterUser = 101
 const FuncLogin = 102
 const FuncGetUser = 103
 const FuncBatchGetUser = 104
 const FuncGetAllUser = 105
-const FuncGetHomeData = 106
 
 const FuncCreateArticle = 10001
 const FuncCreateCompany = 10002

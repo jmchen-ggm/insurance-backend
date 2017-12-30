@@ -26,6 +26,7 @@ func FunCreateComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	createCommentRequest.Comment.Timestamp = time.GetTimestampInMilli()
 	createCommentRequest.Comment.Flags = protocol.CREATED
 	log.Info("Create Comment %s", time.GetCurrentTimeFormat(time.DATE_TIME_FMT))
+	var err error
 	createCommentRequest.Comment, err = database.InsertComment(createCommentRequest.Comment)
 	if err != nil {
 		log.Error("FuncCreateComment %s", err)
@@ -41,7 +42,19 @@ func FunCreateComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 func FunViewComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var viewCommentRequest protocol.BBViewCommentRequest
 	json.Unmarshal(bbReq.Body, &viewCommentRequest)
-	database.UpdateCommentViewCount(viewCommentRequest.ServerId)
-	log.Info("FuncCreateComment: %d", viewCommentRequest.ServerId)
-	return nil, webcommon.ResponseCodeSuccess, ""
+	database.UpdateCommentViewCount(viewCommentRequest.Id)
+	var response protocol.BBViewCommentResponse
+	response.Comment, _ = database.GetCommentById(viewCommentRequest.Id)
+	responseBytes, _ := json.Marshal(response)
+	return responseBytes, webcommon.ResponseCodeSuccess, ""
+}
+
+func FunUpComment(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var upCommentRequest protocol.BBUpCommentRequest
+	json.Unmarshal(bbReq.Body, &upCommentRequest)
+	database.UpdateCommentUpCount(upCommentRequest.Id)
+	var response protocol.BBViewCommentResponse
+	response.Comment, _ = database.GetCommentById(upCommentRequest.Id)
+	responseBytes, _ := json.Marshal(response)
+	return responseBytes, webcommon.ResponseCodeSuccess, ""
 }
