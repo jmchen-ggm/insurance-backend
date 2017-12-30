@@ -66,6 +66,8 @@ func GetTopBannerInsuranceList() []protocol.Insurance {
 		InsuranceTableName, InsuranceTypeTableName, CompanyTableName)
 	log.Info("GetTopBannerInsuranceList sql=%s", sql)
 	rows, err := GetDB().Query(sql)
+	defer rows.Close()
+	var insuranceList []protocol.Insurance
 	if err != nil {
 		log.Error("GetTopBannerInsuranceList err %s", err)
 	} else {
