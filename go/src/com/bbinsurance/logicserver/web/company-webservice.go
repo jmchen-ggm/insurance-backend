@@ -48,7 +48,7 @@ func FunCreateCompany(writer http.ResponseWriter, request *http.Request) {
 		var company protocol.Company
 		company.Name = request.FormValue("name")
 		company.Desc = request.FormValue("desc")
-		company.ThumbUrl = fmt.Sprintf("img/companys/%d.png", uuid.NewV4().String())
+		company.ThumbUrl = fmt.Sprintf("img/companys/%s.png", uuid.NewV4().String())
 
 		savePath := constants.STATIC_FOLDER + "/" + company.ThumbUrl
 		log.Info("try to save file to path %s %s", savePath, fileHandler.Header)
