@@ -35,11 +35,11 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	var sql string
 	if length == -1 {
 		sql = fmt.Sprintf(
-			"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C where CompanyId=B.Id and InsuranceTypeId=C.Id",
+			"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C where CompanyId=C.Id and InsuranceTypeId=B.Id",
 			InsuranceTableName, InsuranceTypeTableName, CompanyTableName)
 	} else {
 		sql = fmt.Sprintf(
-			"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C where CompanyId=B.Id and InsuranceTypeId=C.Id LIMIT %d OFFSET %d",
+			"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C where CompanyId=C.Id and InsuranceTypeId=B.Id LIMIT %d OFFSET %d",
 			InsuranceTableName, InsuranceTypeTableName, CompanyTableName, length, startIndex)
 	}
 	log.Info("GetListInsurance sql=%s", sql)
