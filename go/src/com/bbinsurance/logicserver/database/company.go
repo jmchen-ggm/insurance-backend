@@ -47,7 +47,7 @@ func UpdateCompanyThumbUrl(id int64, thumbUrl string) {
 
 func GetCompanyNameById(id int64) string {
 	sql := fmt.Sprintf("SELECT name FROM %s WHERE id = ?", CompanyTableName)
-	rows, err := GetDB().Query(sql)
+	rows, err := GetDB().Query(sql, id)
 	if err != nil {
 		log.Error("GetCompanyNameById err %s", err)
 		return ""
