@@ -9,7 +9,7 @@ import (
 const ConfigTableName = "Config"
 
 func SetConfig(key string, value string) error {
-	sql := fmt.Sprintf("INSERT INTO %s (Key, Value) VALUES (?, ?);", ConfigTableName)
+	sql := fmt.Sprintf("INSERT OR REPLACE INTO %s (Key, Value) VALUES (?, ?);", ConfigTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
