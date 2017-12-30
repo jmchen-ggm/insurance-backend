@@ -31,6 +31,7 @@ func InsertInsuranceType(insuranceType protocol.InsuranceType) (protocol.Insuran
 func GetInsuranceTypeNameById(id int64) string {
 	sql := fmt.Sprintf("SELECT name FROM %s WHERE id = ?", InsuranceTypeTableName)
 	rows, err := GetDB().Query(sql, id)
+	defer rows.Close()
 	if err != nil {
 		log.Error("GetInsuranceTypeNameById error %s", err)
 		return ""
