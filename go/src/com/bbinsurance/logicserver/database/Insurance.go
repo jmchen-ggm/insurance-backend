@@ -60,6 +60,26 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	return insuranceList
 }
 
+func GetTopBannerInsuranceList() []protocol.Insurance {
+	sql := fmt.Sprintf(
+		"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C WHERE CompanyId=C.Id and InsuranceTypeId=B.Id ORDER BY Timestamp DESC LIMIT 5",
+		InsuranceTableName, InsuranceTypeTableName, CompanyTableName)
+	log.Info("GetTopBannerInsuranceList sql=%s", sql)
+	rows, err := GetDB().Query(sql)
+	if err != nil {
+		log.Error("GetTopBannerInsuranceList err %s", err)
+	} else {
+		for rows.Next() {
+			var insurance protocol.Insurance
+			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId, &insurance.InsuranceTypeName,
+				&insurance.CompanyId, &insurance.CompanyName, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
+			insuranceList = append(insuranceList, insurance)
+		}
+		log.Info("GetTopBannerInsuranceList %d ", len(insuranceList))
+	}
+	return insuranceList
+}
+
 func DeleteInsuranceById(id int64) {
 	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", InsuranceTableName)
 	stmt, err := GetDB().Prepare(sql)

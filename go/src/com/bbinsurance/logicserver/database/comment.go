@@ -72,6 +72,26 @@ func GetListComment(startIndex int, length int) []protocol.Comment {
 	return commentList
 }
 
+func GetTopComment() protocol.Comment {
+	sql := fmt.Sprintf("SELECT * FROM %s ORDER BY UpCount DESC LIMIT 1;", CommentTableName)
+	log.Info("GetTopComment sql=%s", sql)
+	rows, err := GetDB().Query(sql)
+	defer rows.Close()
+	if err != nil {
+		log.Error("GetTopComment err %s", err)
+		return nil
+	} else {
+		if rows.Next() {
+			var comment protocol.Comment
+			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
+				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Timestamp, &comment.ViewCount, &comment.Flags)
+			return comment
+		} else {
+			return nil
+		}
+	}
+}
+
 func DeleteCommentById(id int64) {
 	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", CommentTableName)
 	stmt, err := GetDB().Prepare(sql)

@@ -125,3 +125,13 @@ type BBListInsuranceTypeRequest struct {
 type BBListInsuranceTypeResponse struct {
 	InsuranceTypeList []InsuranceType
 }
+
+type BBGetHomeDataRequest struct {
+}
+
+type BBGetHomeDataResponse struct {
+	BannerList           []Insurance
+	TopComment           Comment
+	TopInsuranceTypeList []InsuranceType
+	TopCompanyList       []Company
+}

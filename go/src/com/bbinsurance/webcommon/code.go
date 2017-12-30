@@ -19,6 +19,7 @@ const FuncLogin = 102
 const FuncGetUser = 103
 const FuncBatchGetUser = 104
 const FuncGetAllUser = 105
+const FuncGetHomeData = 106
 
 const FuncCreateArticle = 10001
 const FuncCreateCompany = 10002
