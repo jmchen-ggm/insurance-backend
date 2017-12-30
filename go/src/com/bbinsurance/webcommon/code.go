@@ -22,6 +22,7 @@ const FuncGetAllUser = 105
 const FuncCreateArticle = 10001
 const FuncCreateCompany = 10002
 const FuncCreateInsurance = 10003
+const FuncCreateInsuranceType = 100004
 
 const UriData = "data-bin"
 const UriCreateData = "create-bin"

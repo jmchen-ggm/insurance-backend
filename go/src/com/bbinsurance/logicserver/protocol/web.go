@@ -25,7 +25,7 @@ type BBListArticleResponse struct {
 }
 
 type Company struct {
-	Id       int
+	Id       int64
 	Name     string
 	Desc     string
 	ThumbUrl string
@@ -41,8 +41,7 @@ type BBListCompanyResponse struct {
 }
 
 type BBCreateCompanyResponse struct {
-	Id       int64
-	ThumbUrl string
+	Company Company
 }
 
 type Insurance struct {
@@ -110,4 +109,19 @@ type BBListCommentResponse struct {
 
 type BBViewCommentRequest struct {
 	ServerId int64
+}
+
+type InsuranceType struct {
+	Id       int64
+	Name     string
+	Desc     string
+	ThumbUrl string
+}
+
+type BBCreateInsuranceTypeResponse struct {
+	InsuranceType InsuranceType
+}
+
+type BBListInsuranceTypeReponse struct {
+	InsuranceTypeList []InsuranceType
 }

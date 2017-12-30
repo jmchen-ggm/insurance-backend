@@ -27,6 +27,60 @@ func FunGetListInsurance(bbReq webcommon.BBReq) ([]byte, int, string) {
 	return responseBytes, webcommon.ResponseCodeSuccess, ""
 }
 
+func FunCreateInsuranceType(writer http.ResponseWriter, request *http.Request) {
+	var bbReq webcommon.BBReq
+	bbReq.Bin.FunId = webcommon.FuncCreateInsuranceType
+	bbReq.Bin.URI = webcommon.UriCreateData
+	bbReq.Bin.SessionId = uuid.NewV4().String()
+	bbReq.Bin.Timestamp = time.GetTimestamp()
+	if request.Method != "POST" {
+		log.Error("Invalid Request Method: %s Url: %s", request.Method, request.URL)
+		webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
+		return
+	} else {
+		request.ParseMultipartForm(32 << 20)
+		file, fileHandler, err := request.FormFile("uploadfile")
+		defer file.Close()
+		if err != nil {
+			log.Error("Invalid File %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst File")
+			return
+		}
+		var insuranceType protocol.InsuranceType
+		insuranceType.Name = request.FormValue("name")
+		insuranceType.Desc = request.FormValue("desc")
+		insuranceType.ThumbUrl = fmt.Sprintf("img/insuranceTypes/%s.png", uuid.NewV4().String())
+
+		savePath := constants.STATIC_FOLDER + "/" + insuranceType.ThumbUrl
+		log.Info("try to save file to path %s %s", savePath, fileHandler.Header)
+		fis, err := util.FileCreate(savePath)
+		defer fis.Close()
+		if err != nil {
+			log.Error("Create File Err %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Create File Error")
+			return
+		}
+		_, err = io.Copy(fis, file)
+		if err != nil {
+			log.Error("Copy File Err %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Copy File Error")
+			return
+		}
+		log.Info("CreateInsuranceType: %s", util.ObjToString(insuranceType))
+		insuranceType, err = database.InsertInsuranceType(insuranceType)
+		if err != nil {
+			util.DeleteFile(savePath)
+			log.Error("Insert data to db error %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Insert Insurance Error")
+		} else {
+			var response protocol.BBCreateInsuranceTypeResponse
+			response.InsuranceType = insuranceType
+			responseBytes, _ := json.Marshal(response)
+			webcommon.HandleSuccessResponse(writer, bbReq, responseBytes)
+		}
+	}
+}
+
 func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 	var bbReq webcommon.BBReq
 	bbReq.Bin.FunId = webcommon.FuncCreateInsurance
@@ -80,6 +134,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		if err != nil {
 			log.Error("Copy File Err %s", err)
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Copy File Error")
+			return
 		}
 		log.Info("CreateInsurance: %s", util.ObjToString(insurance))
 		insurance, err = database.InsertInsurance(insurance)

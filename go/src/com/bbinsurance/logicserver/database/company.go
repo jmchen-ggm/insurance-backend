@@ -9,23 +9,23 @@ import (
 
 const CompanyTableName = "Company"
 
-func InsertCompany(name string, desc string, thumbUrl string) (int64, error) {
+func InsertCompany(company protocol.Company) (protocol.Company, error) {
 	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, ThumbUrl) VALUES (?, ?, ?);", CompanyTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
-		return -1, err
+		company.Id = -1
 	} else {
-		result, err := stmt.Exec(name, desc, thumbUrl)
+		result, err := stmt.Exec(company.Name, company.Desc, company.ThumbUrl)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
-			return -1, err
+			company.Id = -1
 		} else {
-			id, err := result.LastInsertId()
-			return id, err
+			company.Id, err = result.LastInsertId()
 		}
 	}
+	return company, err
 }
 
 func UpdateCompanyThumbUrl(id int64, thumbUrl string) {

@@ -45,32 +45,36 @@ func FunCreateCompany(writer http.ResponseWriter, request *http.Request) {
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst File")
 			return
 		}
-		name := request.FormValue("name")
-		desc := request.FormValue("desc")
+		var company protocol.Company
+		company.Name = request.FormValue("name")
+		company.Desc = request.FormValue("desc")
+		company.ThumbUrl = fmt.Sprintf("img/companys/%d.png", uuid.NewV4().String())
 
-		log.Info("CreateCompany: name=%s desc=%s file=%s", name, desc, fileHandler.Header)
-
-		id, err := database.InsertCompany(name, desc, "")
-		if err != nil {
-			log.Error("Invalid File %s", err)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Insert Company Error")
-			return
-		}
-		thumbUrl := fmt.Sprintf("img/companys/%d.png", id)
-		database.UpdateCompanyThumbUrl(id, thumbUrl)
-		savePath := constants.STATIC_FOLDER + "/" + thumbUrl
+		savePath := constants.STATIC_FOLDER + "/" + company.ThumbUrl
+		log.Info("try to save file to path %s %s", savePath, fileHandler.Header)
 		fis, err := util.FileCreate(savePath)
 		defer fis.Close()
 		if err != nil {
 			log.Error("Save File Err %s", err)
-			database.DeleteCompanyById(id)
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Save File Error")
+			return
+		}
+
+		_, err = io.Copy(fis, file)
+		if err != nil {
+			log.Error("Copy File Err %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Copy File Error")
+			return
+		}
+		log.Info("CreateCompany: %s", util.ObjToString(company))
+		company, err = database.InsertCompany(company)
+		if err != nil {
+			util.DeleteFile(savePath)
+			log.Error("Insert data to db error %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Create Company Error")
 		} else {
-			log.Info("Save File success %s", savePath)
-			io.Copy(fis, file)
 			var response protocol.BBCreateCompanyResponse
-			response.Id = id
-			response.ThumbUrl = thumbUrl
+			response.Company = company
 			responseBytes, _ := json.Marshal(response)
 			webcommon.HandleSuccessResponse(writer, bbReq, responseBytes)
 		}

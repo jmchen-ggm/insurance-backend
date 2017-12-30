@@ -9,23 +9,23 @@ import (
 
 const InsuranceTypeTableName = "InsuranceType"
 
-func InsertType(name string, desc string) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc) VALUES (?, ?);", InsuranceTypeTableName)
+func InsertInsuranceType(insuranceType protocol.InsuranceType) (protocol.InsuranceType, error) {
+	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, ThumbUrl) VALUES (?, ?, ?);", InsuranceTypeTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
-		return -1, err
+		insuranceType.Id = -1
 	} else {
-		result, err := stmt.Exec(name, desc)
+		result, err := stmt.Exec(insuranceType.Name, insuranceType.Desc, insuranceType.ThumbUrl)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
-			return -1, err
+			insuranceType.Id = -1
 		} else {
-			id, err := result.LastInsertId()
-			return id, err
+			insuranceType.Id, err = result.LastInsertId()
 		}
 	}
+	return insuranceType, err
 }
 
 func GetInsuranceTypeNameById(id int64) string {
