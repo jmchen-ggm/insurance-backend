@@ -10,24 +10,25 @@ import (
 
 const CommentTableName = "Comment"
 
-func InsertComment(comment protocol.Comment) (int64, error) {
+func InsertComment(comment protocol.Comment) (protocol.Comment, error) {
 	log.Info("InsertComment %s", util.ObjToString(comment))
-	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, TotalScore, Score1, Score2, Score3, Timestamp, ViewCount, Flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);", CommentTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, TotalScore, Score1, Score2, Score3, Timestamp, UpCount, ViewCount, ReplyCount, Flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", CommentTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
-		return -1, err
+		comment.Id = -1
 	} else {
-		result, err := stmt.Exec(comment.Uin, comment.Content, comment.TotalScore, comment.Score1, comment.Score2, comment.Score3, comment.Timestamp, comment.ViewCount, comment.Flags)
+		result, err := stmt.Exec(comment.Uin, comment.Content, comment.TotalScore, comment.Score1,
+			comment.Score2, comment.Score3, comment.Timestamp, comment.UpCount, comment.ViewCount, comment.ReplyCount, comment.Flags)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
-			return -1, err
+			comment.Id = -1
 		} else {
-			id, err := result.LastInsertId()
-			return id, err
+			comment.Id, err = result.LastInsertId()
 		}
 	}
+	return comment, err
 }
 
 func UpdateCommentViewCount(id int64) {
@@ -43,6 +44,23 @@ func UpdateCommentViewCount(id int64) {
 			log.Error("Prepare Exec Error %s", err)
 		} else {
 			log.Info("UpdateCommentViewCount Success")
+		}
+	}
+}
+
+func UpdateCommentUpCount(id int64) {
+	log.Info("UpdateCommentUpCount: id=%d", id)
+	sql := fmt.Sprintf("UPDATE %s SET UpCount=UpCount+1 WHERE id=?;", CommentTableName)
+	stmt, err := GetDB().Prepare(sql)
+	defer stmt.Close()
+	if err != nil {
+		log.Error("Prepare SQL Error %s", err)
+	} else {
+		_, err = stmt.Exec(id)
+		if err != nil {
+			log.Error("Prepare Exec Error %s", err)
+		} else {
+			log.Info("UpdateCommentUpCount Success")
 		}
 	}
 }

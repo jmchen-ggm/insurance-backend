@@ -24,18 +24,15 @@ func FunCreateComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var createCommentRequest protocol.BBCreateCommentRequest
 	json.Unmarshal(bbReq.Body, &createCommentRequest)
 	createCommentRequest.Comment.Timestamp = time.GetTimestampInMilli()
-	createCommentRequest.Comment.ViewCount = 0
 	createCommentRequest.Comment.Flags = protocol.CREATED
 	log.Info("Create Comment %s", time.GetCurrentTimeFormat(time.DATE_TIME_FMT))
-	id, err := database.InsertComment(createCommentRequest.Comment)
-	log.Info("FuncCreateComment: %d", id)
+	createCommentRequest.Comment, err = database.InsertComment(createCommentRequest.Comment)
 	if err != nil {
 		log.Error("FuncCreateComment %s", err)
 		return nil, webcommon.ResponseCodeServerError, "Create Comment Error"
 	} else {
 		var response protocol.BBCreateCommentResponse
 		response.Comment = createCommentRequest.Comment
-		response.Comment.Id = id
 		responseBytes, _ := json.Marshal(response)
 		return responseBytes, webcommon.ResponseCodeSuccess, ""
 	}
