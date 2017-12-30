@@ -32,7 +32,7 @@ func IsExist(path string) bool {
 }
 
 // delete file
-func Unlink(file string) error {
+func DeleteFile(file string) error {
 	return os.Remove(file)
 }
 

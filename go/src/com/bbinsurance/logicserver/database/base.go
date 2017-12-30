@@ -46,7 +46,7 @@ func InitDB() {
 	CheckTable(InsuranceTypeTableName, InsuranceTypeTableVersionKey, CurrentInsuranceTypeTableVersion)
 	CheckTable(CommentTableName, CommentTableVersionKey, CurrentCommentTableVersion)
 
-	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Desc TEXT NOT NULL, Date TEXT NOT NULL, TimeStamp INTEGER, Url TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
+	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Desc TEXT NOT NULL, Date TEXT NOT NULL, Timestamp INTEGER, Url TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
 	_, err = db.Exec(createArticleSql, nil)
 	if err != nil {
 		log.Error("Create Article Error: sql = %s, err = %s", createArticleSql, err)
@@ -68,14 +68,14 @@ func InitDB() {
 	} else {
 		log.Info("Create Insurance Table Success sql = %s", createInsuranceSql)
 	}
-	var createInsuranceTypeSql = "CREATE TABLE IF NOT EXISTS InsuranceType(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL);"
+	var createInsuranceTypeSql = "CREATE TABLE IF NOT EXISTS InsuranceType(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc Text);"
 	_, err = db.Exec(createInsuranceTypeSql, nil)
 	if err != nil {
 		log.Error("Create InsuranceType Error: sql = %s, err = %s", createInsuranceTypeSql, err)
 	} else {
 		log.Info("Create InsuranceType Table Success sql = %s", createInsuranceTypeSql)
 	}
-	var createCommentSql = "CREATE TABLE IF NOT EXISTS Comment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, Content TEXT NOT NULL, TotalScore INTEGER, Score1 INTEGER, Score2 INTEGER, Score3 INTEGER, TimeStamp INTEGER, ViewCount INTEGER, Flags INTEGER);"
+	var createCommentSql = "CREATE TABLE IF NOT EXISTS Comment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, Content TEXT NOT NULL, TotalScore INTEGER, Score1 INTEGER, Score2 INTEGER, Score3 INTEGER, Timestamp INTEGER, UpCount INTEGER, ViewCount INTEGER, ReplyCount INTEGER, Flags INTEGER);"
 	_, err = db.Exec(createCommentSql, nil)
 	if err != nil {
 		log.Error("Create Comment Error: sql = %s, err = %s", createCommentSql, err)

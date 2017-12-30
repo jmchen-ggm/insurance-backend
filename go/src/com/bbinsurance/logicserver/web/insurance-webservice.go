@@ -46,35 +46,50 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst File")
 			return
 		}
-		nameZHCN := request.FormValue("nameZHCN")
-		nameEN := request.FormValue("nameEN")
-		desc := request.FormValue("desc")
-		companyIdStr := request.FormValue("companyId")
-		companyId, _ := strconv.Atoi(companyIdStr)
+		var insurance protocol.Insurance
+		insurance.Name = request.FormValue("name")
+		insurance.Desc = request.FormValue("desc")
+		insurance.CompanyId, _ = strconv.ParseInt(request.FormValue("companyId"), 10, 64)
+		insurance.InsuranceTypeId, _ = strconv.ParseInt(request.FormValue("insuranceTypeId"), 10, 64)
+		insurance.DetailData = request.FormValue("detailData")
+		insurance.ThumbUrl = fmt.Sprintf("img/insurances/%s.png", uuid.NewV4().String())
 
-		log.Info("CreateInsurance: nameZHCN=%s nameEN=%s desc=%s companyId=%d file=%s", nameZHCN, nameEN, desc, companyId, fileHandler.Header)
-
-		id, err := database.InsertInsurance(nameZHCN, nameEN, desc, 0, companyId, "")
-		if err != nil {
-			log.Error("Invalid File %s", err)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Insert Insurance Error")
+		insurance.InsuranceTypeName = database.GetInsuranceTypeNameById(insurance.InsuranceTypeId)
+		if util.IsEmpty(insurance.InsuranceTypeName) {
+			log.Error("Not Found Insurance Type Name %d", insurance.InsuranceTypeId)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Insurance Type Name")
 			return
 		}
-		thumbUrl := fmt.Sprintf("img/insurances/%d.png", id)
-		database.UpdateInsuranceThumbUrl(id, thumbUrl)
-		savePath := constants.STATIC_FOLDER + "/" + thumbUrl
+		insurance.CompanyName = database.GetCompanyNameById(insurance.CompanyId)
+		if util.IsEmpty(insurance.CompanyName) {
+			log.Error("Not Found Company Name %d", insurance.CompanyId)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Company Name")
+			return
+		}
+
+		savePath := constants.STATIC_FOLDER + "/" + insurance.ThumbUrl
+		log.Info("try to save file to path %s %s", savePath, fileHandler.Header)
 		fis, err := util.FileCreate(savePath)
 		defer fis.Close()
 		if err != nil {
-			log.Error("Save File Err %s", err)
-			database.DeleteInsuranceById(id)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Save File Error")
+			log.Error("Create File Err %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Create File Error")
+			return
+		}
+		_, err = io.Copy(fis, file)
+		if err != nil {
+			log.Error("Copy File Err %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Copy File Error")
+		}
+		log.Info("CreateInsurance: %s", util.ObjToString(insurance))
+		insurance, err = database.InsertInsurance(insurance)
+		if err != nil {
+			util.DeleteFile(savePath)
+			log.Error("Insert data to db error %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Insert Insurance Error")
 		} else {
-			log.Info("Save File success %s", savePath)
-			io.Copy(fis, file)
 			var response protocol.BBCreateInsuranceResponse
-			response.Id = id
-			response.ThumbUrl = thumbUrl
+			response.Insurance = insurance
 			responseBytes, _ := json.Marshal(response)
 			webcommon.HandleSuccessResponse(writer, bbReq, responseBytes)
 		}

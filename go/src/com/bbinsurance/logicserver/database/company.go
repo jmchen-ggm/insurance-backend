@@ -45,6 +45,23 @@ func UpdateCompanyThumbUrl(id int64, thumbUrl string) {
 	}
 }
 
+func GetCompanyNameById(id int64) string {
+	sql := fmt.Sprintf("SELECT name FROM %s WHERE id = ?", CompanyTableName)
+	rows, err := GetDB().Query(sql)
+	if err != nil {
+		log.Error("GetCompanyNameById err %s", err)
+		return ""
+	} else {
+		if rows.Next() {
+			var name string
+			rows.Scan(&name)
+			return name
+		} else {
+			return ""
+		}
+	}
+}
+
 func GetListCompany(startIndex int, length int) []protocol.Company {
 	var sql string
 	if length == -1 {
@@ -72,15 +89,15 @@ func GetListCompany(startIndex int, length int) []protocol.Company {
 func SelectCompanyByName(Name string) protocol.Company {
 	var sql string
 	var company protocol.Company
-	sql = fmt.Sprintf("SELECT * FROM %s where Name=?limit 1",CompanyTableName)
+	sql = fmt.Sprintf("SELECT * FROM %s where Name=?limit 1", CompanyTableName)
 	log.Info("Get Company By Name sql=%s", sql)
-	rows, err := GetDB().Query(sql,Name)
+	rows, err := GetDB().Query(sql, Name)
 	defer rows.Close()
 	if err != nil {
 		log.Error("GetCompany err %s", err)
 	} else {
 		for rows.Next() {
-			  rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
+			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
 		}
 		log.Info("GetCompany %s ", company.Name)
 	}

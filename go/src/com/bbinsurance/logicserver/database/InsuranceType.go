@@ -9,21 +9,38 @@ import (
 
 const InsuranceTypeTableName = "InsuranceType"
 
-func InsertType(name string) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Name) VALUES (?);", InsuranceTypeTableName)
+func InsertType(name string, desc string) (int64, error) {
+	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc) VALUES (?, ?);", InsuranceTypeTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
 		return -1, err
 	} else {
-		result, err := stmt.Exec(name)
+		result, err := stmt.Exec(name, desc)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			return -1, err
 		} else {
 			id, err := result.LastInsertId()
 			return id, err
+		}
+	}
+}
+
+func GetInsuranceTypeNameById(id int64) string {
+	sql := fmt.Sprintf("SELECT name FROM %s WHERE id = ?", InsuranceTypeTableName)
+	rows, err := GetDB().Query(sql, id)
+	if err != nil {
+		log.Error("GetInsuranceTypeNameById error %s", err)
+		return ""
+	} else {
+		if rows.Next() {
+			var name string
+			rows.Scan(&name)
+			return name
+		} else {
+			return ""
 		}
 	}
 }
@@ -55,12 +72,12 @@ func GetListInsuranceType(startIndex int, length int) []protocol.Type {
 func SelectInsuranceTypeByName(Name string) protocol.Type {
 	var sql string
 	var Type protocol.Type
-	sql = fmt.Sprintf("SELECT * FROM %s where Name=? limit 1",InsuranceTypeTableName)
+	sql = fmt.Sprintf("SELECT * FROM %s where Name=? limit 1", InsuranceTypeTableName)
 	log.Info("Get InsuranceType By Name sql=%s", sql)
-	rows, err := GetDB().Query(sql,Name)
+	rows, err := GetDB().Query(sql, Name)
 	defer rows.Close()
 	if err != nil {
-		  log.Error("GetInsuranceType err %s", err)
+		log.Error("GetInsuranceType err %s", err)
 	} else {
 		for rows.Next() {
 			err = rows.Scan(&Type.Id, &Type.Name)

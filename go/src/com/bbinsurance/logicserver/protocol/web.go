@@ -46,14 +46,16 @@ type BBCreateCompanyResponse struct {
 }
 
 type Insurance struct {
-	Id        int
-	NameZHCN  string
-	NameEN    string
-	Desc      string
-	Type      string
-	Company   string
-	Timestamp int64
-	ThumbUrl  string
+	Id                int64
+	Name              string
+	Desc              string
+	InsuranceTypeId   int64
+	InsuranceTypeName string
+	CompanyId         int64
+	CompanyName       string
+	Timestamp         int64
+	ThumbUrl          string
+	DetailData        string
 }
 
 type Type struct {
@@ -71,12 +73,11 @@ type BBListInsuranceResponse struct {
 }
 
 type BBCreateInsuranceResponse struct {
-	Id       int64
-	ThumbUrl string
+	Insurance Insurance
 }
 
 type Comment struct {
-	ServerId   int64
+	Id         int64
 	Uin        int64
 	Content    string
 	TotalScore int
@@ -84,7 +85,9 @@ type Comment struct {
 	Score2     int
 	Score3     int
 	Timestamp  int64
+	UpCount    int
 	ViewCount  int
+	ReplyCount int
 	Flags      int64
 }
 

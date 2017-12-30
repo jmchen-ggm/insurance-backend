@@ -10,55 +10,37 @@ import (
 
 const InsuranceTableName = "Insurance"
 
-func InsertInsurance(nameZHCN string, nameEN string, desc string, InsuranceTypeId int64, companyId int, thumbUrl string) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (NameZHCN, NameEN, Desc, Type, Timestamp, CompanyId, ThumbUrl) VALUES (?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
+func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
+	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, InsuranceTypeId, CompanyId, Timestamp, ThumbUrl, DetailData) VALUES (?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
-		return -1, err
+		insurance.Id = -1
 	} else {
-		timestamp := time.GetTimestampInMilli()
-		result, err := stmt.Exec(nameZHCN, nameEN, desc, InsuranceTypeId, timestamp, companyId, thumbUrl)
+		insurance.Timestamp = time.GetTimestampInMilli()
+		result, err := stmt.Exec(insurance.Name, insurance.Desc, insurance.InsuranceTypeId, insurance.CompanyId,
+			insurance.Timestamp, insurance.ThumbUrl, insurance.DetailData)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
-			return -1, err
+			insurance.Id = -1
 		} else {
-			id, err := result.LastInsertId()
-			return id, err
+			insurance.Id, err = result.LastInsertId()
 		}
 	}
-}
-
-func UpdateInsuranceThumbUrl(id int64, thumbUrl string) {
-	log.Info("UpdateInsuranceThumbUrl: id=%d thumbUrl=%s", id, thumbUrl)
-	sql := fmt.Sprintf("UPDATE %s SET thumbUrl=? WHERE id= ?;", InsuranceTableName)
-	stmt, err := GetDB().Prepare(sql)
-	defer stmt.Close()
-	if err != nil {
-		log.Error("Prepare SQL Error %s", err)
-	} else {
-		_, err = stmt.Exec(thumbUrl, id)
-		if err != nil {
-			log.Error("Prepare Exec Error %s", err)
-		} else {
-			log.Info("UpdateInsuranceThumbUrl Success")
-		}
-	}
+	return insurance, err
 }
 
 func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	var sql string
 	if length == -1 {
 		sql = fmt.Sprintf(
-			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id",
-			InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTypeTableName, CompanyTableName, InsuranceTableName, InsuranceTableName,
-			InsuranceTableName, CompanyTableName, InsuranceTypeTableName, InsuranceTableName, CompanyTableName, InsuranceTableName, InsuranceTypeTableName)
+			"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C where CompanyId=B.Id and InsuranceTypeId=C.Id",
+			InsuranceTableName, InsuranceTypeTableName, CompanyTableName)
 	} else {
 		sql = fmt.Sprintf(
-			"SELECT %s.Id,%s.NameZHCN,%s.NameEN,%s.Desc,%s.Name,%s.Name,%s.Timestamp,%s.ThumbUrl FROM %s,%s,%s where %s.CompanyId=%s.Id and %s.Type=%s.Id LIMIT %d OFFSET %d",
-			InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTableName, InsuranceTypeTableName, CompanyTableName, InsuranceTableName, InsuranceTableName,
-			InsuranceTableName, CompanyTableName, InsuranceTypeTableName, InsuranceTableName, CompanyTableName, InsuranceTableName, InsuranceTypeTableName, length, startIndex)
+			"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C where CompanyId=B.Id and InsuranceTypeId=C.Id LIMIT %d OFFSET %d",
+			InsuranceTableName, InsuranceTypeTableName, CompanyTableName, length, startIndex)
 	}
 	log.Info("GetListInsurance sql=%s", sql)
 	rows, err := GetDB().Query(sql)
@@ -69,7 +51,8 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	} else {
 		for rows.Next() {
 			var insurance protocol.Insurance
-			rows.Scan(&insurance.Id, &insurance.NameZHCN, &insurance.NameEN, &insurance.Desc, &insurance.Type, &insurance.Company, &insurance.Timestamp, &insurance.ThumbUrl)
+			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId, &insurance.InsuranceTypeName,
+				&insurance.CompanyId, &insurance.CompanyName, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetListInsurance %d ", len(insuranceList))
