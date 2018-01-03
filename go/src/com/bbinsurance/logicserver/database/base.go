@@ -18,7 +18,7 @@ const CurrentArticleTableVersion = "0"
 const CurrentCompanyTableVersion = "0"
 const CurrentInsuranceTableVersion = "0"
 const CurrentInsuranceTypeTableVersion = "1"
-const CurrentCommentTableVersion = "0"
+const CurrentCommentTableVersion = "1"
 
 var db *sql.DB
 
@@ -75,7 +75,7 @@ func InitDB() {
 	} else {
 		log.Info("Create InsuranceType Table Success sql = %s", createInsuranceTypeSql)
 	}
-	var createCommentSql = "CREATE TABLE IF NOT EXISTS Comment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, Content TEXT NOT NULL, TotalScore INTEGER, Score1 INTEGER, Score2 INTEGER, Score3 INTEGER, Timestamp INTEGER, UpCount INTEGER, ViewCount INTEGER, ReplyCount INTEGER, Flags INTEGER);"
+	var createCommentSql = "CREATE TABLE IF NOT EXISTS Comment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, Content TEXT NOT NULL, TotalScore INTEGER, Score1 INTEGER, Score2 INTEGER, Score3 INTEGER, Score4 INTEGER, Timestamp INTEGER, UpCount INTEGER, ViewCount INTEGER, ReplyCount INTEGER, Flags INTEGER);"
 	_, err = db.Exec(createCommentSql, nil)
 	if err != nil {
 		log.Error("Create Comment Error: sql = %s, err = %s", createCommentSql, err)

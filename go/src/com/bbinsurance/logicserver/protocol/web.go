@@ -78,6 +78,7 @@ type Comment struct {
 	Score1     int
 	Score2     int
 	Score3     int
+	Score4     int
 	Timestamp  int64
 	UpCount    int
 	ViewCount  int

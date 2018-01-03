@@ -4,6 +4,7 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
 	"com/bbinsurance/util"
+	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -12,7 +13,7 @@ const CommentTableName = "Comment"
 
 func InsertComment(comment protocol.Comment) (protocol.Comment, error) {
 	log.Info("InsertComment %s", util.ObjToString(comment))
-	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, TotalScore, Score1, Score2, Score3, Timestamp, UpCount, ViewCount, ReplyCount, Flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", CommentTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, TotalScore, Score1, Score2, Score3, Score4, Timestamp, UpCount, ViewCount, ReplyCount, Flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", CommentTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -20,7 +21,7 @@ func InsertComment(comment protocol.Comment) (protocol.Comment, error) {
 		comment.Id = -1
 	} else {
 		result, err := stmt.Exec(comment.Uin, comment.Content, comment.TotalScore, comment.Score1,
-			comment.Score2, comment.Score3, comment.Timestamp, comment.UpCount, comment.ViewCount, comment.ReplyCount, comment.Flags)
+			comment.Score2, comment.Score3, comment.Score4, comment.Timestamp, comment.UpCount, comment.ViewCount, comment.ReplyCount, comment.Flags)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			comment.Id = -1
@@ -81,8 +82,7 @@ func GetListComment(startIndex int, length int) []protocol.Comment {
 	} else {
 		for rows.Next() {
 			var comment protocol.Comment
-			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
-				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
+			comment = FromRowsToComment(rows, comment)
 			commentList = append(commentList, comment)
 		}
 		log.Info("GetListComment %d ", len(commentList))
@@ -101,8 +101,7 @@ func GetTopCommentList() []protocol.Comment {
 	} else {
 		for rows.Next() {
 			var comment protocol.Comment
-			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
-				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
+			comment = FromRowsToComment(rows, comment)
 			commentList = append(commentList, comment)
 		}
 		log.Info("GetTopComment %d ", len(commentList))
@@ -120,8 +119,7 @@ func GetCommentById(id int64) (protocol.Comment, error) {
 		return comment, err
 	} else {
 		if rows.Next() {
-			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
-				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
+			comment = FromRowsToComment(rows, comment)
 			return comment, nil
 		} else {
 			return comment, nil
@@ -144,4 +142,10 @@ func DeleteCommentById(id int64) {
 			log.Info("RemoveCommentById %d Success", id)
 		}
 	}
+}
+
+func FromRowsToComment(rows *sql.Rows, comment protocol.Comment) protocol.Comment {
+	rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
+		&comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
+	return comment
 }
