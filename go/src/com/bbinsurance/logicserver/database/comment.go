@@ -82,7 +82,8 @@ func GetListComment(startIndex int, length int) []protocol.Comment {
 	} else {
 		for rows.Next() {
 			var comment protocol.Comment
-			comment = FromRowsToComment(rows, comment)
+			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
+				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
 			commentList = append(commentList, comment)
 		}
 		log.Info("GetListComment %d ", len(commentList))
