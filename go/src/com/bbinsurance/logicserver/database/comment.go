@@ -4,7 +4,6 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
 	"com/bbinsurance/util"
-	"database/sql"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
