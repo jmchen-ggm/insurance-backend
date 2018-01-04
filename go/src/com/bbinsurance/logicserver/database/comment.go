@@ -102,7 +102,8 @@ func GetTopCommentList() []protocol.Comment {
 	} else {
 		for rows.Next() {
 			var comment protocol.Comment
-			comment = FromRowsToComment(rows, comment)
+			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
+				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
 			commentList = append(commentList, comment)
 		}
 		log.Info("GetTopComment %d ", len(commentList))
@@ -120,7 +121,8 @@ func GetCommentById(id int64) (protocol.Comment, error) {
 		return comment, err
 	} else {
 		if rows.Next() {
-			comment = FromRowsToComment(rows, comment)
+			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
+				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
 			return comment, nil
 		} else {
 			return comment, nil
@@ -143,10 +145,4 @@ func DeleteCommentById(id int64) {
 			log.Info("RemoveCommentById %d Success", id)
 		}
 	}
-}
-
-func FromRowsToComment(rows *sql.Rows, comment protocol.Comment) protocol.Comment {
-	rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
-		&comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
-	return comment
 }
