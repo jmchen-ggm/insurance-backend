@@ -21,6 +21,8 @@ func FunInitDataBin() {
 	handlerObjMap[webcommon.FuncListInsuranceType] = FunGetListInsuranceType
 	handlerObjMap[webcommon.FuncGetHomeData] = FunGetHomeData
 	handlerObjMap[webcommon.FuncUpComment] = FunUpComment
+	handlerObjMap[webcommon.FuncGetCompanyById] = FunGetCompanyById
+	handlerObjMap[webcommon.FuncGetInsuranceTypeById] = FunGetInsuranceTypeById
 }
 
 func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {

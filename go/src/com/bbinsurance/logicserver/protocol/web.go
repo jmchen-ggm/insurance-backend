@@ -71,19 +71,23 @@ type BBCreateInsuranceResponse struct {
 }
 
 type Comment struct {
-	Id         int64
-	Uin        int64
-	Content    string
-	TotalScore int
-	Score1     int
-	Score2     int
-	Score3     int
-	Score4     int
-	Timestamp  int64
-	UpCount    int
-	ViewCount  int
-	ReplyCount int
-	Flags      int64
+	Id                int64
+	Uin               int64
+	Content           string
+	CompanyId         int64
+	CompanyName       string
+	InsuranceTypeId   int64
+	InsuranceTypeName string
+	TotalScore        int
+	Score1            int
+	Score2            int
+	Score3            int
+	Score4            int
+	Timestamp         int64
+	UpCount           int
+	ViewCount         int
+	ReplyCount        int
+	Flags             int64
 }
 
 type BBCreateCommentRequest struct {
@@ -147,4 +151,20 @@ type BBGetHomeDataResponse struct {
 	TopCommentList       []Comment
 	TopInsuranceTypeList []InsuranceType
 	TopCompanyList       []Company
+}
+
+type BBGetCompanyRequest struct {
+	Id int64
+}
+
+type BBGetCompanyResponse struct {
+	Company Company
+}
+
+type BBGetInsuranceTypeRequest struct {
+	Id int64
+}
+
+type BBGetInsuranceTypeResponse struct {
+	InsuranceType InsuranceType
 }

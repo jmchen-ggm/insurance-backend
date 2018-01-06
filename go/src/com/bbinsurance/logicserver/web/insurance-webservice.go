@@ -5,6 +5,7 @@ import (
 	"com/bbinsurance/logicserver/constants"
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
+	"com/bbinsurance/logicserver/service"
 	"com/bbinsurance/time"
 	"com/bbinsurance/util"
 	"com/bbinsurance/webcommon"
@@ -36,6 +37,21 @@ func FunGetListInsuranceType(bbReq webcommon.BBReq) ([]byte, int, string) {
 	response.InsuranceTypeList = insuranceTypeList
 	responseBytes, _ := json.Marshal(response)
 	return responseBytes, webcommon.ResponseCodeSuccess, ""
+}
+
+func FunGetInsuranceTypeById(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var getInsuranceTypeRequest protocol.BBGetInsuranceTypeRequest
+	json.Unmarshal(bbReq.Body, &getInsuranceTypeRequest)
+	insuranceType := service.GetInsuranceTypeById(getInsuranceTypeRequest.Id)
+	if insuranceType.Id == -1 {
+		log.Error("FunGetInsuranceTypeById Err")
+		return nil, webcommon.ResponseCodeServerError, "FunGetInsuranceTypeById Err"
+	} else {
+		var response protocol.BBGetInsuranceTypeResponse
+		response.InsuranceType = insuranceType
+		responseBytes, _ := json.Marshal(response)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	}
 }
 
 func FunCreateInsuranceType(writer http.ResponseWriter, request *http.Request) {
@@ -114,7 +130,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		var insurance protocol.Insurance
 		insurance.Name = request.FormValue("name")
 		insurance.Desc = request.FormValue("desc")
-		insurance.CompanyId, _ = strconv.ParseInt(request.FormValue("companyId"), 10, 64)
+		insurance.InsuranceTypeId, _ = strconv.ParseInt(request.FormValue("insuranceTypeId"), 10, 64)
 		insurance.InsuranceTypeId, _ = strconv.ParseInt(request.FormValue("insuranceTypeId"), 10, 64)
 		insurance.DetailData = request.FormValue("detailData")
 		insurance.ThumbUrl = fmt.Sprintf("img/insurances/%s.png", uuid.NewV4().String())
@@ -125,10 +141,10 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Insurance Type Name")
 			return
 		}
-		insurance.CompanyName = database.GetCompanyNameById(insurance.CompanyId)
-		if util.IsEmpty(insurance.CompanyName) {
-			log.Error("Not Found Company Name %d", insurance.CompanyId)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Company Name")
+		insurance.InsuranceTypeName = database.GetInsuranceTypeNameById(insurance.InsuranceTypeId)
+		if util.IsEmpty(insurance.InsuranceTypeName) {
+			log.Error("Not Found InsuranceType Name %d", insurance.InsuranceTypeId)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found InsuranceType Name")
 			return
 		}
 

@@ -3,6 +3,7 @@ package database
 import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
+	"com/bbinsurance/util"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -85,6 +86,29 @@ func GetListCompany(startIndex int, length int) []protocol.Company {
 		log.Info("GetListCompany %d ", len(companyList))
 	}
 	return companyList
+}
+
+func GetCompanyById(id int64) protocol.Company {
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE Id = ?", CompanyTableName)
+	log.Info("GetCompanyById sql=%s", sql)
+	rows, err := GetDB().Query(sql, id)
+	defer rows.Close()
+	var company protocol.Company
+	if err != nil {
+		log.Error("GetListCompany err %s", err)
+		company.Id = -1
+		return company
+	} else {
+		if rows.Next() {
+			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
+			log.Info("GetCompanyById %s", util.ObjToString(company))
+			return company
+		} else {
+			company.Id = -1
+			return company
+		}
+
+	}
 }
 
 func SelectCompanyByName(Name string) protocol.Company {

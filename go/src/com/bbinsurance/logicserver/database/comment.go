@@ -12,14 +12,14 @@ const CommentTableName = "Comment"
 
 func InsertComment(comment protocol.Comment) (protocol.Comment, error) {
 	log.Info("InsertComment %s", util.ObjToString(comment))
-	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, TotalScore, Score1, Score2, Score3, Score4, Timestamp, UpCount, ViewCount, ReplyCount, Flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", CommentTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Uin, Content, CompanyId, InsuranceTypeId, TotalScore, Score1, Score2, Score3, Score4, Timestamp, UpCount, ViewCount, ReplyCount, Flags) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", CommentTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
 		comment.Id = -1
 	} else {
-		result, err := stmt.Exec(comment.Uin, comment.Content, comment.TotalScore, comment.Score1,
+		result, err := stmt.Exec(comment.Uin, comment.Content, comment.CompanyId, comment.InsuranceTypeId, comment.TotalScore, comment.Score1,
 			comment.Score2, comment.Score3, comment.Score4, comment.Timestamp, comment.UpCount, comment.ViewCount, comment.ReplyCount, comment.Flags)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)

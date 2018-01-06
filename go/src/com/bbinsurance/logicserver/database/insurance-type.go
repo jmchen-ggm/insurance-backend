@@ -46,6 +46,26 @@ func GetInsuranceTypeNameById(id int64) string {
 	}
 }
 
+func GetInsuranceTypeById(id int64) protocol.InsuranceType {
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE id = ?", InsuranceTypeTableName)
+	rows, err := GetDB().Query(sql, id)
+	defer rows.Close()
+	var insuranceType protocol.InsuranceType
+	if err != nil {
+		log.Error("GetInsuranceTypeNameById error %s", err)
+		insuranceType.Id = -1
+		return insuranceType
+	} else {
+		if rows.Next() {
+			rows.Scan(&insuranceType.Id, &insuranceType.Name, &insuranceType.Desc, &insuranceType.ThumbUrl)
+			return insuranceType
+		} else {
+			insuranceType.Id = -1
+			return insuranceType
+		}
+	}
+}
+
 func GetListInsuranceType(startIndex int, length int) []protocol.InsuranceType {
 	var sql string
 	if length == -1 {

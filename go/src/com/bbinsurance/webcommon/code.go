@@ -15,6 +15,8 @@ const FuncViewComment = 6
 const FuncListInsuranceType = 7
 const FuncGetHomeData = 8
 const FuncUpComment = 9
+const FuncGetCompanyById = 10
+const FuncGetInsuranceTypeById = 11
 
 const FuncRegisterUser = 101
 const FuncLogin = 102

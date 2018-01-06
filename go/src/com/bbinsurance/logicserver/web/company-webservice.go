@@ -5,6 +5,7 @@ import (
 	"com/bbinsurance/logicserver/constants"
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
+	"com/bbinsurance/logicserver/service"
 	"com/bbinsurance/time"
 	"com/bbinsurance/util"
 	"com/bbinsurance/webcommon"
@@ -24,6 +25,21 @@ func FunGetListCompany(bbReq webcommon.BBReq) ([]byte, int, string) {
 	response.CompanyList = companyList
 	responseBytes, _ := json.Marshal(response)
 	return responseBytes, webcommon.ResponseCodeSuccess, ""
+}
+
+func FunGetCompanyById(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var getCompanyRequest protocol.BBGetCompanyRequest
+	json.Unmarshal(bbReq.Body, &getCompanyRequest)
+	company := service.GetCompanyById(getCompanyRequest.Id)
+	if company.Id == -1 {
+		log.Error("FunGetCompanyById Err")
+		return nil, webcommon.ResponseCodeServerError, "FunGetCompanyById Err"
+	} else {
+		var response protocol.BBGetCompanyResponse
+		response.Company = company
+		responseBytes, _ := json.Marshal(response)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	}
 }
 
 func FunCreateCompany(writer http.ResponseWriter, request *http.Request) {
