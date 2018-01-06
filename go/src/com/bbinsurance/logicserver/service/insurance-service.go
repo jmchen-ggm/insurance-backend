@@ -24,3 +24,13 @@ func GetInsuranceTypeById(id int64) protocol.InsuranceType {
 		return insuranceType
 	}
 }
+
+func GetListInsurance(startIndex int, length int) []protocol.Insurance {
+	insuranceList := database.GetListInsurance(startIndex, length)
+	insuranceListLength := len(insuranceList)
+	for i := 0; i < insuranceListLength; i++ {
+		insuranceList[i].CompanyName = GetCompanyById(insuranceList[i].CompanyId).Name
+		insuranceList[i].InsuranceTypeName = GetInsuranceTypeById(insuranceList[i].InsuranceTypeId).Name
+	}
+	return insuranceList
+}

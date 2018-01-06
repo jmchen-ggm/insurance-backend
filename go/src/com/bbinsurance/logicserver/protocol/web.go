@@ -52,6 +52,9 @@ type Insurance struct {
 	InsuranceTypeName string
 	CompanyId         int64
 	CompanyName       string
+	AgeFrom           int
+	AgeTo             int
+	Flags             int64
 	Timestamp         int64
 	ThumbUrl          string
 	DetailData        string

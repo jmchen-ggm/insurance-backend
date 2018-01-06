@@ -11,7 +11,7 @@ import (
 const InsuranceTableName = "Insurance"
 
 func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, InsuranceTypeId, CompanyId, Timestamp, ThumbUrl, DetailData) VALUES (?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, InsuranceTypeId, CompanyId, AgeFrom, AgeTo, Flags, Timestamp, ThumbUrl, DetailData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -20,7 +20,7 @@ func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 	} else {
 		insurance.Timestamp = time.GetTimestampInMilli()
 		result, err := stmt.Exec(insurance.Name, insurance.Desc, insurance.InsuranceTypeId, insurance.CompanyId,
-			insurance.Timestamp, insurance.ThumbUrl, insurance.DetailData)
+			insurance.AgeFrom, insurance.AgeTo, insurance.Flags, insurance.Timestamp, insurance.ThumbUrl, insurance.DetailData)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			insurance.Id = -1
@@ -34,13 +34,9 @@ func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	var sql string
 	if length == -1 {
-		sql = fmt.Sprintf(
-			"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C where CompanyId=C.Id and InsuranceTypeId=B.Id",
-			InsuranceTableName, InsuranceTypeTableName, CompanyTableName)
+		sql = fmt.Sprintf("SELECT * FROM %s;", InsuranceTableName)
 	} else {
-		sql = fmt.Sprintf(
-			"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C where CompanyId=C.Id and InsuranceTypeId=B.Id LIMIT %d OFFSET %d",
-			InsuranceTableName, InsuranceTypeTableName, CompanyTableName, length, startIndex)
+		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", InsuranceTableName, length, startIndex)
 	}
 	log.Info("GetListInsurance sql=%s", sql)
 	rows, err := GetDB().Query(sql)
@@ -51,8 +47,9 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	} else {
 		for rows.Next() {
 			var insurance protocol.Insurance
-			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId, &insurance.InsuranceTypeName,
-				&insurance.CompanyId, &insurance.CompanyName, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
+			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
+				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.Flags,
+				&insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetListInsurance %d ", len(insuranceList))
@@ -61,9 +58,7 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 }
 
 func GetTopBannerInsuranceList() []protocol.Insurance {
-	sql := fmt.Sprintf(
-		"SELECT A.Id, A.Name, A.Desc, B.Id, B.Name, C.Id, C.Name, A.Timestamp, A.ThumbUrl, A.DetailData FROM %s AS A, %s AS B, %s AS C WHERE CompanyId=C.Id and InsuranceTypeId=B.Id ORDER BY Timestamp DESC LIMIT 5",
-		InsuranceTableName, InsuranceTypeTableName, CompanyTableName)
+	sql := fmt.Sprintf("SELECT * FROM %s ORDER BY Timestamp DESC LIMIT 5", InsuranceTableName)
 	log.Info("GetTopBannerInsuranceList sql=%s", sql)
 	rows, err := GetDB().Query(sql)
 	defer rows.Close()
@@ -73,8 +68,9 @@ func GetTopBannerInsuranceList() []protocol.Insurance {
 	} else {
 		for rows.Next() {
 			var insurance protocol.Insurance
-			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId, &insurance.InsuranceTypeName,
-				&insurance.CompanyId, &insurance.CompanyName, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
+			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
+				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.Flags,
+				&insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetTopBannerInsuranceList %d ", len(insuranceList))

@@ -7,8 +7,8 @@ import (
 
 func GetListComment(startIndex int, length int) []protocol.Comment {
 	commentList := database.GetListComment(startIndex, length)
-	commentLength := len(commentList)
-	for i := 0; i < commentLength; i++ {
+	commentListLength := len(commentList)
+	for i := 0; i < commentListLength; i++ {
 		commentList[i].CompanyName = GetCompanyById(commentList[i].CompanyId).Name
 		commentList[i].InsuranceTypeName = GetInsuranceTypeById(commentList[i].InsuranceTypeId).Name
 	}

@@ -20,7 +20,7 @@ import (
 func FunGetListInsurance(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var listInsuranceRequest protocol.BBListInsuranceRequest
 	json.Unmarshal(bbReq.Body, &listInsuranceRequest)
-	insuranceList := database.GetListInsurance(listInsuranceRequest.StartIndex, listInsuranceRequest.PageSize)
+	insuranceList := service.GetListInsurance(listInsuranceRequest.StartIndex, listInsuranceRequest.PageSize)
 	log.Info("req %d %d %d", listInsuranceRequest.StartIndex, listInsuranceRequest.PageSize, len(insuranceList))
 	var response protocol.BBListInsuranceResponse
 	response.InsuranceList = insuranceList
@@ -131,7 +131,10 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		insurance.Name = request.FormValue("name")
 		insurance.Desc = request.FormValue("desc")
 		insurance.InsuranceTypeId, _ = strconv.ParseInt(request.FormValue("insuranceTypeId"), 10, 64)
-		insurance.InsuranceTypeId, _ = strconv.ParseInt(request.FormValue("insuranceTypeId"), 10, 64)
+		insurance.CompanyId, _ = strconv.ParseInt(request.FormValue("companyId"), 10, 64)
+		insurance.AgeFrom, _ = strconv.Atoi(request.FormValue("ageFrom"))
+		insurance.AgeTo, _ = strconv.Atoi(request.FormValue("ageTo"))
+		insurance.Flags, _ = strconv.ParseInt(request.FormValue("flags"), 10, 64)
 		insurance.DetailData = request.FormValue("detailData")
 		insurance.ThumbUrl = fmt.Sprintf("img/insurances/%s.png", uuid.NewV4().String())
 
@@ -144,7 +147,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		insurance.InsuranceTypeName = database.GetInsuranceTypeNameById(insurance.InsuranceTypeId)
 		if util.IsEmpty(insurance.InsuranceTypeName) {
 			log.Error("Not Found InsuranceType Name %d", insurance.InsuranceTypeId)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found InsuranceType Name")
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Insurance Type Name")
 			return
 		}
 
