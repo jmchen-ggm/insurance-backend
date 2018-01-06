@@ -14,7 +14,7 @@ func GetCompanyById(id int64) protocol.Company {
 	}
 	company, ok := companyCacheMap[id]
 	if ok {
-		log.Info("Hit Company Service Cache %s", id)
+		log.Info("Hit Company Service Cache %d", id)
 		return company
 	} else {
 		company = database.GetCompanyById(id)

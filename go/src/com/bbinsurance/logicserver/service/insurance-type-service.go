@@ -14,7 +14,7 @@ func GetInsuranceTypeById(id int64) protocol.InsuranceType {
 	}
 	insuranceType, ok := insuranceTypeCacheMap[id]
 	if ok {
-		log.Info("Hit InsuranceType Service Cache %s", id)
+		log.Info("Hit InsuranceType Service Cache %d", id)
 		return insuranceType
 	} else {
 		insuranceType = database.GetInsuranceTypeById(id)

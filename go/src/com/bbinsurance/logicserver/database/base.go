@@ -18,7 +18,7 @@ const CurrentArticleTableVersion = "0"
 const CurrentCompanyTableVersion = "0"
 const CurrentInsuranceTableVersion = "0"
 const CurrentInsuranceTypeTableVersion = "1"
-const CurrentCommentTableVersion = "1"
+const CurrentCommentTableVersion = "2"
 
 var db *sql.DB
 

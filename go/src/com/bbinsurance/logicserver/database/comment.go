@@ -81,8 +81,9 @@ func GetListComment(startIndex int, length int) []protocol.Comment {
 	} else {
 		for rows.Next() {
 			var comment protocol.Comment
-			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
-				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
+			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.CompanyId, &comment.InsuranceTypeId,
+				&comment.TotalScore, &comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4,
+				&comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
 			commentList = append(commentList, comment)
 		}
 		log.Info("GetListComment %d ", len(commentList))
@@ -101,8 +102,9 @@ func GetTopCommentList() []protocol.Comment {
 	} else {
 		for rows.Next() {
 			var comment protocol.Comment
-			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
-				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
+			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.CompanyId, &comment.InsuranceTypeId,
+				&comment.TotalScore, &comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4,
+				&comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
 			commentList = append(commentList, comment)
 		}
 		log.Info("GetTopComment %d ", len(commentList))
@@ -120,8 +122,9 @@ func GetCommentById(id int64) (protocol.Comment, error) {
 		return comment, err
 	} else {
 		if rows.Next() {
-			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.TotalScore,
-				&comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4, &comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
+			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.CompanyId, &comment.InsuranceTypeId,
+				&comment.TotalScore, &comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4,
+				&comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
 			return comment, nil
 		} else {
 			return comment, nil

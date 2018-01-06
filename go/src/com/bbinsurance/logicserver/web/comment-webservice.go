@@ -4,6 +4,7 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
+	"com/bbinsurance/logicserver/service"
 	"com/bbinsurance/time"
 	"com/bbinsurance/webcommon"
 	"encoding/json"
@@ -12,7 +13,7 @@ import (
 func FunGetListComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var listCommentRequest protocol.BBListCommentRequest
 	json.Unmarshal(bbReq.Body, &listCommentRequest)
-	commentList := database.GetListComment(listCommentRequest.StartIndex, listCommentRequest.PageSize)
+	commentList := service.GetListComment(listCommentRequest.StartIndex, listCommentRequest.PageSize)
 	log.Info("req %d %d %d", listCommentRequest.StartIndex, listCommentRequest.PageSize, len(commentList))
 	var response protocol.BBListCommentResponse
 	response.CommentList = commentList
