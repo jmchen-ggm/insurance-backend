@@ -134,6 +134,8 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		insurance.CompanyId, _ = strconv.ParseInt(request.FormValue("companyId"), 10, 64)
 		insurance.AgeFrom, _ = strconv.Atoi(request.FormValue("ageFrom"))
 		insurance.AgeTo, _ = strconv.Atoi(request.FormValue("ageTo"))
+		insurance.AnnualCompensation, _ = strconv.Atoi(request.FormValue("annualCompensation"))
+		insurance.AnnualPremium, _ = strconv.Atoi(request.FormValue("annualPremium"))
 		insurance.Flags, _ = strconv.ParseInt(request.FormValue("flags"), 10, 64)
 		insurance.DetailData = request.FormValue("detailData")
 		insurance.ThumbUrl = fmt.Sprintf("img/insurances/%s.png", uuid.NewV4().String())

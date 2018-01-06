@@ -61,7 +61,7 @@ func InitDB() {
 	} else {
 		log.Info("Create Company Table Success sql = %s", createCompanySql)
 	}
-	var createInsuranceSql = "CREATE TABLE IF NOT EXISTS Insurance(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Desc TEXT, InsuranceTypeId INTEGER, CompanyId INTEGER, AgeFrom INTEGER, AgeTo, INTEGER, Flags INTEGER, Timestamp INTEGER, ThumbUrl TEXT NOT NULL, DetailData TEXT NOT NULL);"
+	var createInsuranceSql = "CREATE TABLE IF NOT EXISTS Insurance(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT, Desc TEXT, InsuranceTypeId INTEGER, CompanyId INTEGER, AgeFrom INTEGER, AgeTo, INTEGER, AnnualCompensation INTEGER, AnnualPremium INTEGER,  Flags INTEGER, Timestamp INTEGER, ThumbUrl TEXT NOT NULL, DetailData TEXT NOT NULL);"
 	_, err = db.Exec(createInsuranceSql, nil)
 	if err != nil {
 		log.Error("Create Insurance Error: sql = %s, err = %s", createInsuranceSql, err)

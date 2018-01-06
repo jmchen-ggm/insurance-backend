@@ -11,7 +11,7 @@ import (
 const InsuranceTableName = "Insurance"
 
 func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, InsuranceTypeId, CompanyId, AgeFrom, AgeTo, Flags, Timestamp, ThumbUrl, DetailData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, InsuranceTypeId, CompanyId, AgeFrom, AgeTo, AnnualCompensation, AnnualPremium, Flags, Timestamp, ThumbUrl, DetailData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -20,7 +20,8 @@ func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 	} else {
 		insurance.Timestamp = time.GetTimestampInMilli()
 		result, err := stmt.Exec(insurance.Name, insurance.Desc, insurance.InsuranceTypeId, insurance.CompanyId,
-			insurance.AgeFrom, insurance.AgeTo, insurance.Flags, insurance.Timestamp, insurance.ThumbUrl, insurance.DetailData)
+			insurance.AgeFrom, insurance.AgeTo, insurance.AnnualCompensation, insurance.AnnualPremium,
+			insurance.Flags, insurance.Timestamp, insurance.ThumbUrl, insurance.DetailData)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			insurance.Id = -1
@@ -48,8 +49,8 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 		for rows.Next() {
 			var insurance protocol.Insurance
 			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
-				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.Flags,
-				&insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
+				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.AnnualCompensation,
+				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetListInsurance %d ", len(insuranceList))
@@ -69,8 +70,8 @@ func GetTopBannerInsuranceList() []protocol.Insurance {
 		for rows.Next() {
 			var insurance protocol.Insurance
 			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
-				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.Flags,
-				&insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
+				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.AnnualCompensation,
+				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetTopBannerInsuranceList %d ", len(insuranceList))

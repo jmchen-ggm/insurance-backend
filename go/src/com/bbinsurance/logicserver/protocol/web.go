@@ -45,19 +45,21 @@ type BBCreateCompanyResponse struct {
 }
 
 type Insurance struct {
-	Id                int64
-	Name              string
-	Desc              string
-	InsuranceTypeId   int64
-	InsuranceTypeName string
-	CompanyId         int64
-	CompanyName       string
-	AgeFrom           int
-	AgeTo             int
-	Flags             int64
-	Timestamp         int64
-	ThumbUrl          string
-	DetailData        string
+	Id                 int64
+	Name               string
+	Desc               string
+	InsuranceTypeId    int64
+	InsuranceTypeName  string
+	CompanyId          int64
+	CompanyName        string
+	AgeFrom            int
+	AgeTo              int
+	AnnualCompensation int
+	AnnualPremium      int
+	Flags              int64
+	Timestamp          int64
+	ThumbUrl           string
+	DetailData         string
 }
 
 type BBListInsuranceRequest struct {
