@@ -9,6 +9,9 @@ import (
 var companyCacheMap map[int64]protocol.Company
 
 func GetCompanyById(id int64) protocol.Company {
+	if companyCacheMap == nil {
+		companyCacheMap = make(map[int64]protocol.Company)
+	}
 	company, ok := companyCacheMap[id]
 	if ok {
 		log.Info("Hit Company Service Cache %s", id)
