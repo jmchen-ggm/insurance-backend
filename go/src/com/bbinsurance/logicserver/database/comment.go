@@ -112,22 +112,23 @@ func GetTopCommentList() []protocol.Comment {
 	return commentList
 }
 
-func GetCommentById(id int64) (protocol.Comment, error) {
+func GetCommentById(id int64) protocol.Comment {
 	sql := fmt.Sprintf("SELECT * FROM Comment WHERE id = ?", CommentTableName)
 	rows, err := GetDB().Query(sql)
 	defer rows.Close()
 	var comment protocol.Comment
+	comment.Id = -1
 	if err != nil {
 		log.Error("GetCommentById err %s", err)
-		return comment, err
+		return comment
 	} else {
 		if rows.Next() {
 			rows.Scan(&comment.Id, &comment.Uin, &comment.Content, &comment.CompanyId, &comment.InsuranceTypeId,
 				&comment.TotalScore, &comment.Score1, &comment.Score2, &comment.Score3, &comment.Score4,
 				&comment.Timestamp, &comment.UpCount, &comment.ViewCount, &comment.ReplyCount, &comment.Flags)
-			return comment, nil
+			return comment
 		} else {
-			return comment, nil
+			return comment
 		}
 	}
 }
