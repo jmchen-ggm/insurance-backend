@@ -42,10 +42,9 @@ func FunCreateComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 
 func FunViewComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var viewCommentRequest protocol.BBViewCommentRequest
-	json.Unmarshal(bbReq.Header.Uin, bbReq.Body, &viewCommentRequest)
-	database.UpdateCommentViewCount(viewCommentRequest.Id)
+	json.Unmarshal(bbReq.Body, &viewCommentRequest)
 	var response protocol.BBViewCommentResponse
-	response.Comment = database.GetCommentById(viewCommentRequest.Id)
+	response.Comment = service.ViewComment(bbReq.Header.Uin, viewCommentRequest.Id)
 	if response.Comment.Id == -1 {
 		return nil, webcommon.ResponseCodeServerError, "Not Found Comment"
 	} else {
