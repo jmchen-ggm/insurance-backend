@@ -58,7 +58,7 @@ func FunUpComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var upCommentRequest protocol.BBUpCommentRequest
 	json.Unmarshal(bbReq.Body, &upCommentRequest)
 	var response protocol.BBUpCommentResponse
-	response.Comment = service.UpComment(upCommentRequest.CommentUp)
+	response.Comment = service.UpComment(upCommentRequest.CommentUp, upCommentRequest.IsUp)
 	if response.Comment.Id == -1 {
 		return nil, webcommon.ResponseCodeServerError, "Not Found Comment"
 	} else {
@@ -68,10 +68,10 @@ func FunUpComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 }
 
 func FunReplyComment(bbReq webcommon.BBReq) ([]byte, int, string) {
-	var replyCommentRequest protocol.BBUpCommentRequest
+	var replyCommentRequest protocol.BBReplyCommentRequest
 	json.Unmarshal(bbReq.Body, &replyCommentRequest)
 	var response protocol.BBReplyCommentResponse
-	response.Comment = service.UpComment(replyCommentRequest.CommentReply)
+	response.Comment = service.ReplyComment(replyCommentRequest.CommentReply)
 	if response.Comment.Id == -1 {
 		return nil, webcommon.ResponseCodeServerError, "Not Found Comment"
 	} else {

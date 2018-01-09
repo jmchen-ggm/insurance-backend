@@ -122,6 +122,7 @@ type BBViewCommentResponse struct {
 
 type BBUpCommentRequest struct {
 	CommentUp CommentUp
+	IsUp      bool
 }
 
 type BBUpCommentResponse struct {
