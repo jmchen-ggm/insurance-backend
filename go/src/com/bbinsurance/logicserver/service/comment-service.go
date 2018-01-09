@@ -18,11 +18,12 @@ func GetListComment(uin int64, startIndex int, length int) []protocol.Comment {
 }
 
 func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
-	dbUp := database.CheckCommentUp(commentUp.Uin, comment.Id)
+	dbUp := database.CheckCommentUp(commentUp.Uin, commentUp.Id)
 	log.Info("database.CheckCommentUp dbUp: %b", dbUp)
 	if dbUp == isUp {
 		comment := database.GetCommentById(commentUp.CommentId)
-		comment.IsUp = IsUp
+		comment.IsUp = isUp
+		return comment
 	} else {
 		var canUpdateCount = false
 		if isUp {
@@ -34,13 +35,13 @@ func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 		}
 		comment := database.GetCommentById(commentUp.CommentId)
 		if canUpdateCount {
-			database.UpdateCommentUpCount(commentUp.CommentId)
+			database.UpdateCommentUpCount(commentUp.CommentId, isUp)
 			comment.IsUp = isUp
 		} else {
 			comment.IsUp = dbUp
 		}
+		return comment
 	}
-	return comment
 }
 
 func ReplyComment(uin int64, commentReply protocol.CommentReply) protocol.Comment {
