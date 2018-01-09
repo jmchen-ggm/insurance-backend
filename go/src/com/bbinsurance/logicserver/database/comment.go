@@ -136,7 +136,7 @@ func GetTopCommentList() []protocol.Comment {
 }
 
 func GetCommentById(id int64) protocol.Comment {
-	sql := fmt.Sprintf("SELECT * FROM Comment WHERE Id = ?", CommentTableName)
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE Id = ?", CommentTableName)
 	log.Info("GetCommentById sql=%s", sql)
 	rows, err := GetDB().Query(sql, id)
 	defer rows.Close()
