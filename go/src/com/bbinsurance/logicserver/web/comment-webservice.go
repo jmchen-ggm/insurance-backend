@@ -13,7 +13,7 @@ import (
 func FunGetListComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var listCommentRequest protocol.BBListCommentRequest
 	json.Unmarshal(bbReq.Body, &listCommentRequest)
-	commentList := service.GetListComment(listCommentRequest.StartIndex, listCommentRequest.PageSize)
+	commentList := service.GetListComment(bbReq.Header.Uin, listCommentRequest.StartIndex, listCommentRequest.PageSize)
 	log.Info("req %d %d %d", listCommentRequest.StartIndex, listCommentRequest.PageSize, len(commentList))
 	var response protocol.BBListCommentResponse
 	response.CommentList = commentList
@@ -42,7 +42,7 @@ func FunCreateComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 
 func FunViewComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var viewCommentRequest protocol.BBViewCommentRequest
-	json.Unmarshal(bbReq.Body, &viewCommentRequest)
+	json.Unmarshal(bbReq.Header.Uin, bbReq.Body, &viewCommentRequest)
 	database.UpdateCommentViewCount(viewCommentRequest.Id)
 	var response protocol.BBViewCommentResponse
 	response.Comment = database.GetCommentById(viewCommentRequest.Id)
@@ -71,7 +71,7 @@ func FunReplyComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var replyCommentRequest protocol.BBReplyCommentRequest
 	json.Unmarshal(bbReq.Body, &replyCommentRequest)
 	var response protocol.BBReplyCommentResponse
-	response.Comment = service.ReplyComment(replyCommentRequest.CommentReply)
+	response.Comment = service.ReplyComment(bbReq.Header.Uin, replyCommentRequest.CommentReply)
 	if response.Comment.Id == -1 {
 		return nil, webcommon.ResponseCodeServerError, "Not Found Comment"
 	} else {

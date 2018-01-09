@@ -93,6 +93,7 @@ type Comment struct {
 	ViewCount         int
 	ReplyCount        int
 	Flags             int64
+	IsUp              bool
 }
 
 type BBCreateCommentRequest struct {
