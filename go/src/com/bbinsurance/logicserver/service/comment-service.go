@@ -18,7 +18,7 @@ func GetListComment(uin int64, startIndex int, length int) []protocol.Comment {
 }
 
 func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
-	var dbUp bool = database.CheckCommentUp(commentUp.Uin, commentUp.CommentId)
+	dbUp := database.CheckCommentUp(commentUp.Uin, commentUp.CommentId)
 	log.Info("database.CheckCommentUp dbUp: %t", dbUp)
 	if dbUp == isUp {
 		comment := database.GetCommentById(commentUp.CommentId)
