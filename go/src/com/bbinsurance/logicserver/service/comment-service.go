@@ -14,3 +14,27 @@ func GetListComment(startIndex int, length int) []protocol.Comment {
 	}
 	return commentList
 }
+
+func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
+	database.UpdateCommentUpCount(commentUp.CommentId, isUp)
+	if isUp {
+		database.InsertCommentUp(commentUp)
+	} else {
+		database.DeleteCommentUp(commentUp.Uin, commentUp.CommentId)
+	}
+	comment := database.GetCommentById(commentUp.CommentId)
+	return comment
+}
+
+func ReplyComment(commentReply protocol.CommentReply) protocol.Comment {
+	database.UpdateCommentReplyCount(commentReply.CommentId)
+	database.InsertCommentReply(commentReply)
+	comment := database.GetCommentById(commentReply.CommentId)
+	return comment
+}
+
+func ViewComment(id int64) protocol.Comment {
+	database.UpdateCommentViewCount(id)
+	comment := database.GetCommentById(id)
+	return comment
+}

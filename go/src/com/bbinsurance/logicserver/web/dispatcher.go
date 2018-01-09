@@ -21,6 +21,7 @@ func FunInitDataBin() {
 	handlerObjMap[webcommon.FuncListInsuranceType] = FunGetListInsuranceType
 	handlerObjMap[webcommon.FuncGetHomeData] = FunGetHomeData
 	handlerObjMap[webcommon.FuncUpComment] = FunUpComment
+	handlerObjMap[webcommon.FuncReplyComment] = FunReplyComment
 	handlerObjMap[webcommon.FuncGetCompanyById] = FunGetCompanyById
 	handlerObjMap[webcommon.FuncGetInsuranceTypeById] = FunGetInsuranceTypeById
 }

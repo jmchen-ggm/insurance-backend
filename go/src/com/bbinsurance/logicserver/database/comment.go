@@ -48,9 +48,15 @@ func UpdateCommentViewCount(id int64) {
 	}
 }
 
-func UpdateCommentUpCount(id int64) {
+func UpdateCommentUpCount(id int64, isUp bool) {
 	log.Info("UpdateCommentUpCount: id=%d", id)
-	sql := fmt.Sprintf("UPDATE %s SET UpCount=UpCount+1 WHERE id=?;", CommentTableName)
+	var sql string
+	if isUp {
+		sql = fmt.Sprintf("UPDATE %s SET UpCount=UpCount+1 WHERE Id=?;", CommentTableName)
+	} else {
+		sql = fmt.Sprintf("UPDATE %s SET UpCount=UpCount-1 WHERE Id=?;", CommentTableName)
+	}
+
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -61,6 +67,23 @@ func UpdateCommentUpCount(id int64) {
 			log.Error("Prepare Exec Error %s", err)
 		} else {
 			log.Info("UpdateCommentUpCount Success")
+		}
+	}
+}
+
+func UpdateCommentReplyCount(id int64) {
+	log.Info("UpdateCommentReplyCount: id=%d", id)
+	sql := fmt.Sprintf("UPDATE %s SET ReplyCount=ReplyCount+1 WHERE Id = ?", CommentTableName)
+	stmt, err := GetDB().Prepare(sql)
+	defer stmt.Close()
+	if err != nil {
+		log.Error("Prepare SQL Error %s", err)
+	} else {
+		_, err = stmt.Exec(id)
+		if err != nil {
+			log.Error("Prepare Exec Error %s", err)
+		} else {
+			log.Info("UpdateCommentReplyCount Success")
 		}
 	}
 }
@@ -145,7 +168,7 @@ func DeleteCommentById(id int64) {
 			log.Error("Prepare Exec Error %s", err)
 			return
 		} else {
-			log.Info("RemoveCommentById %d Success", id)
+			log.Info("DeleteCommentById %d Success", id)
 		}
 	}
 }

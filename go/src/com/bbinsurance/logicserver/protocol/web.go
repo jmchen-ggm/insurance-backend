@@ -121,10 +121,18 @@ type BBViewCommentResponse struct {
 }
 
 type BBUpCommentRequest struct {
-	Id int64
+	CommentUp CommentUp
 }
 
 type BBUpCommentResponse struct {
+	Comment Comment
+}
+
+type BBReplyCommentRequest struct {
+	CommentReply CommentReply
+}
+
+type BBReplyCommentResponse struct {
 	Comment Comment
 }
 
@@ -172,4 +180,20 @@ type BBGetInsuranceTypeRequest struct {
 
 type BBGetInsuranceTypeResponse struct {
 	InsuranceType InsuranceType
+}
+
+type CommentUp struct {
+	Id        int64
+	Uin       int64
+	CommentId int64
+	Timestamp int64
+}
+
+type CommentReply struct {
+	Id        int64
+	Uin       int64
+	ReplyUin  int64
+	CommentId int64
+	Content   string
+	Timestamp int64
 }

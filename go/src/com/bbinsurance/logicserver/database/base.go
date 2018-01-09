@@ -13,12 +13,16 @@ const CompanyTableVersionKey = "ComponyTableVersionKey"
 const InsuranceTableVersionKey = "InsuranceTableVersionKey"
 const InsuranceTypeTableVersionKey = "InsuranceTypeTableVersionKey"
 const CommentTableVersionKey = "CommentTableVersionKey"
+const CommentUpTableVersionKey = "CommentUpTableVersionKey"
+const CommentReplyTableVersionKey = "CommentReplyTableVersionKey"
 
 const CurrentArticleTableVersion = "0"
 const CurrentCompanyTableVersion = "0"
 const CurrentInsuranceTableVersion = "1"
 const CurrentInsuranceTypeTableVersion = "1"
 const CurrentCommentTableVersion = "2"
+const CurrentCommentUpTableVersion = "0"
+const CurrentCommentReplyTableVersion = "0"
 
 var db *sql.DB
 
@@ -45,6 +49,8 @@ func InitDB() {
 	CheckTable(InsuranceTableName, InsuranceTableVersionKey, CurrentInsuranceTableVersion)
 	CheckTable(InsuranceTypeTableName, InsuranceTypeTableVersionKey, CurrentInsuranceTypeTableVersion)
 	CheckTable(CommentTableName, CommentTableVersionKey, CurrentCommentTableVersion)
+	CheckTable(CommentUpTableName, CommentUpTableVersionKey, CurrentCommentUpTableVersion)
+	CheckTable(CommentReplyTableName, CommentReplyTableVersionKey, CurrentCommentReplyTableVersion)
 
 	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Desc TEXT NOT NULL, Date TEXT NOT NULL, Timestamp INTEGER, Url TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
 	_, err = db.Exec(createArticleSql, nil)
@@ -75,6 +81,8 @@ func InitDB() {
 	} else {
 		log.Info("Create InsuranceType Table Success sql = %s", createInsuranceTypeSql)
 	}
+
+	// 评论
 	var createCommentSql = "CREATE TABLE IF NOT EXISTS Comment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, Content TEXT NOT NULL, CompanyId INTEGER, InsuranceTypeId INTEGER, TotalScore INTEGER, Score1 INTEGER, Score2 INTEGER, Score3 INTEGER, Score4 INTEGER, Timestamp INTEGER, UpCount INTEGER, ViewCount INTEGER, ReplyCount INTEGER, Flags INTEGER);"
 	_, err = db.Exec(createCommentSql, nil)
 	if err != nil {
@@ -86,13 +94,26 @@ func InitDB() {
 	var createCommentTimestampIndex = "CREATE INDEX IF NOT EXISTS Comment_Timestamp ON Comment(Timestamp)"
 	db.Exec(createCommentTimestampIndex, nil)
 
-	var createSubCommentSql = "CREATE TABLE IF NOT EXISTS SubComment(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, ReplyUin INTEGER, CommentId INTEGER, Content TEXT NOT NULL, TimeStamp INTEGER);"
-	_, err = db.Exec(createSubCommentSql, nil)
+	var createCommentUpSql = "CREATE TABLE IF NOT EXISTS CommentUp(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, CommentId INTEGER, Timestamp INTEGER);"
+	_, err = db.Exec(createCommentUpSql, nil)
 	if err != nil {
-		log.Error("Create SubComment Error: sql = %s, err = %s", createSubCommentSql, err)
+		log.Error("Create CommentUp Table Error: sql = %s, err = %s", createCommentUpSql, err)
 	} else {
-		log.Info("Create SubComment Table Success sql = %s", createSubCommentSql)
+		log.Info("Create CommentUp Table Success sql = %s", createCommentUpSql)
 	}
+
+	var createCommentUpUinCommentIdIndex = "CREATE INDEX IF NOT EXISTS CommentUp_Uin_CommentId ON CommentUp(Uin, CommentId)"
+	db.Exec(createCommentUpUinCommentIdIndex, nil)
+
+	var createCommentReplySql = "CREATE TABLE IF NOT EXISTS CommentReply(Id INTEGER PRIMARY KEY AUTOINCREMENT, Uin INTEGER, ReplyUin INTEGER, CommentId INTEGER, Content TEXT NOT NULL, TimeStamp INTEGER);"
+	_, err = db.Exec(createCommentReplySql, nil)
+	if err != nil {
+		log.Error("Create CommentReply Error: sql = %s, err = %s", createCommentReplySql, err)
+	} else {
+		log.Info("Create CommentReply Table Success sql = %s", createCommentReplySql)
+	}
+	var createCommentReplyUinCommentIdIndex = "CREATE INDEX IF NOT EXISTS CommentReply_Uin_CommentId ON CommentReply(Uin, CommentId)"
+	db.Exec(createCommentReplyUinCommentIdIndex, nil)
 }
 
 func GetDB() *sql.DB {

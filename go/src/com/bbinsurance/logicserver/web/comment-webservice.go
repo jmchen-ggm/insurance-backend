@@ -45,17 +45,37 @@ func FunViewComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	json.Unmarshal(bbReq.Body, &viewCommentRequest)
 	database.UpdateCommentViewCount(viewCommentRequest.Id)
 	var response protocol.BBViewCommentResponse
-	response.Comment, _ = database.GetCommentById(viewCommentRequest.Id)
-	responseBytes, _ := json.Marshal(response)
-	return responseBytes, webcommon.ResponseCodeSuccess, ""
+	response.Comment = database.GetCommentById(viewCommentRequest.Id)
+	if response.Comment.Id == -1 {
+		return nil, webcommon.ResponseCodeServerError, "Not Found Comment"
+	} else {
+		responseBytes, _ := json.Marshal(response)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	}
 }
 
 func FunUpComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var upCommentRequest protocol.BBUpCommentRequest
 	json.Unmarshal(bbReq.Body, &upCommentRequest)
-	database.UpdateCommentUpCount(upCommentRequest.Id)
-	var response protocol.BBViewCommentResponse
-	response.Comment, _ = database.GetCommentById(upCommentRequest.Id)
-	responseBytes, _ := json.Marshal(response)
-	return responseBytes, webcommon.ResponseCodeSuccess, ""
+	var response protocol.BBUpCommentResponse
+	response.Comment = service.UpComment(upCommentRequest.CommentUp)
+	if response.Comment.Id == -1 {
+		return nil, webcommon.ResponseCodeServerError, "Not Found Comment"
+	} else {
+		responseBytes, _ := json.Marshal(response)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	}
+}
+
+func FunReplyComment(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var replyCommentRequest protocol.BBUpCommentRequest
+	json.Unmarshal(bbReq.Body, &replyCommentRequest)
+	var response protocol.BBReplyCommentResponse
+	response.Comment = service.UpComment(replyCommentRequest.CommentReply)
+	if response.Comment.Id == -1 {
+		return nil, webcommon.ResponseCodeServerError, "Not Found Comment"
+	} else {
+		responseBytes, _ := json.Marshal(response)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	}
 }
