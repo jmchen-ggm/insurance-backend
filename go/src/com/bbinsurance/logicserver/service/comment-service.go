@@ -1,6 +1,7 @@
 package service
 
 import (
+	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
 )
@@ -17,14 +18,28 @@ func GetListComment(uin int64, startIndex int, length int) []protocol.Comment {
 }
 
 func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
-	database.UpdateCommentUpCount(commentUp.CommentId, isUp)
-	if isUp {
-		database.InsertCommentUp(commentUp)
+	dbUp := database.CheckCommentUp(commentUp.Uin, comment.Id)
+	log.Info("database.CheckCommentUp dbUp: %b", dbUp)
+	if dbUp == isUp {
+		comment := database.GetCommentById(commentUp.CommentId)
+		comment.IsUp = IsUp
 	} else {
-		database.DeleteCommentUp(commentUp.Uin, commentUp.CommentId)
+		var canUpdateCount = false
+		if isUp {
+			if database.InsertCommentUp(commentUp).Id >= 0 {
+				canUpdateCount = true
+			}
+		} else {
+			canUpdateCount = database.DeleteCommentUp(commentUp.Uin, commentUp.CommentId)
+		}
+		comment := database.GetCommentById(commentUp.CommentId)
+		if canUpdateCount {
+			database.UpdateCommentUpCount(commentUp.CommentId)
+			comment.IsUp = isUp
+		} else {
+			comment.IsUp = dbUp
+		}
 	}
-	comment := database.GetCommentById(commentUp.CommentId)
-	comment.IsUp = isUp
 	return comment
 }
 
