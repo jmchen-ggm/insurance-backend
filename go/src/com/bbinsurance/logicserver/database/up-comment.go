@@ -56,7 +56,7 @@ func DeleteCommentUp(uin int64, commentId int64) bool {
 			log.Error("Prepare Exec Error %s", err)
 			return false
 		} else {
-			rowCnt, err := result.RowsAffected()
+			rowCnt, _ := result.RowsAffected()
 			if rowCnt > 0 {
 				log.Info("DeleteCommentUp uin:%d commentId:%d Success", uin, commentId)
 				return true
