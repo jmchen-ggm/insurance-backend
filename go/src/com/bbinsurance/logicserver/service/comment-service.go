@@ -34,7 +34,11 @@ func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 			canUpdateCount = database.DeleteCommentUp(commentUp.Uin, commentUp.CommentId)
 		}
 		if canUpdateCount {
-			comment.UpCount++
+			if isUp {
+				comment.UpCount++
+			} else {
+				comment.UpCount--
+			}
 			database.UpdateCommentUpCount(commentUp.CommentId, comment.UpCount)
 			comment.IsUp = isUp
 		} else {
