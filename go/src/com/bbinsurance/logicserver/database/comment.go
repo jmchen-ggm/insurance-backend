@@ -48,14 +48,8 @@ func UpdateCommentViewCount(id int64) {
 	}
 }
 
-func UpdateCommentUpCount(id int64, isUp bool) {
-	var sql string
-	// 这里有点奇葩，不知道是不是golang的bug，计算这个SQL的时候，计算反了
-	if isUp {
-		sql = fmt.Sprintf("UPDATE %s SET UpCount=UpCount-1 WHERE Id=?;", CommentTableName)
-	} else {
-		sql = fmt.Sprintf("UPDATE %s SET UpCount=UpCount+1 WHERE Id=?;", CommentTableName)
-	}
+func UpdateCommentUpCount(id int64, upCount int) {
+	sql := fmt.Sprintf("UPDATE %s SET UpCount=%d WHERE Id=?;", CommentTableName, upCount)
 	log.Info("UpdateCommentUpCount: id=%d sql=%s", id, sql)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()

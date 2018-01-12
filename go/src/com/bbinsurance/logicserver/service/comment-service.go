@@ -19,9 +19,9 @@ func GetListComment(uin int64, startIndex int, length int) []protocol.Comment {
 
 func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 	dbUp := database.CheckCommentUp(commentUp.Uin, commentUp.CommentId)
+	comment := database.GetCommentById(commentUp.CommentId)
 	log.Info("database.CheckCommentUp dbUp: %t", dbUp)
 	if dbUp == isUp {
-		comment := database.GetCommentById(commentUp.CommentId)
 		comment.IsUp = isUp
 		return comment
 	} else {
@@ -33,9 +33,9 @@ func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 		} else {
 			canUpdateCount = database.DeleteCommentUp(commentUp.Uin, commentUp.CommentId)
 		}
-		comment := database.GetCommentById(commentUp.CommentId)
 		if canUpdateCount {
-			database.UpdateCommentUpCount(commentUp.CommentId, isUp)
+			comment.UpCount++
+			database.UpdateCommentUpCount(commentUp.CommentId, comment.UpCount)
 			comment.IsUp = isUp
 		} else {
 			comment.IsUp = dbUp
