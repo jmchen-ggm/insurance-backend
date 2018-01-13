@@ -13,7 +13,7 @@ const CommentReplyTableName = "CommentReply"
 func InsertCommentReply(commentReply protocol.CommentReply) protocol.CommentReply {
 	commentReply.Id = -1
 	log.Info("InsertCommentReply %s", util.ObjToString(commentReply))
-	sql := fmt.Sprintf("INSERT INTO %s (Uin, ReplyUin CommentId, Content, Timestamp) VALUES (?, ?, ?, ?, ?);", CommentReplyTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Uin, ReplyUin, CommentId, Content, Timestamp) VALUES (?, ?, ?, ?, ?);", CommentReplyTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
