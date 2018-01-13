@@ -70,6 +70,7 @@ func FunReplyComment(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var replyCommentRequest protocol.BBReplyCommentRequest
 	json.Unmarshal(bbReq.Body, &replyCommentRequest)
 	var response protocol.BBReplyCommentResponse
+	replyCommentRequest.CommentReply.Timestamp = time.GetTimestampInMilli()
 	response.Comment = service.ReplyComment(bbReq.Header.Uin, replyCommentRequest.CommentReply)
 	if response.Comment.Id == -1 {
 		return nil, webcommon.ResponseCodeServerError, "Not Found Comment"
