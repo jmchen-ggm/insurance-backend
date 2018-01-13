@@ -52,8 +52,9 @@ func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 	}
 }
 
-func ReplyComment(commentReply protocol.CommentReply) protocol.Comment {
+func ReplyComment(uin int64, commentReply protocol.CommentReply) protocol.Comment {
 	comment := database.GetCommentById(commentReply.CommentId)
+	comment.IsUp = database.CheckCommentUp(uin, commentReply.CommentId)
 	commentReply = database.InsertCommentReply(commentReply)
 	if commentReply.Id >= 0 {
 		comment.ReplyCount++
@@ -62,8 +63,9 @@ func ReplyComment(commentReply protocol.CommentReply) protocol.Comment {
 	return comment
 }
 
-func ViewComment(id int64) protocol.Comment {
+func ViewComment(uin int64, id int64) protocol.Comment {
 	comment := database.GetCommentById(id)
+	comment.IsUp = database.CheckCommentUp(uin, id)
 	comment.ViewCount++
 	database.UpdateCommentViewCount(id, comment.ViewCount)
 	return comment
