@@ -18,7 +18,7 @@ func GetListComment(uin int64, startIndex int, length int) []protocol.Comment {
 }
 
 func GetListCommentReply(commentId int64) []protocol.CommentReply {
-	return database.GetReplyCommentListByCommentId(commentId)
+	return database.GetCommentReplyListByCommentId(commentId)
 }
 
 func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
@@ -35,7 +35,7 @@ func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 				canUpdateCount = true
 			}
 		} else {
-			canUpdateCount = database.DeleteCommentUp(commentUp.Uin, commentUp.CommentId)
+			canUpdateCount = database.DeleteCommentUpById(commentUp.Uin, commentUp.CommentId)
 		}
 		if canUpdateCount {
 			if isUp {

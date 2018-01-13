@@ -43,7 +43,7 @@ func CheckCommentUp(uin int64, commentId int64) bool {
 	}
 }
 
-func DeleteCommentUp(uin int64, commentId int64) bool {
+func DeleteCommentUpById(uin int64, commentId int64) bool {
 	sql := fmt.Sprintf("DELETE FROM %s WHERE Uin = ? AND CommentId = ?", CommentUpTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
@@ -58,7 +58,7 @@ func DeleteCommentUp(uin int64, commentId int64) bool {
 		} else {
 			rowCnt, _ := result.RowsAffected()
 			if rowCnt > 0 {
-				log.Info("DeleteCommentUp uin:%d commentId:%d Success", uin, commentId)
+				log.Info("DeleteCommentUpById uin:%d commentId:%d Success", uin, commentId)
 				return true
 			} else {
 				return false

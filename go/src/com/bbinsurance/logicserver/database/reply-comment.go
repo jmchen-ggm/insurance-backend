@@ -20,6 +20,7 @@ func InsertCommentReply(commentReply protocol.CommentReply) protocol.CommentRepl
 		log.Error("Prepare SQL Error %s", err)
 		return commentReply
 	} else {
+		commentReply.Timestamp = 
 		result, err := stmt.Exec(commentReply.Uin, commentReply.ReplyUin, commentReply.CommentId, commentReply.Content, commentReply.Timestamp)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
@@ -31,7 +32,7 @@ func InsertCommentReply(commentReply protocol.CommentReply) protocol.CommentRepl
 	return commentReply
 }
 
-func GetReplyCommentListByCommentId(commentId int64) []protocol.CommentReply {
+func GetCommentReplyListByCommentId(commentId int64) []protocol.CommentReply {
 	sql := fmt.Sprintf("SELECT * FROM %s WHERE CommentId = ? ORDER BY Timestamp DESC", CommentReplyTableName)
 	rows, err := GetDB().Query(sql, commentId)
 	defer rows.Close()
