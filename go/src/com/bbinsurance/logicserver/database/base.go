@@ -112,8 +112,8 @@ func InitDB() {
 	} else {
 		log.Info("Create CommentReply Table Success sql = %s", createCommentReplySql)
 	}
-	var createCommentReplyUinCommentIdIndex = "CREATE INDEX IF NOT EXISTS CommentReply_Uin_CommentId ON CommentReply(Uin, CommentId)"
-	db.Exec(createCommentReplyUinCommentIdIndex, nil)
+	var createCommentReplyCommentIdIndex = "CREATE INDEX IF NOT EXISTS CommentReply_CommentId ON CommentReply(CommentId)"
+	db.Exec(createCommentReplyCommentIdIndex, nil)
 }
 
 func GetDB() *sql.DB {

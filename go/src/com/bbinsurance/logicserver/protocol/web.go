@@ -199,3 +199,11 @@ type CommentReply struct {
 	Content   string
 	Timestamp int64
 }
+
+type BBGetCommentReplyListRequest struct {
+	CommentId int64
+}
+
+type BBGetCommentReplyListResponse struct {
+	CommentReplyList []CommentReply
+}

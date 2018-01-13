@@ -13,7 +13,7 @@ const CommentReplyTableName = "CommentReply"
 func InsertCommentReply(commentReply protocol.CommentReply) protocol.CommentReply {
 	commentReply.Id = -1
 	log.Info("InsertCommentReply %s", util.ObjToString(commentReply))
-	sql := fmt.Sprintf("INSERT INTO %s (Uin, ReplyUin CommentId, Content, Timestamp) VALUES (?, ?, ?, ?, ?);", CommentTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Uin, ReplyUin CommentId, Content, Timestamp) VALUES (?, ?, ?, ?, ?);", CommentReplyTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -29,4 +29,22 @@ func InsertCommentReply(commentReply protocol.CommentReply) protocol.CommentRepl
 		}
 	}
 	return commentReply
+}
+
+func GetReplyCommentListByCommentId(commentId int64) []protocol.CommentReply {
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE CommentId = ?", CommentReplyTableName)
+	rows, err := GetDB().Query(sql, commentId)
+	defer rows.Close()
+	var commentReplyList []protocol.CommentReply
+	if err != nil {
+		log.Error("GetReplyCommentListByCommentId err %s", err)
+	} else {
+		for rows.Next() {
+			var commentReply protocol.CommentReply
+			rows.Scan(&commentReply.Id, &commentReply.Uin, &commentReply.ReplyUin,
+				&commentReply.CommentId, &commentReply.Content, &commentReply.Timestamp)
+			commentReplyList = append(commentReplyList, commentReply)
+		}
+	}
+	return commentReplyList
 }

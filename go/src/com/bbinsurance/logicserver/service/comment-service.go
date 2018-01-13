@@ -17,6 +17,10 @@ func GetListComment(uin int64, startIndex int, length int) []protocol.Comment {
 	return commentList
 }
 
+func GetListCommentReply(commentId int64) []protocol.CommentReply {
+	return database.GetReplyCommentListByCommentId(commentId)
+}
+
 func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 	dbUp := database.CheckCommentUp(commentUp.Uin, commentUp.CommentId)
 	comment := database.GetCommentById(commentUp.CommentId)
@@ -48,17 +52,19 @@ func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 	}
 }
 
-func ReplyComment(uin int64, commentReply protocol.CommentReply) protocol.Comment {
-	database.UpdateCommentReplyCount(commentReply.CommentId)
-	database.InsertCommentReply(commentReply)
+func ReplyComment(commentReply protocol.CommentReply) protocol.Comment {
 	comment := database.GetCommentById(commentReply.CommentId)
-	comment.IsUp = database.CheckCommentUp(uin, comment.Id)
+	commentReply = database.InsertCommentReply(commentReply)
+	if commentReply.Id >= 0 {
+		comment.ReplyCount++
+		database.UpdateCommentReplyCount(commentReply.CommentId, comment.ReplyCount)
+	}
 	return comment
 }
 
-func ViewComment(uin int64, id int64) protocol.Comment {
-	database.UpdateCommentViewCount(id)
+func ViewComment(id int64) protocol.Comment {
 	comment := database.GetCommentById(id)
-	comment.IsUp = database.CheckCommentUp(uin, id)
+	comment.ViewCount++
+	database.UpdateCommentViewCount(id, comment.ViewCount)
 	return comment
 }

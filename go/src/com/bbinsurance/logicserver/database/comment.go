@@ -31,9 +31,9 @@ func InsertComment(comment protocol.Comment) (protocol.Comment, error) {
 	return comment, err
 }
 
-func UpdateCommentViewCount(id int64) {
-	log.Info("UpdateCommentViewCount: id=%d", id)
-	sql := fmt.Sprintf("UPDATE %s SET ViewCount=ViewCount+1 WHERE id=?;", CommentTableName)
+func UpdateCommentViewCount(id int64, viewCount int) {
+	sql := fmt.Sprintf("UPDATE %s SET ViewCount=%d WHERE id=?;", CommentTableName, viewCount)
+	log.Info("UpdateCommentViewCount: id=%d sql=%s", id, sql)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -65,9 +65,9 @@ func UpdateCommentUpCount(id int64, upCount int) {
 	}
 }
 
-func UpdateCommentReplyCount(id int64) {
-	log.Info("UpdateCommentReplyCount: id=%d", id)
-	sql := fmt.Sprintf("UPDATE %s SET ReplyCount=ReplyCount+1 WHERE Id = ?", CommentTableName)
+func UpdateCommentReplyCount(id int64, replyCount int) {
+	sql := fmt.Sprintf("UPDATE %s SET ReplyCount=%d WHERE Id = ?", CommentTableName, replyCount)
+	log.Info("UpdateCommentReplyCount: id=%d sql=%s", id, sql)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {

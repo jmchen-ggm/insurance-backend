@@ -24,6 +24,7 @@ func FunInitDataBin() {
 	handlerObjMap[webcommon.FuncReplyComment] = FunReplyComment
 	handlerObjMap[webcommon.FuncGetCompanyById] = FunGetCompanyById
 	handlerObjMap[webcommon.FuncGetInsuranceTypeById] = FunGetInsuranceTypeById
+	handlerObjMap[webcommon.FuncGetListCommentReply] = FunGetListCommentReply
 }
 
 func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
