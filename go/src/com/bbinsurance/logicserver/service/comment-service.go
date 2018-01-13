@@ -23,7 +23,7 @@ func GetListCommentReply(commentId int64) []protocol.CommentReply {
 
 func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 	dbUp := database.CheckCommentUp(commentUp.Uin, commentUp.CommentId)
-	comment := database.GetCommentById(commentUp.CommentId)
+	comment := GetCommentById(commentUp.Uin, commentUp.CommentId)
 	log.Info("database.CheckCommentUp dbUp: %t", dbUp)
 	if dbUp == isUp {
 		comment.IsUp = isUp
@@ -53,7 +53,7 @@ func UpComment(commentUp protocol.CommentUp, isUp bool) protocol.Comment {
 }
 
 func ReplyComment(uin int64, commentReply protocol.CommentReply) protocol.Comment {
-	comment := database.GetCommentById(commentReply.CommentId)
+	comment := GetCommentById(uin, commentReply.CommentId)
 	comment.IsUp = database.CheckCommentUp(uin, commentReply.CommentId)
 	commentReply = database.InsertCommentReply(commentReply)
 	if commentReply.Id >= 0 {
@@ -64,9 +64,17 @@ func ReplyComment(uin int64, commentReply protocol.CommentReply) protocol.Commen
 }
 
 func ViewComment(uin int64, id int64) protocol.Comment {
-	comment := database.GetCommentById(id)
+	comment := GetCommentById(uin, id)
 	comment.IsUp = database.CheckCommentUp(uin, id)
 	comment.ViewCount++
 	database.UpdateCommentViewCount(id, comment.ViewCount)
+	return comment
+}
+
+func GetCommentById(uin int64, id int64) protocol.Comment {
+	comment := database.GetCommentById(id)
+	comment.CompanyName = GetCompanyById(comment.CompanyId).Name
+	comment.InsuranceTypeName = GetInsuranceTypeById(comment.InsuranceTypeId).Name
+	comment.IsUp = database.CheckCommentUp(uin, comment.Id)
 	return comment
 }
