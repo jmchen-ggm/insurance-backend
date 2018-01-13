@@ -32,7 +32,7 @@ func InsertCommentReply(commentReply protocol.CommentReply) protocol.CommentRepl
 }
 
 func GetReplyCommentListByCommentId(commentId int64) []protocol.CommentReply {
-	sql := fmt.Sprintf("SELECT * FROM %s WHERE CommentId = ?", CommentReplyTableName)
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE CommentId = ? ORDER BY Timestamp DESC", CommentReplyTableName)
 	rows, err := GetDB().Query(sql, commentId)
 	defer rows.Close()
 	var commentReplyList []protocol.CommentReply
