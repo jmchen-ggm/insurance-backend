@@ -43,7 +43,7 @@ func HandleSuccessResponse(writer http.ResponseWriter, request BBReq, body []byt
 	writer.Header().Set("Access-Control-Allow-Methods", "HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS")
 	writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Authorization, Accept, X-Requested-With, Token")
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
-	writer.Header().Set("Access-Control-Max-Age", 86400)
+	writer.Header().Set("Access-Control-Max-Age", "86400")
 	fmt.Fprintf(writer, string(responseJsonStr))
 }
 
@@ -60,6 +60,6 @@ func HandleErrorResponse(writer http.ResponseWriter, request BBReq, errorCode in
 	writer.Header().Set("Access-Control-Allow-Methods", "HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS")
 	writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Authorization, Accept, X-Requested-With, Token")
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
-	writer.Header().Set("Access-Control-Max-Age", 86400)
+	writer.Header().Set("Access-Control-Max-Age", "86400")
 	fmt.Fprintf(writer, string(responseJsonStr))
 }
