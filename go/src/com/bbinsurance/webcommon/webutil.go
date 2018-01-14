@@ -2,6 +2,7 @@ package webcommon
 
 import (
 	"com/bbinsurance/log"
+	"com/bbinsurance/util"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
@@ -17,6 +18,7 @@ func HandleRequest(request *http.Request) (BBReq, int, string) {
 		if err == nil {
 			err = json.Unmarshal(body, &bbReq)
 			if err != nil {
+				log.Error("receive body %s", util.BytesToString(body))
 				return bbReq, ResponseCodeRequestInvalid, "Decode Request Json Err"
 			}
 		} else {

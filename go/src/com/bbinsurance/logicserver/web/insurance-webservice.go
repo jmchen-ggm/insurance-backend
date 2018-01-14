@@ -146,6 +146,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Insurance Type")
 			return
 		}
+
 		company := service.GetCompanyById(insurance.CompanyId)
 		if company.Id == -1 {
 			log.Error("Not Found Compnany Name %d", insurance.CompanyId)
