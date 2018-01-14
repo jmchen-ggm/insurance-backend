@@ -11,14 +11,14 @@ import (
 const CompanyTableName = "Company"
 
 func InsertCompany(company protocol.Company) (protocol.Company, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, ThumbUrl) VALUES (?, ?, ?);", CompanyTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?);", CompanyTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
 		company.Id = -1
 	} else {
-		result, err := stmt.Exec(company.Name, company.Desc, company.ThumbUrl)
+		result, err := stmt.Exec(company.Name, company.Desc, company.ThumbUrl, company.Flags, company.DetailData)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			company.Id = -1
@@ -80,7 +80,7 @@ func GetListCompany(startIndex int, length int) []protocol.Company {
 	} else {
 		for rows.Next() {
 			var company protocol.Company
-			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
+			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl, &company.Flags, &company.DetailData)
 			companyList = append(companyList, company)
 		}
 		log.Info("GetListCompany %d ", len(companyList))
@@ -100,7 +100,7 @@ func GetCompanyById(id int64) protocol.Company {
 		return company
 	} else {
 		if rows.Next() {
-			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
+			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl, &company.Flags, &company.DetailData)
 			log.Info("GetCompanyById %s", util.ObjToString(company))
 			return company
 		} else {
@@ -109,24 +109,6 @@ func GetCompanyById(id int64) protocol.Company {
 		}
 
 	}
-}
-
-func SelectCompanyByName(Name string) protocol.Company {
-	var sql string
-	var company protocol.Company
-	sql = fmt.Sprintf("SELECT * FROM %s where Name=?limit 1", CompanyTableName)
-	log.Info("Get Company By Name sql=%s", sql)
-	rows, err := GetDB().Query(sql, Name)
-	defer rows.Close()
-	if err != nil {
-		log.Error("GetCompany err %s", err)
-	} else {
-		for rows.Next() {
-			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl)
-		}
-		log.Info("GetCompany %s ", company.Name)
-	}
-	return company
 }
 
 func DeleteCompanyById(id int64) {

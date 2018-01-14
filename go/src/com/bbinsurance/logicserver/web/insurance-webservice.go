@@ -140,16 +140,16 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		insurance.DetailData = request.FormValue("detailData")
 		insurance.ThumbUrl = fmt.Sprintf("img/insurances/%s.png", uuid.NewV4().String())
 
-		insurance.InsuranceTypeName = database.GetInsuranceTypeNameById(insurance.InsuranceTypeId)
-		if util.IsEmpty(insurance.InsuranceTypeName) {
+		insuraceType := service.GetInsuranceTypeById(insurance.InsuranceTypeId)
+		if insuraceType.Id == -1 {
 			log.Error("Not Found Insurance Type Name %d", insurance.InsuranceTypeId)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Insurance Type Name")
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Insurance Type")
 			return
 		}
-		insurance.InsuranceTypeName = database.GetInsuranceTypeNameById(insurance.InsuranceTypeId)
-		if util.IsEmpty(insurance.InsuranceTypeName) {
-			log.Error("Not Found InsuranceType Name %d", insurance.InsuranceTypeId)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Insurance Type Name")
+		company := service.GetCompanyById(insurance.CompanyId)
+		if company.Id == -1 {
+			log.Error("Not Found Compnany Name %d", insurance.CompanyId)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Not Found Company Name")
 			return
 		}
 

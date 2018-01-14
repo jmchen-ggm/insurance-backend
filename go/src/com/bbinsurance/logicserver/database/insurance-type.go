@@ -10,14 +10,14 @@ import (
 const InsuranceTypeTableName = "InsuranceType"
 
 func InsertInsuranceType(insuranceType protocol.InsuranceType) (protocol.InsuranceType, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, ThumbUrl) VALUES (?, ?, ?);", InsuranceTypeTableName)
+	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?);", InsuranceTypeTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
 		insuranceType.Id = -1
 	} else {
-		result, err := stmt.Exec(insuranceType.Name, insuranceType.Desc, insuranceType.ThumbUrl)
+		result, err := stmt.Exec(insuranceType.Name, insuranceType.Desc, insuranceType.ThumbUrl, insuranceType.Flags, insuranceType.DetailData)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
 			insuranceType.Id = -1
@@ -26,24 +26,6 @@ func InsertInsuranceType(insuranceType protocol.InsuranceType) (protocol.Insuran
 		}
 	}
 	return insuranceType, err
-}
-
-func GetInsuranceTypeNameById(id int64) string {
-	sql := fmt.Sprintf("SELECT name FROM %s WHERE id = ?", InsuranceTypeTableName)
-	rows, err := GetDB().Query(sql, id)
-	defer rows.Close()
-	if err != nil {
-		log.Error("GetInsuranceTypeNameById error %s", err)
-		return ""
-	} else {
-		if rows.Next() {
-			var name string
-			rows.Scan(&name)
-			return name
-		} else {
-			return ""
-		}
-	}
 }
 
 func GetInsuranceTypeById(id int64) protocol.InsuranceType {
@@ -57,7 +39,7 @@ func GetInsuranceTypeById(id int64) protocol.InsuranceType {
 		return insuranceType
 	} else {
 		if rows.Next() {
-			rows.Scan(&insuranceType.Id, &insuranceType.Name, &insuranceType.Desc, &insuranceType.ThumbUrl)
+			rows.Scan(&insuranceType.Id, &insuranceType.Name, &insuranceType.Desc, &insuranceType.ThumbUrl, &insuranceType.Flags, &insuranceType.DetailData)
 			return insuranceType
 		} else {
 			insuranceType.Id = -1
@@ -82,7 +64,7 @@ func GetListInsuranceType(startIndex int, length int) []protocol.InsuranceType {
 	} else {
 		for rows.Next() {
 			var insuranceType protocol.InsuranceType
-			rows.Scan(&insuranceType.Id, &insuranceType.Name, &insuranceType.Desc, &insuranceType.ThumbUrl)
+			rows.Scan(&insuranceType.Id, &insuranceType.Name, &insuranceType.Desc, &insuranceType.ThumbUrl, &insuranceType.Flags, &insuranceType.DetailData)
 			insuranceTypeList = append(insuranceTypeList, insuranceType)
 		}
 		log.Info("GetListInsuranceType %d ", len(insuranceTypeList))

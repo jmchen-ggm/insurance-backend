@@ -17,9 +17,9 @@ const CommentUpTableVersionKey = "CommentUpTableVersionKey"
 const CommentReplyTableVersionKey = "CommentReplyTableVersionKey"
 
 const CurrentArticleTableVersion = "0"
-const CurrentCompanyTableVersion = "0"
+const CurrentCompanyTableVersion = "1"
 const CurrentInsuranceTableVersion = "1"
-const CurrentInsuranceTypeTableVersion = "1"
+const CurrentInsuranceTypeTableVersion = "2"
 const CurrentCommentTableVersion = "2"
 const CurrentCommentUpTableVersion = "0"
 const CurrentCommentReplyTableVersion = "0"
@@ -60,7 +60,7 @@ func InitDB() {
 		log.Info("Create Article Table Success sql = %s", createArticleSql)
 	}
 
-	var createCompanySql = "CREATE TABLE IF NOT EXISTS Company(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
+	var createCompanySql = "CREATE TABLE IF NOT EXISTS Company(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc TEXT NOT NULL, ThumbUrl TEXT NOT NULL, Flags INTEGER, DetailData TEXT);"
 	_, err = db.Exec(createCompanySql, nil)
 	if err != nil {
 		log.Error("Create Company Error: sql = %s, err = %s", createCompanySql, err)
@@ -74,7 +74,7 @@ func InitDB() {
 	} else {
 		log.Info("Create Insurance Table Success sql = %s", createInsuranceSql)
 	}
-	var createInsuranceTypeSql = "CREATE TABLE IF NOT EXISTS InsuranceType(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc Text, ThumbUrl Text);"
+	var createInsuranceTypeSql = "CREATE TABLE IF NOT EXISTS InsuranceType(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc Text, ThumbUrl Text, Flags INTEGER, DetailData TEXT);"
 	_, err = db.Exec(createInsuranceTypeSql, nil)
 	if err != nil {
 		log.Error("Create InsuranceType Error: sql = %s, err = %s", createInsuranceTypeSql, err)
