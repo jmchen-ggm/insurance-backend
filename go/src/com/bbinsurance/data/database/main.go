@@ -17,6 +17,7 @@ func main() {
 	fmt.Printf("%s %s\n", constants.STATIC_FOLDER, constants.LOGIC_DB_PATH)
 
 	HandleInsuranceType()
+	HandleAritcle()
 }
 
 func HandleAritcle() {
@@ -48,7 +49,7 @@ func InsertArticle(article protocol.Article) (protocol.Article, error) {
 	if err != nil {
 		return article, err
 	} else {
-		result, err := stmt.Exec(article.Title, article.Desc, article.Date, arxticle.Timestamp, article.Url, article.ThumbUrl, article.ViewCount)
+		result, err := stmt.Exec(article.Title, article.Desc, article.Date, article.Timestamp, article.Url, article.ThumbUrl, article.ViewCount)
 		if err != nil {
 			return article, err
 		} else {
