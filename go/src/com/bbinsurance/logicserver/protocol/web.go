@@ -10,7 +10,7 @@ type BBListArticleRequest struct {
 }
 
 type Article struct {
-	Id        int
+	Id        int64
 	Title     string
 	Desc      string
 	Date      string
