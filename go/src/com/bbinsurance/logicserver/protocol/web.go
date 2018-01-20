@@ -9,6 +9,14 @@ type BBListArticleRequest struct {
 	PageSize   int
 }
 
+type BBViewArticleRequest struct {
+	id int64
+}
+
+type BBViewArticleResponse struct {
+	Article Article
+}
+
 type Article struct {
 	Id        int64
 	Title     string

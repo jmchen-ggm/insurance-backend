@@ -53,6 +53,44 @@ func GetListArticle(startIndex int, length int) []protocol.Article {
 	return articleList
 }
 
+func GetArticleById(id int64) protocol.Article {
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE Id = ?", ArticleTableName)
+	log.Info("GetArticleById sql=%s", sql)
+	rows, err := GetDB().Query(sql, id)
+	defer rows.Close()
+	var article protocol.Article
+	if err != nil {
+		log.Error("GetListArticle err %s", err)
+		article.Id = -1
+		return article
+	} else {
+		if rows.Next() {
+			rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Date, &article.Timestamp, &article.Url, &article.ThumbUrl, &article.ViewCount)
+			return article
+		} else {
+			article.Id = -1
+			return article
+		}
+	}
+}
+
+func UpdateArticleViewCount(id int64, viewCount int) {
+	sql := fmt.Sprintf("UPDATE %s SET ViewCount=%d WHERE Id = ?;", viewCount)
+	log.Info("UpdateArticleViewCount sql=%s id=%d", sql, id)
+	stmt, err := GetDB().Prepare(sql)
+	defer stmt.Close()
+	if err != nil {
+		log.Error("Prepare SQL Error %s", err)
+	} else {
+		_, err = stmt.Exec(id)
+		if err != nil {
+			log.Error("Prepare Exec Error %s", err)
+		} else {
+			log.Info("UpdateArticleViewCount Success")
+		}
+	}
+}
+
 func DeleteArticleById(id int64) {
 	sql := fmt.Sprintf("DELETE FROM %s WHERE id=?", ArticleTableName)
 	stmt, err := GetDB().Prepare(sql)

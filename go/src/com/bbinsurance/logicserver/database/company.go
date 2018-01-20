@@ -3,7 +3,6 @@ package database
 import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
-	"com/bbinsurance/util"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -101,13 +100,11 @@ func GetCompanyById(id int64) protocol.Company {
 	} else {
 		if rows.Next() {
 			rows.Scan(&company.Id, &company.Name, &company.Desc, &company.ThumbUrl, &company.Flags, &company.DetailData)
-			log.Info("GetCompanyById %s", util.ObjToString(company))
 			return company
 		} else {
 			company.Id = -1
 			return company
 		}
-
 	}
 }
 

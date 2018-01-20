@@ -13,3 +13,12 @@ func GetListArticle(startIndex int, length int) []protocol.Article {
 	}
 	return articleList
 }
+
+func ViewArticle(id int64) protocol.Article {
+	article := database.GetArticleById(id)
+	if article.Id != -1 {
+		article.ViewCount++
+		database.UpdateArticleViewCount(id, article.ViewCount)
+	}
+	return article
+}

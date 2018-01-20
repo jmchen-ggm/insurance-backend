@@ -26,6 +26,20 @@ func FunGetListArticle(bbReq webcommon.BBReq) ([]byte, int, string) {
 	return responseBytes, webcommon.ResponseCodeSuccess, ""
 }
 
+func FunViewArticle(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var viewArticleRequest protocol.BBViewArticleRequest
+	json.Unmarshal(bbReq.Body, &viewArticleRequest)
+	article := service.ViewArticle(viewArticleRequest.Id)
+	if article.Id != -1 {
+		var response protocol.BBViewArticleResponse
+		response.Article = article
+		responseBytes, _ := json.Marshal(response)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	} else {
+		return nil, webcommon.ResponseCodeServerError, "Not Found Article"
+	}
+}
+
 func FunCreateArticle(writer http.ResponseWriter, request *http.Request) {
 	var bbReq webcommon.BBReq
 	bbReq.Bin.FunId = webcommon.FuncCreateArticle
