@@ -18,7 +18,7 @@ func InitDB() {
 		log.Info("open db success")
 	}
 
-	var createHttpRequestSql = "CREATE TABLE IF NOT EXISTS HttpFun(Id INTEGER PRIMARY KEY AUTOINCREMENT, FunId INTEGER, Timestamp INTEGER, ResponseSize INTEGER, UserTime INTEGER, Uin INTEGER);"
+	var createHttpRequestSql = "CREATE TABLE IF NOT EXISTS HttpFun(Id INTEGER PRIMARY KEY AUTOINCREMENT, FunId INTEGER, Timestamp INTEGER, ResponseSize INTEGER, UseTime INTEGER, Uin INTEGER);"
 	_, err = db.Exec(createHttpRequestSql, nil)
 	if err != nil {
 		log.Error("Create HttpRequest Error: sql = %s, err = %s", createHttpRequestSql, err)
