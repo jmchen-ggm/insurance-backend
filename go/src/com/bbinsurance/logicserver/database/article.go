@@ -75,7 +75,7 @@ func GetArticleById(id int64) protocol.Article {
 }
 
 func UpdateArticleViewCount(id int64, viewCount int) {
-	sql := fmt.Sprintf("UPDATE %s SET ViewCount=%d WHERE Id = ?;", viewCount)
+	sql := fmt.Sprintf("UPDATE %s SET ViewCount=%d WHERE Id = ?;", ArticleTableName, viewCount)
 	log.Info("UpdateArticleViewCount sql=%s id=%d", sql, id)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
