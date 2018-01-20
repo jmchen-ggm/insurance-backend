@@ -2,9 +2,9 @@ package webcommon
 
 type HttpFun struct {
 	Id           int64
-	FunId        int64
+	FunId        int
 	Timestamp    int64
-	ResponseSize int64
+	ResponseSize int
 	UseTime      int64
 	Uin          int64
 }

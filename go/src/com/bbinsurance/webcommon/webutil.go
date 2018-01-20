@@ -1,6 +1,7 @@
 package webcommon
 
 import (
+	"bytes"
 	"com/bbinsurance/log"
 	"com/bbinsurance/time"
 	"com/bbinsurance/util"
@@ -78,11 +79,39 @@ func inRequestMap(bbReq BBReq) {
 func outRequestMap(bbReq BBReq, responseSize int) {
 	key := fmt.Sprintf("%d$%s", bbReq.Bin.FunId, bbReq.Bin.SessionId)
 	requestTime := requestHandleMap[key]
+	responseTime := time.GetTimestampInMilli()
+	useTime := responseTime - requestTime
 	delete(requestHandleMap, key)
-	useTime := time.GetTimestampInMilli() - requestTime
+
 	log.Info("Total Use Time key:%s useTime:%d mapSize:%d responseSize:%d", key, useTime, len(requestHandleMap), responseSize)
+
+	if bbReq.Bin.FunId < FuncKv {
+		var httpFun HttpFun
+		httpFun.FunId = bbReq.Bin.FunId
+		httpFun.Timestamp = requestTime
+		httpFun.ResponseSize = responseSize
+		httpFun.UseTime = useTime
+		httpFun.Uin = bbReq.Header.Uin
+		kvHttpFun(httpFun)
+	}
 }
 
 func GenerateImgFileServerUrl(thumbUrl string) string {
 	return FileServer + thumbUrl
+}
+
+func kvHttpFun(httpFun HttpFun) {
+	var bbReq BBReq
+	bbReq.Bin.FunId = FuncKvHttpFun
+	bbReq.Bin.URI = UriKv
+	var httpFunRequest KvHttpFunRequest
+	httpFunRequest.HttpFun = httpFun
+	body, _ := json.Marshal(httpFunRequest)
+	if body != nil {
+		json.Unmarshal(body, &bbReq.Body)
+	}
+	requestData, _ := json.Marshal(bbReq)
+	requestBuffer := bytes.NewBuffer([]byte(requestData))
+	requestBodyType := "application/json;charset=utf-8"
+	http.Post("http://127.0.0.1:8080/data-bin", requestBodyType, requestBuffer)
 }
