@@ -22,7 +22,6 @@ func main() {
 
 func HandleAritcle() {
 	articleJsonStr, _ := util.FileGetContent(constants.STATIC_FOLDER + "/data/articles.json")
-	fmt.Printf("%s\n", articleJsonStr)
 	var listArticleResponse protocol.BBListArticleResponse
 	json.Unmarshal(util.StringToBytes(articleJsonStr), &listArticleResponse)
 	articleList := listArticleResponse.ArticleList
