@@ -4,6 +4,7 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
+	"com/bbinsurance/webcommon"
 )
 
 var insuranceTypeCacheMap map[int64]protocol.InsuranceType
@@ -33,4 +34,15 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 		insuranceList[i].InsuranceTypeName = GetInsuranceTypeById(insuranceList[i].InsuranceTypeId).Name
 	}
 	return insuranceList
+}
+
+func GetListInsuranceType(startIndex int, length int) []protocol.InsuranceType {
+	insuranceTypeList := database.GetListInsuranceType(startIndex, length)
+	insuranceListLength := len(insuranceTypeList)
+	for i := 0; i < insuranceListLength; i++ {
+		insuranceTypeList[i].CompanyName = GetCompanyById(insuranceTypeList[i].CompanyId).Name
+		insuranceTypeList[i].InsuranceTypeName = GetInsuranceTypeById(insuranceTypeList[i].InsuranceTypeId).Name
+		insuranceTypeList[i].ThumbUrl = webcommon.GenerateImgFileServerUrl(insuranceTypeList[i].ThumbUrl)
+	}
+	return insuranceTypeList
 }

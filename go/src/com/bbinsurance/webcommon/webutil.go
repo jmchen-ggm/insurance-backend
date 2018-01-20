@@ -63,3 +63,7 @@ func HandleErrorResponse(writer http.ResponseWriter, request BBReq, errorCode in
 	writer.Header().Set("Access-Control-Max-Age", "86400")
 	fmt.Fprintf(writer, string(responseJsonStr))
 }
+
+func GenerateImgFileServerUrl(thumbUrl string) string {
+	return FileServer + thumbUrl
+}

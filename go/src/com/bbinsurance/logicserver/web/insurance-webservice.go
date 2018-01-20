@@ -31,7 +31,7 @@ func FunGetListInsurance(bbReq webcommon.BBReq) ([]byte, int, string) {
 func FunGetListInsuranceType(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var listInsuranceTypeRequest protocol.BBListInsuranceTypeRequest
 	json.Unmarshal(bbReq.Body, &listInsuranceTypeRequest)
-	insuranceTypeList := database.GetListInsuranceType(listInsuranceTypeRequest.StartIndex, listInsuranceTypeRequest.PageSize)
+	insuranceTypeList := service.GetListInsuranceType(listInsuranceTypeRequest.StartIndex, listInsuranceTypeRequest.PageSize)
 	log.Info("req %d %d %d", listInsuranceTypeRequest.StartIndex, listInsuranceTypeRequest.PageSize, len(insuranceTypeList))
 	var response protocol.BBListInsuranceTypeResponse
 	response.InsuranceTypeList = insuranceTypeList
