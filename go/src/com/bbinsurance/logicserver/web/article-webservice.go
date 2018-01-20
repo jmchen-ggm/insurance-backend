@@ -71,7 +71,7 @@ func FunCreateArticle(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 		log.Info("CreateArticle: %s", util.ObjToString(article))
-		article, err := database.InsertArticle(article)
+		article, err = database.InsertArticle(article)
 		if err != nil {
 			util.DeleteFile(savePath)
 			log.Error("Insert data to db error %s", err)
