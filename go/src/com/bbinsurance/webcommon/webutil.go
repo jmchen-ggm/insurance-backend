@@ -113,5 +113,5 @@ func kvHttpFun(httpFun HttpFun) {
 	requestData, _ := json.Marshal(bbReq)
 	requestBuffer := bytes.NewBuffer([]byte(requestData))
 	requestBodyType := "application/json;charset=utf-8"
-	http.Post("http://127.0.0.1:8080/data-bin", requestBodyType, requestBuffer)
+	http.Post("http://127.0.0.1:8083/data-bin", requestBodyType, requestBuffer)
 }
