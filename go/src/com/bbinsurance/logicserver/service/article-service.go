@@ -16,6 +16,7 @@ func GetListArticle(startIndex int, length int) []protocol.Article {
 
 func ViewArticle(id int64) protocol.Article {
 	article := database.GetArticleById(id)
+	article.ThumbUrl = webcommon.GenerateImgFileServerUrl(article.ThumbUrl)
 	if article.Id != -1 {
 		article.ViewCount++
 		database.UpdateArticleViewCount(id, article.ViewCount)
