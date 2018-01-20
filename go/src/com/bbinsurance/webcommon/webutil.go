@@ -2,12 +2,15 @@ package webcommon
 
 import (
 	"com/bbinsurance/log"
+	"com/bbinsurance/time"
 	"com/bbinsurance/util"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 )
+
+var requestHandleMap = make(map[string]int64)
 
 func HandleRequest(request *http.Request) (BBReq, int, string) {
 	var bbReq BBReq
@@ -25,7 +28,8 @@ func HandleRequest(request *http.Request) (BBReq, int, string) {
 			return bbReq, ResponseCodeRequestInvalid, "Decode Request Json Err"
 		}
 	}
-	log.Info("HandleRequest %s", bbReq.Body)
+	log.Info("HandleRequest %s", util.ObjToString(bbReq))
+	inRequestMap(bbReq)
 	return bbReq, ResponseCodeSuccess, ""
 }
 
@@ -45,6 +49,7 @@ func HandleSuccessResponse(writer http.ResponseWriter, request BBReq, body []byt
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
 	writer.Header().Set("Access-Control-Max-Age", "86400")
 	fmt.Fprintf(writer, string(responseJsonStr))
+	outRequestMap(request)
 }
 
 func HandleErrorResponse(writer http.ResponseWriter, request BBReq, errorCode int, errMsg string) {
@@ -62,6 +67,20 @@ func HandleErrorResponse(writer http.ResponseWriter, request BBReq, errorCode in
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
 	writer.Header().Set("Access-Control-Max-Age", "86400")
 	fmt.Fprintf(writer, string(responseJsonStr))
+	outRequestMap(request)
+}
+
+func inRequestMap(bbReq BBReq) {
+	key := fmt.Sprintf("%d$%s", bbReq.Bin.FunId, bbReq.Bin.SessionId)
+	requestHandleMap[key] = time.GetTimestampInMilli()
+}
+
+func outRequestMap(bbReq BBReq) {
+	key := fmt.Sprintf("%d$%s", bbReq.Bin.FunId, bbReq.Bin.SessionId)
+	requestTime := requestHandleMap[key]
+	delete(requestHandleMap, key)
+	useTime := time.GetTimestampInMilli() - requestTime
+	log.Info("Total Use Time key:%s useTime:%d size:%d", key, useTime, len(requestHandleMap))
 }
 
 func GenerateImgFileServerUrl(thumbUrl string) string {
