@@ -21,12 +21,16 @@ func main() {
 }
 
 func HandleAritcle() {
-	articleJsonStr, _ := util.FileGetContent(constants.STATIC_FOLDER + "/data/artcles.json")
+	articleJsonStr, _ := util.FileGetContent(constants.STATIC_FOLDER + "/data/articles.json")
+	fmt.Printf("%s\n", articleJsonStr)
 	var listArticleResponse protocol.BBListArticleResponse
 	json.Unmarshal(util.StringToBytes(articleJsonStr), &listArticleResponse)
 	articleList := listArticleResponse.ArticleList
 	for i := 0; i < len(articleList); i++ {
-		InsertArticle(articleList[i])
+		article, _ := InsertArticle(articleList[i])
+		if article.Id != -1 {
+			fmt.Printf("Insert Success %s\n", util.ObjToString(article))
+		}
 	}
 }
 
@@ -36,21 +40,25 @@ func HandleInsuranceType() {
 	json.Unmarshal(util.StringToBytes(insuranceTypeJsonStr), &listInsuranceTypeResponse)
 	insuranceTypeList := listInsuranceTypeResponse.InsuranceTypeList
 	for i := 0; i < len(insuranceTypeList); i++ {
-		InsertInsuranceType(insuranceTypeList[i])
+		insuranceType, _ := InsertInsuranceType(insuranceTypeList[i])
+		if insuranceType.Id != -1 {
+			fmt.Printf("Insert Success %s\n", util.ObjToString(insuranceType))
+		}
 	}
 }
 
 func InsertArticle(article protocol.Article) (protocol.Article, error) {
 	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
-	sql := fmt.Sprintf("INSERT OR REPLACE INTO Article (Title, Desc, Date, Timestamp, Url, ThumbUrl, ViewCount) VALUES (?, ?, ?, ?, ?, ?, ?);")
+	sql := fmt.Sprintf("INSERT OR REPLACE INTO Article (Id, Title, Desc, Date, Timestamp, Url, ThumbUrl, ViewCount) VALUES (?, ?, ?, ?, ?, ?, ?);")
 	stmt, err := db.Prepare(sql)
 	defer stmt.Close()
-	article.Id = -1
 	if err != nil {
+		article.Id = -1
 		return article, err
 	} else {
-		result, err := stmt.Exec(article.Title, article.Desc, article.Date, article.Timestamp, article.Url, article.ThumbUrl, article.ViewCount)
+		result, err := stmt.Exec(article.Id, article.Title, article.Desc, article.Date, article.Timestamp, article.Url, article.ThumbUrl, article.ViewCount)
 		if err != nil {
+			article.Id = -1
 			return article, err
 		} else {
 			article.Id, err = result.LastInsertId()
