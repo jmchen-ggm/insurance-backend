@@ -52,9 +52,9 @@ func FunCreateArticle(writer http.ResponseWriter, request *http.Request) {
 		article.Date = request.FormValue("date")
 		article.Url = request.FormValue("url")
 		article.Timestamp = time.GetTimestampInMilli()
-		aritcle.ThumbUrl = fmt.Sprintf("img/articles/%s.jpg", article.Title)
+		article.ThumbUrl = fmt.Sprintf("img/articles/%s.jpg", article.Title)
 
-		savePath := constants.STATIC_FOLDER + "/" + aritcle.ThumbUrl
+		savePath := constants.STATIC_FOLDER + "/" + article.ThumbUrl
 		log.Info("try to save file to path %s %s", savePath, fileHandler.Header)
 		fis, err := util.FileCreate(savePath)
 		defer fis.Close()
@@ -71,14 +71,14 @@ func FunCreateArticle(writer http.ResponseWriter, request *http.Request) {
 			return
 		}
 		log.Info("CreateArticle: %s", util.ObjToString(article))
-		aritcle, err := database.InsertArticle(aritcle)
+		article, err := database.InsertArticle(article)
 		if err != nil {
 			util.DeleteFile(savePath)
 			log.Error("Insert data to db error %s", err)
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Create Article Error")
 		} else {
 			var response protocol.BBCreateArticleResponse
-			response.Article = aritcle
+			response.Article = article
 			responseBytes, _ := json.Marshal(response)
 			webcommon.HandleSuccessResponse(writer, bbReq, responseBytes)
 		}
