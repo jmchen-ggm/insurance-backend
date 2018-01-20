@@ -32,6 +32,8 @@ const FuncCreateCompany = 10002
 const FuncCreateInsurance = 10003
 const FuncCreateInsuranceType = 100004
 
+const FuncKvHttpFun = 10000001
+
 const UriData = "data-bin"
 const UriCreateData = "create-bin"
 const UriUser = "user-bin"

@@ -18,7 +18,6 @@ type BBReqHeader struct {
 }
 
 type BBRespHeader struct {
-	Uin          int64
 	Username     string
 	ResponseCode int
 	ErrMsg       string
