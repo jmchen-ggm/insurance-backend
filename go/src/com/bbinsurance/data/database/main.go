@@ -1,6 +1,7 @@
 package main
 
 import (
+	"com/bbinsurance/data/constants"
 	"com/bbinsurance/logicserver/protocol"
 	"com/bbinsurance/util"
 	"database/sql"
@@ -10,15 +11,18 @@ import (
 )
 
 func main() {
+	// 初始化变量
+	constants.InitConstants()
+
+	fmt.Printf("%s %s", constants.STATIC_FOLDER, constants.LOGIC_DB_PATH)
+
 	HandleInsuranceType()
 }
 
 func HandleInsuranceType() {
-	insuranceTypeJsonStr, _ := util.FileGetContent("/Users/jiaminchen/develop/insurance/insurance-file/static/data/insurance-types.json")
-	fmt.Printf("%s\n", insuranceTypeJsonStr)
+	insuranceTypeJsonStr, _ := util.FileGetContent(constants.STATIC_FOLDER + "/data/insurance-types.json")
 	var listInsuranceTypeResponse protocol.BBListInsuranceTypeResponse
 	json.Unmarshal(util.StringToBytes(insuranceTypeJsonStr), &listInsuranceTypeResponse)
-	fmt.Printf("%s\n", util.ObjToString(listInsuranceTypeResponse))
 	insuranceTypeList := listInsuranceTypeResponse.InsuranceTypeList
 	for i := 0; i < len(insuranceTypeList); i++ {
 		InsertInsuranceType(insuranceTypeList[i])
@@ -26,8 +30,8 @@ func HandleInsuranceType() {
 }
 
 func InsertInsuranceType(insuranceType protocol.InsuranceType) (protocol.InsuranceType, error) {
-	db, _ := sql.Open("sqlite3", "./logic.db")
-	sql := fmt.Sprintf("INSERT INTO InsuranceType (Id, Name, Desc, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?, ?);")
+	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
+	sql := fmt.Sprintf("INSERT OR REPLACE INTO InsuranceType (Id, Name, Desc, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?, ?);")
 	stmt, err := db.Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
