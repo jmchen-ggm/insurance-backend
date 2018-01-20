@@ -19,7 +19,9 @@ func main() {
 	//初始化DB
 	database.InitDB()
 
+	web.FunInitDataBin()
 	http.HandleFunc("/data-bin", web.FunHandleDataBin)
+
 	log.Info("listen %s port", constants.PORT)
 	http.ListenAndServe(":"+constants.PORT, nil)
 }
