@@ -14,7 +14,7 @@ func main() {
 	// 初始化变量
 	constants.InitConstants()
 
-	fmt.Printf("%s %s", constants.STATIC_FOLDER, constants.LOGIC_DB_PATH)
+	fmt.Printf("%s %s\n", constants.STATIC_FOLDER, constants.LOGIC_DB_PATH)
 
 	HandleInsuranceType()
 }
