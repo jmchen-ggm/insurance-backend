@@ -76,6 +76,8 @@ func FunCreateInsuranceType(writer http.ResponseWriter, request *http.Request) {
 		var insuranceType protocol.InsuranceType
 		insuranceType.Name = request.FormValue("name")
 		insuranceType.Desc = request.FormValue("desc")
+		insuranceType.Flags, _ = strconv.ParseInt(request.FormValue("flags"), 16, 64)
+		insuranceType.DetailData = request.FormValue("detailData")
 		insuranceType.ThumbUrl = fmt.Sprintf("img/insuranceTypes/%s.png", uuid.NewV4().String())
 
 		savePath := constants.STATIC_FOLDER + "/" + insuranceType.ThumbUrl
@@ -136,7 +138,7 @@ func FunCreateInsurance(writer http.ResponseWriter, request *http.Request) {
 		insurance.AgeTo, _ = strconv.Atoi(request.FormValue("ageTo"))
 		insurance.AnnualCompensation, _ = strconv.Atoi(request.FormValue("annualCompensation"))
 		insurance.AnnualPremium, _ = strconv.Atoi(request.FormValue("annualPremium"))
-		insurance.Flags, _ = strconv.ParseInt(request.FormValue("flags"), 10, 64)
+		insurance.Flags, _ = strconv.ParseInt(request.FormValue("flags"), 16, 64)
 		insurance.DetailData = request.FormValue("detailData")
 		insurance.ThumbUrl = fmt.Sprintf("img/insurances/%s.png", uuid.NewV4().String())
 
