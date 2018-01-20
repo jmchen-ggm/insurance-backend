@@ -48,8 +48,8 @@ func HandleSuccessResponse(writer http.ResponseWriter, request BBReq, body []byt
 	writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Authorization, Accept, X-Requested-With, Token")
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
 	writer.Header().Set("Access-Control-Max-Age", "86400")
-	fmt.Fprintf(writer, string(responseJsonStr))
-	outRequestMap(request)
+	fmt.Fprintf(writer, responseJsonStr)
+	outRequestMap(request, len(responseJsonStr))
 }
 
 func HandleErrorResponse(writer http.ResponseWriter, request BBReq, errorCode int, errMsg string) {
@@ -59,15 +59,15 @@ func HandleErrorResponse(writer http.ResponseWriter, request BBReq, errorCode in
 	bbResp.Header.ResponseCode = errorCode
 	bbResp.Header.ErrMsg = errMsg
 	bbResp.Body = *new(json.RawMessage)
-	responseJsonStr, _ := json.Marshal(bbResp)
+	responseJsonBytes, _ := json.Marshal(bbResp)
 	log.Info("HandleErrorResponse code: %d errMsg: %s", errorCode, errMsg)
 	writer.Header().Set("content-type", "application/json")
 	writer.Header().Set("Access-Control-Allow-Methods", "HEAD, GET, POST, PUT, PATCH, DELETE, OPTIONS")
 	writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Authorization, Accept, X-Requested-With, Token")
 	writer.Header().Set("Access-Control-Allow-Origin", "*")
 	writer.Header().Set("Access-Control-Max-Age", "86400")
-	fmt.Fprintf(writer, string(responseJsonStr))
-	outRequestMap(request)
+	fmt.Fprintf(writer, string(responseJsonBytes))
+	outRequestMap(request, len(responseJsonBytes))
 }
 
 func inRequestMap(bbReq BBReq) {
@@ -75,12 +75,12 @@ func inRequestMap(bbReq BBReq) {
 	requestHandleMap[key] = time.GetTimestampInMilli()
 }
 
-func outRequestMap(bbReq BBReq) {
+func outRequestMap(bbReq BBReq, responseSize int) {
 	key := fmt.Sprintf("%d$%s", bbReq.Bin.FunId, bbReq.Bin.SessionId)
 	requestTime := requestHandleMap[key]
 	delete(requestHandleMap, key)
 	useTime := time.GetTimestampInMilli() - requestTime
-	log.Info("Total Use Time key:%s useTime:%d size:%d", key, useTime, len(requestHandleMap))
+	log.Info("Total Use Time key:%s useTime:%d mapSize:%d responseSize:%d", key, useTime, len(requestHandleMap), responseSize)
 }
 
 func GenerateImgFileServerUrl(thumbUrl string) string {
