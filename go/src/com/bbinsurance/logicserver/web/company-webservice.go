@@ -48,7 +48,7 @@ func FunCreateCompany(writer http.ResponseWriter, request *http.Request) {
 	bbReq.Bin.FunId = webcommon.FuncCreateCompany
 	bbReq.Bin.URI = webcommon.UriCreateData
 	bbReq.Bin.SessionId = uuid.NewV4().String()
-	bbReq.Bin.Timestamp = time.GetTimestamp()
+	bbReq.Bin.Timestamp = time.GetTimestampInMilli()
 	if request.Method != "POST" {
 		log.Error("Invalid Request Method: %s Url: %s", request.Method, request.URL)
 		webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")

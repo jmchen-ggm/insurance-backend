@@ -5,6 +5,7 @@ import (
 	"com/bbinsurance/logicserver/constants"
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
+	"com/bbinsurance/logicserver/service"
 	"com/bbinsurance/time"
 	"com/bbinsurance/util"
 	"com/bbinsurance/webcommon"
@@ -18,8 +19,7 @@ import (
 func FunGetListArticle(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var listArticleRequest protocol.BBListArticleRequest
 	json.Unmarshal(bbReq.Body, &listArticleRequest)
-	articleList := database.GetListArticle(listArticleRequest.StartIndex, listArticleRequest.PageSize)
-	log.Info("req %d %d %d", listArticleRequest.StartIndex, listArticleRequest.PageSize, len(articleList))
+	articleList := service.GetListArticle(listArticleRequest.StartIndex, listArticleRequest.PageSize)
 	var response protocol.BBListArticleResponse
 	response.ArticleList = articleList
 	responseBytes, _ := json.Marshal(response)
@@ -31,7 +31,7 @@ func FunCreateArticle(writer http.ResponseWriter, request *http.Request) {
 	bbReq.Bin.FunId = webcommon.FuncCreateArticle
 	bbReq.Bin.URI = webcommon.UriCreateData
 	bbReq.Bin.SessionId = uuid.NewV4().String()
-	bbReq.Bin.Timestamp = time.GetTimestamp()
+	bbReq.Bin.Timestamp = time.GetTimestampInMilli()
 	if request.Method != "POST" {
 		log.Error("Invalid Request Method: %s Url: %s", request.Method, request.URL)
 		webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst, Please Use Http POST")
@@ -45,34 +45,40 @@ func FunCreateArticle(writer http.ResponseWriter, request *http.Request) {
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeRequestInvalid, "Invalid Requst File")
 			return
 		}
-		title := request.FormValue("title")
-		desc := request.FormValue("desc")
-		date := request.FormValue("date")
-		url := request.FormValue("url")
+		var article protocol.Article
 
-		log.Info("CreateArticle: title=%s desc=%s date=%s url=%s file=%s", title, desc, date, url, fileHandler.Header)
+		article.Title = request.FormValue("title")
+		article.Desc = request.FormValue("desc")
+		article.Date = request.FormValue("date")
+		article.Url = request.FormValue("url")
+		article.Timestamp = time.GetTimestampInMilli()
+		aritcle.ThumbUrl = fmt.Sprintf("img/articles/%s.jpg", article.Title)
 
-		id, err := database.InsertArticle(title, desc, date, url, "")
-		if err != nil {
-			log.Error("Invalid File %s", err)
-			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Insert Article Error")
-			return
-		}
-		thumbUrl := fmt.Sprintf("img/articles/%d.png", id)
-		database.UpdateArticleThumbUrl(id, thumbUrl)
-		savePath := constants.STATIC_FOLDER + "/" + thumbUrl
+		savePath := constants.STATIC_FOLDER + "/" + aritcle.ThumbUrl
+		log.Info("try to save file to path %s %s", savePath, fileHandler.Header)
 		fis, err := util.FileCreate(savePath)
 		defer fis.Close()
 		if err != nil {
 			log.Error("Save File Err %s", err)
-			database.DeleteArticleById(id)
 			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Save File Error")
+			return
+		}
+
+		_, err = io.Copy(fis, file)
+		if err != nil {
+			log.Error("Copy File Err %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Copy File Error")
+			return
+		}
+		log.Info("CreateArticle: %s", util.ObjToString(article))
+		aritcle, err := database.InsertArticle(aritcle)
+		if err != nil {
+			util.DeleteFile(savePath)
+			log.Error("Insert data to db error %s", err)
+			webcommon.HandleErrorResponse(writer, bbReq, webcommon.ResponseCodeServerError, "Create Article Error")
 		} else {
-			log.Info("Save File success %s", savePath)
-			io.Copy(fis, file)
 			var response protocol.BBCreateArticleResponse
-			response.Id = id
-			response.ThumbUrl = thumbUrl
+			response.Article = aritcle
 			responseBytes, _ := json.Marshal(response)
 			webcommon.HandleSuccessResponse(writer, bbReq, responseBytes)
 		}

@@ -3,46 +3,28 @@ package database
 import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
-	"com/bbinsurance/time"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 const ArticleTableName = "Article"
 
-func InsertArticle(title string, desc string, date string, url string, thumbUrl string) (int64, error) {
-	sql := fmt.Sprintf("INSERT INTO %s (Title, Desc, Date, Timestamp, Url, ThumbUrl) VALUES (?, ?, ?, ?, ?, ?);", ArticleTableName)
+func InsertArticle(article protocol.Article) (protocol.Article, error) {
+	sql := fmt.Sprintf("INSERT INTO %s (Title, Desc, Date, Timestamp, Url, ThumbUrl, ViewCount) VALUES (?, ?, ?, ?, ?, ?, ?);", ArticleTableName)
 	stmt, err := GetDB().Prepare(sql)
 	defer stmt.Close()
+	article.Id = -1
 	if err != nil {
 		log.Error("Prepare SQL Error %s", err)
-		return -1, err
+		return article, err
 	} else {
-		timestamp := time.GetTimestampInMilli()
-		result, err := stmt.Exec(title, desc, date, timestamp, url, thumbUrl)
+		result, err := stmt.Exec(article.Title, article.Desc, article.Date, article.Timestamp, article.Url, article.ThumbUrl, article.ViewCount)
 		if err != nil {
 			log.Error("Prepare Exec Error %s", err)
-			return -1, err
+			return article, err
 		} else {
-			id, err := result.LastInsertId()
-			return id, err
-		}
-	}
-}
-
-func UpdateArticleThumbUrl(id int64, thumbUrl string) {
-	log.Info("UpdateArticleThumbUrl: id=%d thumbUrl=%s", id, thumbUrl)
-	sql := fmt.Sprintf("UPDATE %s SET thumbUrl=? WHERE id= ?;", ArticleTableName)
-	stmt, err := GetDB().Prepare(sql)
-	defer stmt.Close()
-	if err != nil {
-		log.Error("Prepare SQL Error %s", err)
-	} else {
-		_, err = stmt.Exec(thumbUrl, id)
-		if err != nil {
-			log.Error("Prepare Exec Error %s", err)
-		} else {
-			log.Info("UpdateArticleThumbUrl Success")
+			article.Id, err = result.LastInsertId()
+			return article, err
 		}
 	}
 }
@@ -63,7 +45,7 @@ func GetListArticle(startIndex int, length int) []protocol.Article {
 	} else {
 		for rows.Next() {
 			var article protocol.Article
-			rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Date, &article.Timestamp, &article.Url, &article.ThumbUrl)
+			rows.Scan(&article.Id, &article.Title, &article.Desc, &article.Date, &article.Timestamp, &article.Url, &article.ThumbUrl, &article.ViewCount)
 			articleList = append(articleList, article)
 		}
 		log.Info("GetListArticle %d ", len(articleList))

@@ -1,8 +1,7 @@
 package protocol
 
 type BBCreateArticleResponse struct {
-	Id       int64
-	ThumbUrl string
+	Article Article
 }
 
 type BBListArticleRequest struct {
@@ -18,6 +17,7 @@ type Article struct {
 	Timestamp int64
 	Url       string
 	ThumbUrl  string
+	ViewCount int
 }
 
 type BBListArticleResponse struct {

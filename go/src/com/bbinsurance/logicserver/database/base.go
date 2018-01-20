@@ -16,7 +16,7 @@ const CommentTableVersionKey = "CommentTableVersionKey"
 const CommentUpTableVersionKey = "CommentUpTableVersionKey"
 const CommentReplyTableVersionKey = "CommentReplyTableVersionKey"
 
-const CurrentArticleTableVersion = "0"
+const CurrentArticleTableVersion = "1"
 const CurrentCompanyTableVersion = "1"
 const CurrentInsuranceTableVersion = "1"
 const CurrentInsuranceTypeTableVersion = "2"
@@ -52,7 +52,7 @@ func InitDB() {
 	CheckTable(CommentUpTableName, CommentUpTableVersionKey, CurrentCommentUpTableVersion)
 	CheckTable(CommentReplyTableName, CommentReplyTableVersionKey, CurrentCommentReplyTableVersion)
 
-	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Desc TEXT NOT NULL, Date TEXT NOT NULL, Timestamp INTEGER, Url TEXT NOT NULL, ThumbUrl TEXT NOT NULL);"
+	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Desc TEXT NOT NULL, Date TEXT NOT NULL, Timestamp INTEGER, Url TEXT NOT NULL, ThumbUrl TEXT NOT NULL, ViewCount INTEGER);"
 	_, err = db.Exec(createArticleSql, nil)
 	if err != nil {
 		log.Error("Create Article Error: sql = %s, err = %s", createArticleSql, err)
