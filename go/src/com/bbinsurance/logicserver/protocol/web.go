@@ -10,7 +10,7 @@ type BBListArticleRequest struct {
 }
 
 type BBViewArticleRequest struct {
-	id int64
+	Id int64
 }
 
 type BBViewArticleResponse struct {
