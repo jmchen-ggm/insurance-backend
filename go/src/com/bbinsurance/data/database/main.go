@@ -49,7 +49,7 @@ func HandleInsuranceType() {
 
 func InsertArticle(article protocol.Article) (protocol.Article, error) {
 	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
-	sql := fmt.Sprintf("INSERT OR REPLACE INTO Article (Id, Title, Desc, Date, Timestamp, Url, ThumbUrl, ViewCount) VALUES (?, ?, ?, ?, ?, ?, ?);")
+	sql := fmt.Sprintf("INSERT OR REPLACE INTO Article (Id, Title, Desc, Date, Timestamp, Url, ThumbUrl, ViewCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
 	stmt, err := db.Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
