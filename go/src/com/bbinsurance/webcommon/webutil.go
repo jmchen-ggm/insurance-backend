@@ -7,6 +7,7 @@ import (
 	"com/bbinsurance/util"
 	"encoding/json"
 	"fmt"
+	"github.com/satori/go.uuid"
 	"io/ioutil"
 	"net/http"
 )
@@ -92,6 +93,7 @@ func outRequestMap(bbReq BBReq, responseSize int) {
 		httpFun.ResponseSize = responseSize
 		httpFun.UseTime = useTime
 		httpFun.Uin = bbReq.Header.Uin
+		// 后面需要把这里进行异步化
 		kvHttpFun(httpFun)
 	}
 }
@@ -102,8 +104,9 @@ func GenerateImgFileServerUrl(thumbUrl string) string {
 
 func kvHttpFun(httpFun HttpFun) {
 	var bbReq BBReq
-	bbReq.Bin.FunId = FuncKvHttpFun
+	bbReq.Bin.FunId = FuncKvCreateHttpFun
 	bbReq.Bin.URI = UriKv
+	bbReq.Header.SessionId = uuid.NewV4().String()
 	var httpFunRequest KvHttpFunRequest
 	httpFunRequest.HttpFun = httpFun
 	body, _ := json.Marshal(httpFunRequest)
@@ -113,5 +116,5 @@ func kvHttpFun(httpFun HttpFun) {
 	requestData, _ := json.Marshal(bbReq)
 	requestBuffer := bytes.NewBuffer([]byte(requestData))
 	requestBodyType := "application/json;charset=utf-8"
-	http.Post("http://127.0.0.1:8083/data-bin", requestBodyType, requestBuffer)
+	http.Post(KvServer+"data-bin", requestBodyType, requestBuffer)
 }

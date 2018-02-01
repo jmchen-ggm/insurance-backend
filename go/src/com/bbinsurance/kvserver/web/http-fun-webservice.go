@@ -6,7 +6,7 @@ import (
 	"encoding/json"
 )
 
-func FunKvHttpFun(bbReq webcommon.BBReq) ([]byte, int, string) {
+func FuncKvCreateHttpFun(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var httpFunRequest webcommon.KvHttpFunRequest
 	json.Unmarshal(bbReq.Body, &httpFunRequest)
 	httpFun := database.InsertHttpFun(httpFunRequest.HttpFun)

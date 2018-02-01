@@ -29,3 +29,41 @@ func InsertHttpFun(httpFun webcommon.HttpFun) webcommon.HttpFun {
 		}
 	}
 }
+
+func ListHttpFunByTime(beginTime int64, endTime int64) []webcommon.HttpFun {
+	sql := fmt.Sprint("SELECT * FROM %s WHERE Timestamp >= %d AND endTime <= %d", HttpFunTableName, beginTime, endTime)
+	rows, err := GetDB().Query(sql)
+	defer rows.Close()
+	var httpFunList []webcommon.HttpFun
+	if err != nil {
+		log.Error("ListHttpFun err %s", err)
+		return httpFunList
+	} else {
+		for rows.Next() {
+			var httpFun webcommon.HttpFun
+			rows.Scan(&httpFun.Id, &httpFun.FunId, &httpFun.Timestamp, &httpFun.ResponseSize, &user.UseTime, &user.Uin)
+			httpFunList = append(httpFunList, httpFun)
+		}
+		log.Info("ListHttpFun %d ", len(httpFunList))
+		return httpFunList
+	}
+}
+
+func ListHttpFunByPage(startIndex int, pageSize int) []webcommon.HttpFun {
+	sql := fmt.Sprint("SELECT * FROM %s WHERE Timestamp >= %d AND endTime <= %d", HttpFunTableName, beginTime, endTime)
+	rows, err := GetDB().Query(sql)
+	defer rows.Close()
+	var httpFunList []webcommon.HttpFun
+	if err != nil {
+		log.Error("ListHttpFun err %s", err)
+		return httpFunList
+	} else {
+		for rows.Next() {
+			var httpFun webcommon.HttpFun
+			rows.Scan(&httpFun.Id, &httpFun.FunId, &httpFun.Timestamp, &httpFun.ResponseSize, &user.UseTime, &user.Uin)
+			httpFunList = append(httpFunList, httpFun)
+		}
+		log.Info("ListHttpFun %d ", len(httpFunList))
+		return httpFunList
+	}
+}

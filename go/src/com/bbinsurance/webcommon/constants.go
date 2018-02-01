@@ -33,7 +33,9 @@ const FuncCreateInsurance = 10003
 const FuncCreateInsuranceType = 100004
 
 const FuncKv = 10000000
-const FuncKvHttpFun = 10000001
+const FuncKvCreateHttpFun = 10000001
+const FuncKvListHttpFunByTime = 10000002
+const FuncKvListHttpFunByPage = 10000003
 
 const UriData = "data-bin"
 const UriCreateData = "create-bin"
@@ -41,3 +43,4 @@ const UriUser = "user-bin"
 const UriKv = "kv-bin"
 
 const FileServer = "http://120.78.175.235:8081/"
+const KvServer = "http://127.0.0.1:8083/"

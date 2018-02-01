@@ -12,7 +12,7 @@ var handlerObjMap map[int]HandleMethod
 
 func FunInitDataBin() {
 	handlerObjMap = make(map[int]HandleMethod)
-	handlerObjMap[webcommon.FuncKvHttpFun] = FunKvHttpFun
+	handlerObjMap[webcommon.FuncKvCreateHttpFun] = FuncKvCreateHttpFun
 }
 
 func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {
