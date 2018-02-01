@@ -1,6 +1,8 @@
 package main
 
 import (
+	"com/bbinsurance/util"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/tealeg/xlsx"
@@ -9,7 +11,66 @@ import (
 	"strings"
 )
 
+type TestData struct {
+	CompanyList []TestCompany
+}
+
+type TestCompany struct {
+	Name         string
+	EnglishName  string
+	BuildTime    int
+	Website      string
+	Introduction string
+	Id           int64
+	Img          string
+}
+
+type TestData2 struct {
+	CompanyList []Company
+}
+
+type Company struct {
+	Id         int64
+	Name       string
+	Desc       string
+	ThumbUrl   string
+	Flags      int64
+	DetailData string
+}
+
+type Detail struct {
+	EnglishName string
+	BuildTime   int
+	Website     string
+}
+
 func main() {
+	content, _ := util.FileGetContent("./company.json")
+	fmt.Println(content)
+	var testData TestData
+	json.Unmarshal(util.StringToBytes(content), &testData)
+	var testData2 TestData2
+	var companyList []Company
+	for i := 0; i < len(testData.CompanyList); i++ {
+		var company Company
+		var detail Detail
+		company.Id = testData.CompanyList[i].Id
+		company.Name = testData.CompanyList[i].Name
+		company.Desc = testData.CompanyList[i].Introduction
+		company.ThumbUrl = testData.CompanyList[i].Img
+		detail.BuildTime = testData.CompanyList[i].BuildTime
+		detail.Website = testData.CompanyList[i].Website
+		detail.EnglishName = testData.CompanyList[i].EnglishName
+		detailData, _ := json.Marshal(detail)
+		company.DetailData = util.BytesToString(detailData)
+		companyList = append(companyList, company)
+	}
+	testData2.CompanyList = companyList
+	testData2Byte, _ := json.Marshal(testData2)
+	util.FilePutContent("./test-company.json", util.BytesToString(testData2Byte))
+}
+
+func process() {
 	flag.Parse()
 	root := "/Users/jiaminchen/Documents/保险/保险/excel/"
 	xlsxFileList := getFilelist(root)

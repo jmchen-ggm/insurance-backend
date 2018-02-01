@@ -18,6 +18,7 @@ func main() {
 
 	HandleInsuranceType()
 	HandleAritcle()
+	HandleCompany()
 }
 
 func HandleAritcle() {
@@ -46,8 +47,22 @@ func HandleInsuranceType() {
 	}
 }
 
+func HandleCompany() {
+	companyJsonStr, _ := util.FileGetContent(constants.STATIC_FOLDER + "/data/companys.json")
+	var listCompanyResponse protocol.BBListCompanyResponse
+	json.Unmarshal(util.StringToBytes(companyJsonStr), &listCompanyResponse)
+	companyList := listCompanyResponse.CompanyList
+	for i := 0; i < len(companyList); i++ {
+		company, _ := InsertCompany(companyList[i])
+		if company.Id != -1 {
+			fmt.Printf("Insert Success %s\n", util.ObjToString(company))
+		}
+	}
+}
+
 func InsertArticle(article protocol.Article) (protocol.Article, error) {
 	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
+	defer db.Close()
 	sql := fmt.Sprintf("INSERT OR REPLACE INTO Article (Id, Title, Desc, Date, Timestamp, Url, ThumbUrl, ViewCount) VALUES (?, ?, ?, ?, ?, ?, ?, ?);")
 	stmt, err := db.Prepare(sql)
 	defer stmt.Close()
@@ -68,6 +83,7 @@ func InsertArticle(article protocol.Article) (protocol.Article, error) {
 
 func InsertInsuranceType(insuranceType protocol.InsuranceType) (protocol.InsuranceType, error) {
 	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
+	defer db.Close()
 	sql := fmt.Sprintf("INSERT OR REPLACE INTO InsuranceType (Id, Name, Desc, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?, ?);")
 	stmt, err := db.Prepare(sql)
 	defer stmt.Close()
@@ -82,4 +98,23 @@ func InsertInsuranceType(insuranceType protocol.InsuranceType) (protocol.Insuran
 		}
 	}
 	return insuranceType, err
+}
+
+func InsertCompany(company protocol.Company) (protocol.Company, error) {
+	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
+	defer db.Close()
+	sql := fmt.Sprintf("INSERT INTO Company (Id, Name, Desc, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?, ?);")
+	stmt, err := db.Prepare(sql)
+	defer stmt.Close()
+	if err != nil {
+		company.Id = -1
+	} else {
+		result, err := stmt.Exec(company.Id, company.Name, company.Desc, company.ThumbUrl, company.Flags, company.DetailData)
+		if err != nil {
+			company.Id = -1
+		} else {
+			company.Id, err = result.LastInsertId()
+		}
+	}
+	return company, err
 }
