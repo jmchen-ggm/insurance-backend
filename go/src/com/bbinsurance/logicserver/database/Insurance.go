@@ -36,7 +36,7 @@ func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	var sql string
 	if length == -1 {
-		sql = fmt.Sprintf("SELECT Id FROM %s;", InsuranceTableName)
+		sql = fmt.Sprintf("SELECT * FROM %s;", InsuranceTableName)
 	} else {
 		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", InsuranceTableName, length, startIndex)
 	}
@@ -49,7 +49,8 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	} else {
 		for rows.Next() {
 			var insurance protocol.Insurance
-			rows.Scan(&insurance.Id)
+			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
+				&insurance.CompanyId)
 			insuranceList = append(insuranceList, insurance)
 			log.Info("insurance %s", util.ObjToString(insurance))
 		}
