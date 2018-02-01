@@ -52,6 +52,7 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.AnnualCompensation,
 				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
 			insuranceList = append(insuranceList, insurance)
+			log.Info("insurance %s", util.ObjToString(insurance))
 		}
 		log.Info("GetListInsurance %d ", len(insuranceList))
 	}

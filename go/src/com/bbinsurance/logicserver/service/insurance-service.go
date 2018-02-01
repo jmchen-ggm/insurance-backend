@@ -32,7 +32,7 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	for i := 0; i < insuranceListLength; i++ {
 		insuranceList[i].CompanyName = GetCompanyById(insuranceList[i].CompanyId).Name
 		insuranceList[i].InsuranceTypeName = GetInsuranceTypeById(insuranceList[i].InsuranceTypeId).Name
-		insuranceList[i].InsuranceTypeName = webcommon.GenerateImgFileServerUrl(insuranceList[i].ThumbUrl)
+		insuranceList[i].ThumbUrl = webcommon.GenerateImgFileServerUrl(insuranceList[i].ThumbUrl)
 	}
 	return insuranceList
 }
