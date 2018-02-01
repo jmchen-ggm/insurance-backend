@@ -20,7 +20,7 @@ import (
 func FunGetListCompany(bbReq webcommon.BBReq) ([]byte, int, string) {
 	var listCompanyRequest protocol.BBListCompanyRequest
 	json.Unmarshal(bbReq.Body, &listCompanyRequest)
-	companyList := database.GetListCompany(listCompanyRequest.StartIndex, listCompanyRequest.PageSize)
+	companyList := service.GetListCompany(listCompanyRequest.StartIndex, listCompanyRequest.PageSize)
 	log.Info("req %d %d %d", listCompanyRequest.StartIndex, listCompanyRequest.PageSize, len(companyList))
 	var response protocol.BBListCompanyResponse
 	response.CompanyList = companyList

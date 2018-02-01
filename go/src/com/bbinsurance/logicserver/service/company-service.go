@@ -24,3 +24,12 @@ func GetCompanyById(id int64) protocol.Company {
 		return company
 	}
 }
+
+func GetListCompany(startIndex int, length int) []protocol.Company {
+	companyList := database.GetListCompany(startIndex, length)
+	companyListLength := len(companyList)
+	for i := 0; i < companyListLength; i++ {
+		companyList[i].ThumbUrl = webcommon.GenerateImgFileServerUrl(companyList[i].ThumbUrl)
+	}
+	return companyList
+}
