@@ -16,9 +16,10 @@ func main() {
 
 	fmt.Printf("%s %s\n", constants.STATIC_FOLDER, constants.LOGIC_DB_PATH)
 
-	HandleInsuranceType()
-	HandleAritcle()
-	HandleCompany()
+	// HandleInsuranceType()
+	// HandleAritcle()
+	// HandleCompany()
+	HandleInsurance()
 }
 
 func HandleAritcle() {
@@ -56,6 +57,19 @@ func HandleCompany() {
 		company, _ := InsertCompany(companyList[i])
 		if company.Id != -1 {
 			fmt.Printf("Insert Success %s\n", util.ObjToString(company))
+		}
+	}
+}
+
+func HandleInsurance() {
+	insuranceJsonStr, _ := util.FileGetContent(constants.STATIC_FOLDER + "/data/insurances.json")
+	var listInsuranceResponse protocol.BBListInsuranceResponse
+	json.Unmarshal(util.StringToBytes(insuranceJsonStr), &listInsuranceResponse)
+	insuranceList := listInsuranceResponse.InsuranceList
+	for i := 0; i < len(insuranceList); i++ {
+		insurance, _ := InsertInsurance(insuranceList[i])
+		if insurance.Id != -1 {
+			fmt.Printf("Insert Success %s\n", util.ObjToString(insurance))
 		}
 	}
 }
@@ -103,7 +117,7 @@ func InsertInsuranceType(insuranceType protocol.InsuranceType) (protocol.Insuran
 func InsertCompany(company protocol.Company) (protocol.Company, error) {
 	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
 	defer db.Close()
-	sql := fmt.Sprintf("INSERT INTO Company (Id, Name, Desc, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?, ?);")
+	sql := fmt.Sprintf("INSERT OR REPLACE INTO Company (Id, Name, Desc, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?, ?);")
 	stmt, err := db.Prepare(sql)
 	defer stmt.Close()
 	if err != nil {
@@ -117,4 +131,25 @@ func InsertCompany(company protocol.Company) (protocol.Company, error) {
 		}
 	}
 	return company, err
+}
+
+func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
+	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
+	defer db.Close()
+	sql := fmt.Sprintf("INSERT OR REPLACE INTO Insurance (Id, Name, Desc, InsuranceTypeId, CompanyId, AgeFrom, AgeTo, AnnualCompensation, AnnualPremium, Flags, Timestamp, ThumbUrl, DetailData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);")
+	stmt, err := db.Prepare(sql)
+	defer stmt.Close()
+	if err != nil {
+		insurance.Id = -1
+	} else {
+		result, err := stmt.Exec(insurance.Id, insurance.Name, insurance.Desc, insurance.InsuranceTypeId, insurance.CompanyId,
+			insurance.AgeFrom, insurance.AgeTo, insurance.AnnualCompensation, insurance.AnnualPremium,
+			insurance.Flags, insurance.Timestamp, insurance.ThumbUrl, insurance.DetailData)
+		if err != nil {
+			insurance.Id = -1
+		} else {
+			insurance.Id, err = result.LastInsertId()
+		}
+	}
+	return insurance, err
 }
