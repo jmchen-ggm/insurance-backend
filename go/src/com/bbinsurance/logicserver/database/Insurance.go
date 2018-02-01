@@ -49,8 +49,7 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	} else {
 		for rows.Next() {
 			var insurance protocol.Insurance
-			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
-				&insurance.CompanyId)
+			rows.Scan(&insurance.Id, &insurance.Name)
 			insuranceList = append(insuranceList, insurance)
 			log.Info("insurance %s", util.ObjToString(insurance))
 		}
