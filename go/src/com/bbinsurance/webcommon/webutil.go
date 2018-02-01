@@ -106,7 +106,7 @@ func kvHttpFun(httpFun HttpFun) {
 	var bbReq BBReq
 	bbReq.Bin.FunId = FuncKvCreateHttpFun
 	bbReq.Bin.URI = UriKv
-	bbReq.Header.SessionId = uuid.NewV4().String()
+	bbReq.Bin.SessionId = uuid.NewV4().String()
 	var httpFunRequest KvHttpFunRequest
 	httpFunRequest.HttpFun = httpFun
 	body, _ := json.Marshal(httpFunRequest)
