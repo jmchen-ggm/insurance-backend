@@ -16,9 +16,9 @@ func main() {
 
 	fmt.Printf("%s %s\n", constants.STATIC_FOLDER, constants.LOGIC_DB_PATH)
 
-	// HandleInsuranceType()
-	// HandleAritcle()
-	// HandleCompany()
+	HandleInsuranceType()
+	HandleAritcle()
+	HandleCompany()
 	HandleInsurance()
 }
 
