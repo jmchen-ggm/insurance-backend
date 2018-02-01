@@ -10,6 +10,7 @@ import (
 )
 
 const InsuranceTableName = "Insurance"
+const InsuranceListField = "Id, Name, Desc, InsuranceTypeId, CompanyId, AgeFrom, AgeTo, AnnualCompensation, AnnualPremium, Flags, Timestamp, ThumbUrl"
 
 func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 	sql := fmt.Sprintf("INSERT INTO %s (Name, Desc, InsuranceTypeId, CompanyId, AgeFrom, AgeTo, AnnualCompensation, AnnualPremium, Flags, Timestamp, ThumbUrl, DetailData) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);", InsuranceTableName)
@@ -36,9 +37,9 @@ func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	var sql string
 	if length == -1 {
-		sql = fmt.Sprintf("SELECT Id, Name, Desc, InsuranceTypeId, CompanyId, AgeFrom, AgeTo, AnnualCompensation, AnnualPremium, Flags, Timestamp, ThumbUrl, DetailData FROM %s;", InsuranceTableName)
+		sql = fmt.Sprintf("SELECT %s FROM %s;", InsuranceListField, InsuranceTableName)
 	} else {
-		sql = fmt.Sprintf("SELECT * FROM %s LIMIT %d OFFSET %d", InsuranceTableName, length, startIndex)
+		sql = fmt.Sprintf("SELECT %s FROM %s LIMIT %d OFFSET %d", InsuranceListField, InsuranceTableName, length, startIndex)
 	}
 	log.Info("GetListInsurance sql=%s", sql)
 	rows, err := GetDB().Query(sql)
@@ -51,7 +52,7 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 			var insurance protocol.Insurance
 			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
 				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.AnnualCompensation,
-				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
+				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl)
 			insuranceList = append(insuranceList, insurance)
 			log.Info("insurance %s", util.ObjToString(insurance))
 		}
@@ -61,7 +62,7 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 }
 
 func GetTopBannerInsuranceList() []protocol.Insurance {
-	sql := fmt.Sprintf("SELECT * FROM %s ORDER BY Timestamp DESC LIMIT 5", InsuranceTableName)
+	sql := fmt.Sprintf("SELECT %s FROM %s ORDER BY Timestamp DESC LIMIT 5", InsuranceListField, InsuranceTableName)
 	log.Info("GetTopBannerInsuranceList sql=%s", sql)
 	rows, err := GetDB().Query(sql)
 	defer rows.Close()
@@ -73,7 +74,7 @@ func GetTopBannerInsuranceList() []protocol.Insurance {
 			var insurance protocol.Insurance
 			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
 				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.AnnualCompensation,
-				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
+				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl)
 			insuranceList = append(insuranceList, insurance)
 		}
 		log.Info("GetTopBannerInsuranceList %d ", len(insuranceList))
