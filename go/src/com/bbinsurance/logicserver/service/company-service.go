@@ -4,6 +4,7 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/database"
 	"com/bbinsurance/logicserver/protocol"
+	"com/bbinsurance/webcommon"
 )
 
 var companyCacheMap map[int64]protocol.Company
