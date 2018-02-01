@@ -62,7 +62,7 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 }
 
 func GetTopBannerInsuranceList() []protocol.Insurance {
-	sql := fmt.Sprintf("SELECT %s FROM %s ORDER BY Timestamp DESC LIMIT 5", InsuranceListField, InsuranceTableName)
+	sql := fmt.Sprintf("SELECT %s FROM %s LIMIT 5", InsuranceListField, InsuranceTableName)
 	log.Info("GetTopBannerInsuranceList sql=%s", sql)
 	rows, err := GetDB().Query(sql)
 	defer rows.Close()
