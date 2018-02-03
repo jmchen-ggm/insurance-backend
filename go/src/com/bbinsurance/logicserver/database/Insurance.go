@@ -4,7 +4,6 @@ import (
 	"com/bbinsurance/log"
 	"com/bbinsurance/logicserver/protocol"
 	"com/bbinsurance/time"
-	"com/bbinsurance/util"
 	"fmt"
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -34,6 +33,27 @@ func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 	return insurance, err
 }
 
+func GetInsuranceById(id int64) protocol.Insurance {
+	sql := fmt.Sprintf("SELECT * FROM %s WHERE Id = ?;", InsuranceTableName)
+	log.Info("GetInsuranceById sql=%s", sql)
+	rows, err := GetDB().Query(sql, id)
+	defer rows.Close()
+	var insurance protocol.Insurance
+	if err != nil {
+		insurance.Id = -1
+		log.Error("GetListInsurance err %s", err)
+	} else {
+		if rows.Next() {
+			rows.Scan(&insurance.Id, &insurance.Name, &insurance.Desc, &insurance.InsuranceTypeId,
+				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.AnnualCompensation,
+				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl, &insurance.DetailData)
+		} else {
+			insurance.Id = -1
+		}
+	}
+	return insurance
+}
+
 func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 	var sql string
 	if length == -1 {
@@ -54,7 +74,6 @@ func GetListInsurance(startIndex int, length int) []protocol.Insurance {
 				&insurance.CompanyId, &insurance.AgeFrom, &insurance.AgeTo, &insurance.AnnualCompensation,
 				&insurance.AnnualPremium, &insurance.Flags, &insurance.Timestamp, &insurance.ThumbUrl)
 			insuranceList = append(insuranceList, insurance)
-			log.Info("insurance %s", util.ObjToString(insurance))
 		}
 		log.Info("GetListInsurance %d ", len(insuranceList))
 	}

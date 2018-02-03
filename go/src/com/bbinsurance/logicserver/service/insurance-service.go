@@ -45,3 +45,26 @@ func GetListInsuranceType(startIndex int, length int) []protocol.InsuranceType {
 	}
 	return insuranceTypeList
 }
+
+func GetInsuranceDetail(id int64) protocol.InsuranceDetail {
+	insurance := database.GetInsuranceById(id)
+	var insuranceDetail protocol.InsuranceDetail
+	if insurance.Id >= 0 {
+		insuranceDetail.Id = insurance.Id
+		insuranceDetail.Name = insurance.Name
+		insuranceDetail.Desc = insurance.Desc
+		insuranceDetail.InsuranceType = GetInsuranceTypeById(insurance.InsuranceTypeId)
+		insuranceDetail.Company = GetCompanyById(insurance.CompanyId)
+		insuranceDetail.AgeFrom = insurance.AgeFrom
+		insuranceDetail.AgeTo = insurance.AgeTo
+		insuranceDetail.AnnualCompensation = insurance.AnnualCompensation
+		insuranceDetail.AnnualPremium = insurance.AnnualPremium
+		insuranceDetail.Flags = insurance.Flags
+		insuranceDetail.Timestamp = insurance.Timestamp
+		insuranceDetail.ThumbUrl = insurance.ThumbUrl
+		insuranceDetail.DetailData = insurance.DetailData
+	} else {
+		insuranceDetail.Id = -1
+	}
+	return insuranceDetail
+}

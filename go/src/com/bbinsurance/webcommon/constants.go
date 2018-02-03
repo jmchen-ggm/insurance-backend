@@ -20,6 +20,7 @@ const FuncGetInsuranceTypeById = 11
 const FuncReplyComment = 12
 const FuncGetListCommentReply = 13
 const FuncViewArticle = 14
+const FuncGetInsuranceDetail = 15
 
 const FuncRegisterUser = 101
 const FuncLogin = 102

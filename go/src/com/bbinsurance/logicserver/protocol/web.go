@@ -72,6 +72,30 @@ type Insurance struct {
 	DetailData         string
 }
 
+type InsuranceDetail struct {
+	Id                 int64
+	Name               string
+	Desc               string
+	InsuranceType      InsuranceType
+	Company            Company
+	AgeFrom            int
+	AgeTo              int
+	AnnualCompensation int
+	AnnualPremium      int
+	Flags              int64
+	Timestamp          int64
+	ThumbUrl           string
+	DetailData         string
+}
+
+type BBGetInsuranceDetailRequest struct {
+	Id int64
+}
+
+type BBGetInsuranceDetailResponse struct {
+	InsuranceDetail InsuranceDetail
+}
+
 type BBListInsuranceRequest struct {
 	StartIndex int
 	PageSize   int

@@ -54,6 +54,21 @@ func FunGetInsuranceTypeById(bbReq webcommon.BBReq) ([]byte, int, string) {
 	}
 }
 
+func FunGetInsuranceDetail(bbReq webcommon.BBReq) ([]byte, int, string) {
+	var getInsuranceDetailRequest protocol.BBGetInsuranceDetailRequest
+	json.Unmarshal(bbReq.Body, &getInsuranceDetailRequest)
+	insuranceDetail := service.GetInsuranceDetail(getInsuranceDetailRequest.Id)
+	if insuranceDetail.Id == -1 {
+		log.Error("FunGetInsuranceDetail Err")
+		return nil, webcommon.ResponseCodeServerError, "FunGetInsuranceDetail Err"
+	} else {
+		var response protocol.BBGetInsuranceDetailResponse
+		response.InsuranceDetail = insuranceDetail
+		responseBytes, _ := json.Marshal(response)
+		return responseBytes, webcommon.ResponseCodeSuccess, ""
+	}
+}
+
 func FunCreateInsuranceType(writer http.ResponseWriter, request *http.Request) {
 	var bbReq webcommon.BBReq
 	bbReq.Bin.FunId = webcommon.FuncCreateInsuranceType
