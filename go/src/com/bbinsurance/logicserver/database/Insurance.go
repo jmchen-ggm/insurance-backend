@@ -34,7 +34,7 @@ func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 }
 
 func GetInsuranceById(id int64) protocol.Insurance {
-	sql := fmt.Sprintf("SELECT %s, DetailData, FROM %s WHERE Id = ?;", InsuranceListField, InsuranceTableName)
+	sql := fmt.Sprintf("SELECT %s, DetailData FROM %s WHERE Id = ?;", InsuranceListField, InsuranceTableName)
 	log.Info("GetInsuranceById sql=%s", sql)
 	rows, err := GetDB().Query(sql, id)
 	defer rows.Close()
