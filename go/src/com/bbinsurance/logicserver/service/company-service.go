@@ -20,6 +20,7 @@ func GetCompanyById(id int64) protocol.Company {
 	} else {
 		company = database.GetCompanyById(id)
 		if company.Id != -1 {
+			company.ThumbUrl = webcommon.GenerateImgFileServerUrl(company.ThumbUrl)
 			companyCacheMap[id] = company
 		}
 		return company

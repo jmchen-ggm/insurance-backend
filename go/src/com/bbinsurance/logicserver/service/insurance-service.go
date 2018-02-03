@@ -20,6 +20,7 @@ func GetInsuranceTypeById(id int64) protocol.InsuranceType {
 	} else {
 		insuranceType = database.GetInsuranceTypeById(id)
 		if insuranceType.Id != -1 {
+			insuranceType.ThumbUrl = webcommon.GenerateImgFileServerUrl(insuranceType.ThumbUrl)
 			insuranceTypeCacheMap[id] = insuranceType
 		}
 		return insuranceType
@@ -61,7 +62,7 @@ func GetInsuranceDetail(id int64) protocol.InsuranceDetail {
 		insuranceDetail.AnnualPremium = insurance.AnnualPremium
 		insuranceDetail.Flags = insurance.Flags
 		insuranceDetail.Timestamp = insurance.Timestamp
-		insuranceDetail.ThumbUrl = insurance.ThumbUrl
+		insuranceDetail.ThumbUrl = webcommon.GenerateImgFileServerUrl(insurance.ThumbUrl)
 		insuranceDetail.DetailData = insurance.DetailData
 	} else {
 		insuranceDetail.Id = -1
