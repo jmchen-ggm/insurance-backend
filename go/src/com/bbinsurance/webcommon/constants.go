@@ -5,6 +5,7 @@ const ResponseCodeServerError = -1
 const ResponseCodeRequestInvalid = -2
 const ResponseCodeInvalidURI = -3
 const ResponseCodeInvalidFunId = -4
+const ResponseCodeEntityNotFound = -5
 
 const FuncListArticle = 1
 const FuncListCompany = 2
@@ -25,8 +26,7 @@ const FuncGetInsuranceDetail = 15
 const FuncRegisterUser = 101
 const FuncLogin = 102
 const FuncGetUser = 103
-const FuncBatchGetUser = 104
-const FuncGetAllUser = 105
+const FuncListUser = 104
 
 const FuncCreateArticle = 10001
 const FuncCreateCompany = 10002

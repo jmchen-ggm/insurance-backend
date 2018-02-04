@@ -243,3 +243,13 @@ type BBGetCommentReplyListRequest struct {
 type BBGetCommentReplyListResponse struct {
 	CommentReplyList []CommentReply
 }
+
+type BBSearchInsuranceListRequest struct {
+	InsuranceTypeId int64
+	CompanyId       int64
+	Keyword         string
+	Smoke           bool
+}
+
+type BBSearchInsuranceListResponse struct {
+}

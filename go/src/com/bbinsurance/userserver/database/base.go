@@ -2,9 +2,16 @@ package database
 
 import (
 	"com/bbinsurance/log"
+	"com/bbinsurance/util"
 	"database/sql"
 	_ "github.com/mattn/go-sqlite3"
 )
+
+const UserTableVersionKey = "UserTableVersionKey"
+const PasswordTableVersionKey = "PasswordTableVersionKey"
+
+const CurrentUserTableVersion = "1"
+const CurrentPasswordTableVersion = "1"
 
 var db *sql.DB
 
@@ -17,7 +24,12 @@ func InitDB() {
 	} else {
 		log.Info("open db success")
 	}
-	var createUserSql = "CREATE TABLE IF NOT EXISTS User(Id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT NOT NULL, NickName TEXT NOT NULL, PhoneNumber TEXT NOT NULL, Timestamp INTEGER, ThumbUrl TEXT NOT NULL);"
+
+	util.CreateDBConfigTable(db)
+	util.CheckDBTable(db, UserTableName, UserTableVersionKey, CurrentUserTableVersion)
+	util.CheckDBTable(db, PasswordTableName, PasswordTableVersionKey, CurrentPasswordTableVersion)
+
+	var createUserSql = "CREATE TABLE IF NOT EXISTS User(Id INTEGER PRIMARY KEY AUTOINCREMENT, Username TEXT NOT NULL, NickName TEXT NOT NULL, Timestamp INTEGER, ThumbUrl TEXT NOT NULL);"
 	_, err = db.Exec(createUserSql, nil)
 	if err != nil {
 		log.Error("Create User Error: sql = %s, err = %s", createUserSql, err)
@@ -35,6 +47,8 @@ func InitDB() {
 	} else {
 		log.Info("Create Password Table Success sql = %s", createPasswordSql)
 	}
+
+	util.SetSequenceStartId(db, UserTableName, 10000)
 }
 
 func GetDB() *sql.DB {

@@ -14,8 +14,7 @@ func FunInitDataBin() {
 	handlerObjMap = make(map[int]HandleMethod)
 	handlerObjMap[webcommon.FuncLogin] = FunLogin
 	handlerObjMap[webcommon.FuncGetUser] = FunGetUser
-	handlerObjMap[webcommon.FuncBatchGetUser] = FunBatchGetUser
-	handlerObjMap[webcommon.FuncGetAllUser] = FunGetAllUser
+	handlerObjMap[webcommon.FuncListUser] = FunListUser
 }
 
 func FunHandleDataBin(writer http.ResponseWriter, request *http.Request) {

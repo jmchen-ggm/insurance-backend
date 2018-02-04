@@ -1,12 +1,11 @@
 package protocol
 
 type User struct {
-	Id          int64
-	Username    string
-	Nickname    string
-	PhoneNumber string
-	Timestamp   int64
-	ThumbUrl    string
+	Id        int64
+	Username  string
+	Nickname  string
+	Timestamp int64
+	ThumbUrl  string
 }
 
 type Password struct {
@@ -24,11 +23,12 @@ type BBGetUserResponse struct {
 	User User
 }
 
-type BBBatchGetUserRequest struct {
-	UserIdList []int64
+type BBListUserRequest struct {
+	StartIndex int
+	PageSize   int
 }
 
-type BBBatchGetUserResponse struct {
+type BBListUserResponse struct {
 	UserList []User
 }
 
@@ -38,7 +38,8 @@ type BBLoginRequest struct {
 }
 
 type BBLoginResponse struct {
-	UserInfo  User
+	LoginCode int
+	User      User
 	Token     string
 	Timestamp int64
 }
