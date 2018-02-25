@@ -8,7 +8,7 @@ import (
 
 func GetListConsultant(startIndex int, length int) []protocol.Consultant {
 	consultantList := database.GetListConsultant(startIndex, length)
-	consultantListLength = len(consultantList)
+	consultantListLength := len(consultantList)
 	for i := 0; i < consultantListLength; i++ {
 		consultantList[i].ThumbUrl = webcommon.GenerateImgFileServerUrl(consultantList[i].ThumbUrl)
 	}
