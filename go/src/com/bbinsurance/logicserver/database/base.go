@@ -118,7 +118,7 @@ func InitDB() {
 	var createCommentReplyCommentIdIndex = "CREATE INDEX IF NOT EXISTS CommentReply_CommentId ON CommentReply(CommentId)"
 	db.Exec(createCommentReplyCommentIdIndex, nil)
 
-	var createConsultantSql = "CREATE TABLE IF NOT EXIST Consultant(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc TEXT NOT NULL, Score INTEGER, ThumbUrl TEXT NOT NULL, Flags INTEGER, DetailData TEXT)"
+	var createConsultantSql = "CREATE TABLE IF NOT EXISTS Consultant(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc TEXT NOT NULL, Score INTEGER, ThumbUrl TEXT NOT NULL, Flags INTEGER, DetailData TEXT)"
 	_, err = db.Exec(createConsultantSql, nil)
 	if err != nil {
 		log.Error("Create Consultant Error: sql = %s, err = %s", createConsultantSql, err)
