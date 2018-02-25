@@ -16,10 +16,11 @@ func main() {
 
 	fmt.Printf("%s %s\n", constants.STATIC_FOLDER, constants.LOGIC_DB_PATH)
 
-	HandleInsuranceType()
-	HandleAritcle()
-	HandleCompany()
-	HandleInsurance()
+	// HandleInsuranceType()
+	// HandleAritcle()
+	// HandleCompany()
+	// HandleInsurance()
+	HandleConsultant()
 }
 
 func HandleAritcle() {
@@ -70,6 +71,19 @@ func HandleInsurance() {
 		insurance, _ := InsertInsurance(insuranceList[i])
 		if insurance.Id != -1 {
 			fmt.Printf("Insert Success %s\n", util.ObjToString(insurance))
+		}
+	}
+}
+
+func HandleConsultant() {
+	consultantJsonStr, _ := util.FileGetContent(constants.STATIC_FOLDER + "/data/consultants.json")
+	var listConsultantResponse protocol.BBListConsultantResponse
+	json.Unmarshal(util.StringToBytes(consultantJsonStr), &listConsultantResponse)
+	consultantList := listConsultantResponse.ConsultantList
+	for i := 0; i < len(consultantList); i++ {
+		consultant, _ := InsertConsultant(consultantList[i])
+		if consultant.Id != -1 {
+			fmt.Printf("Insert Success %s\n", util.ObjToString(consultant))
 		}
 	}
 }
@@ -152,4 +166,23 @@ func InsertInsurance(insurance protocol.Insurance) (protocol.Insurance, error) {
 		}
 	}
 	return insurance, err
+}
+
+func InsertConsultant(consultant protocol.Consultant) (protocol.Consultant, error) {
+	db, _ := sql.Open("sqlite3", constants.LOGIC_DB_PATH)
+	defer db.Close()
+	sql := fmt.Sprintf("INSERT OR REPLACE INTO Consultant (Id, Name, Desc, Score, ThumbUrl, Flags, DetailData) VALUES (?, ?, ?, ?, ?, ?, ?);")
+	stmt, err := db.Prepare(sql)
+	defer stmt.Close()
+	if err != nil {
+		consultant.Id = -1
+	} else {
+		result, err := stmt.Exec(consultant.Id, consultant.Name, consultant.Desc, consultant.Score, consultant.ThumbUrl, consultant.Flags, consultant.DetailData)
+		if err != nil {
+			consultant.Id = -1
+		} else {
+			consultant.Id, err = result.LastInsertId()
+		}
+	}
+	return consultant, err
 }
