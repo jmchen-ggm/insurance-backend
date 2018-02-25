@@ -15,6 +15,7 @@ const InsuranceTypeTableVersionKey = "InsuranceTypeTableVersionKey"
 const CommentTableVersionKey = "CommentTableVersionKey"
 const CommentUpTableVersionKey = "CommentUpTableVersionKey"
 const CommentReplyTableVersionKey = "CommentReplyTableVersionKey"
+const ConsultantTableVersionKey = "ConsultantTableVersionKey"
 
 const CurrentArticleTableVersion = "1"
 const CurrentCompanyTableVersion = "1"
@@ -23,6 +24,7 @@ const CurrentInsuranceTypeTableVersion = "2"
 const CurrentCommentTableVersion = "2"
 const CurrentCommentUpTableVersion = "0"
 const CurrentCommentReplyTableVersion = "0"
+const CurrentConsultantTableVersion = "0"
 
 var db *sql.DB
 
@@ -51,6 +53,7 @@ func InitDB() {
 	CheckTable(CommentTableName, CommentTableVersionKey, CurrentCommentTableVersion)
 	CheckTable(CommentUpTableName, CommentUpTableVersionKey, CurrentCommentUpTableVersion)
 	CheckTable(CommentReplyTableName, CommentReplyTableVersionKey, CurrentCommentReplyTableVersion)
+	CheckTable(ConsultantTableName, ConsultantTableVersionKey, CurrentConsultantTableVersion)
 
 	var createArticleSql = "CREATE TABLE IF NOT EXISTS Article(Id INTEGER PRIMARY KEY AUTOINCREMENT, Title TEXT NOT NULL, Desc TEXT NOT NULL, Date TEXT NOT NULL, Timestamp INTEGER, Url TEXT NOT NULL, ThumbUrl TEXT NOT NULL, ViewCount INTEGER);"
 	_, err = db.Exec(createArticleSql, nil)
@@ -114,6 +117,14 @@ func InitDB() {
 	}
 	var createCommentReplyCommentIdIndex = "CREATE INDEX IF NOT EXISTS CommentReply_CommentId ON CommentReply(CommentId)"
 	db.Exec(createCommentReplyCommentIdIndex, nil)
+
+	var createConsultantSql = "CREATE TABLE IF NOT EXIST Consultant(Id INTEGER PRIMARY KEY AUTOINCREMENT, Name TEXT Not NULL, Desc TEXT NOT NULL, Score INTEGER, ThumbUrl TEXT NOT NULL, Flags INTEGER, DetailData TEXT)"
+	_, err = db.Exec(createConsultantSql, nil)
+	if err != nil {
+		log.Error("Create Consultant Error: sql = %s, err = %s", createConsultantSql, err)
+	} else {
+		log.Info("Create Consultant Table Success sql = %s", createConsultantSql)
+	}
 }
 
 func GetDB() *sql.DB {

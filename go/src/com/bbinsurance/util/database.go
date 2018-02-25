@@ -32,7 +32,9 @@ func SetDBConfig(db *sql.DB, key string, value string) error {
 func GetDBConfig(db *sql.DB, key string) (string, error) {
 	sql := fmt.Sprintf("SELECT value FROM %s WHERE key = ?", ConfigTableName)
 	rows, err := db.Query(sql, key)
-	defer rows.Close()
+	if rows != nil {
+		defer rows.Close()
+	}
 	if err != nil {
 		return "", err
 	} else {

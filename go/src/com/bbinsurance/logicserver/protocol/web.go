@@ -253,3 +253,23 @@ type BBSearchInsuranceListRequest struct {
 
 type BBSearchInsuranceListResponse struct {
 }
+
+type Consultant struct {
+	Id         int64
+	Name       string
+	Desc       string
+	Age        int
+	Score      int64
+	ThumbUrl   string
+	Flags      int64
+	DetailData string
+}
+
+type BBListConsultantRequest struct {
+	StartIndex int
+	PageSize   int
+}
+
+type BBListConsultantResponse struct {
+	ConsultantList []Consultant
+}
